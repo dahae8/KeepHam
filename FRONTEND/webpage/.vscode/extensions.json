@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "bradlc.vscode-tailwindcss",
+    "alfredbirk.tailwind-documentation",
+    "kalimahapps.tailwind-config-viewer",
+    "esbenp.prettier-vscode"
+  ]
+}
