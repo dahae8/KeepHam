@@ -1,0 +1,30 @@
+spring:
+  jpa:
+    show-sql: true
+    properties:
+      format_sql: true
+      dialect: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    url: jdbc:mysql://localhost:3306/keepham
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+
+springdoc:
+  packages-to-scan: com.ssafy.keepham
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    path: keepham-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    api-docs:
+      path: /api-docs/json
+      groups:
+        enabled: true
+    cache:
+      disabled: true
+
+
