@@ -4,7 +4,9 @@ class TOC extends Component {
   render() {
     return (
       <div>
-        <h1>{this.props.name}</h1>
+        <a href="/">
+          <h1>{this.props.name}</h1>
+        </a>
         {this.props.subt}
       </div>
     );
