@@ -1,20 +1,21 @@
 package com.ssafy.keepham.user.dto.user.response;
 
+import com.ssafy.keepham.user.entity.User;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserUpdateResponse{
 
     boolean result;
-    String userId;
-    String name;
+    String email;
+    String nickName;
 
-    public UserUpdateResponse(boolean result, String userId, String name) {
-        this.result = result;
-        this.userId = userId;
-        this.name = name;
+    public static UserUpdateResponse of(boolean result, User user) {
+        return new UserUpdateResponse(result, user.getEmail(),user.getNickName());
     }
 }
 
