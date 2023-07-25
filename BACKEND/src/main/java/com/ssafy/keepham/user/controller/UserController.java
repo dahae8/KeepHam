@@ -6,6 +6,7 @@ import com.ssafy.keepham.user.entity.User;
 import com.ssafy.keepham.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,5 +31,10 @@ public class UserController {
     @PutMapping
     public ApiResponse updateUser(String userId, @RequestBody UserUpdateRequest request){
         return ApiResponse.success(userService);
+    }
+    @Operation(summary = "회원 삭제")
+    @DeleteMapping
+    public ApiResponse deleteUser(Long id){
+        return ApiResponse.success(userService.userDelete(id));
     }
 }
