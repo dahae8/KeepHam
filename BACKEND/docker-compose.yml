@@ -1,17 +1,14 @@
-version: '2.1'
-
+version: '3'
 services:
-
   zookeeper-1:
-    hostname: zookeeper-1
+    image: confluentinc/cp-zookeeper:7.1.0
     container_name: zookeeper-1
-    image: zookeeper:3.6
-    restart: always
-    ports:
-      - 2181:2181
     environment:
-      ZOO_MY_ID: 1
-      ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
     volumes:
       - type: bind
         source: ./data/zk-cluster/zookeeper-1/data
@@ -19,15 +16,14 @@ services:
         read_only: false
 
   zookeeper-2:
-    hostname: zookeeper-2
+    image: confluentinc/cp-zookeeper:7.1.0
     container_name: zookeeper-2
-    image: zookeeper:3.6
-    restart: always
-    ports:
-      - 2182:2181
     environment:
-      ZOO_MY_ID: 2
-      ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
+      ZOOKEEPER_SERVER_ID: 2
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2182:2181"
     volumes:
       - type: bind
         source: ./data/zk-cluster/zookeeper-2/data
@@ -35,20 +31,90 @@ services:
         read_only: false
 
   zookeeper-3:
-    hostname: zookeeper-3
+    image: confluentinc/cp-zookeeper:7.1.0
     container_name: zookeeper-3
-    image: zookeeper:3.6
-    restart: always
-    ports:
-      - 2183:2181
     environment:
-      ZOO_MY_ID: 3
-      ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
+      ZOOKEEPER_SERVER_ID: 3
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2183:2181"
     volumes:
       - type: bind
         source: ./data/zk-cluster/zookeeper-3/data
         target: /data
         read_only: false
+
+  kafka-1:
+    image: confluentinc/cp-kafka:7.1.0
+    container_name: kafka-1
+    depends_on:
+      - zookeeper-1
+      - zookeeper-2
+      - zookeeper-3
+    ports:
+      - "9092:9092"
+      - "19092:19092"
+    volumes:
+      - type: bind
+        source: ./data/kafka-cluster/kafka-1/data
+        target: /var/lib/kafka/data
+        read_only: false
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092,PLAINTEXT_HOST://localhost:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+  kafka-2:
+    image: confluentinc/cp-kafka:7.1.0
+    container_name: kafka-2
+    depends_on:
+      - zookeeper-1
+      - zookeeper-2
+      - zookeeper-3
+    ports:
+      - "9093:9092"
+      - "19093:19093"
+    volumes:
+      - type: bind
+        source: ./data/kafka-cluster/kafka-2/data
+        target: /var/lib/kafka/data
+        read_only: false
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:9092,PLAINTEXT_HOST://localhost:19093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+  kafka-3:
+    image: confluentinc/cp-kafka:7.1.0
+    container_name: kafka-3
+    depends_on:
+      - zookeeper-1
+      - zookeeper-2
+      - zookeeper-3
+    ports:
+      - "9094:9092"
+      - "19094:19094"
+    volumes:
+      - type: bind
+        source: ./data/kafka-cluster/kafka-3/data
+        target: /var/lib/kafka/data
+        read_only: false
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:9092,PLAINTEXT_HOST://localhost:19094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
 
   zookeeper-navigator:
     hostname: zookeeper-navigator
@@ -63,75 +129,17 @@ services:
       - zookeeper-1
       - zookeeper-2
       - zookeeper-3
-
-  kafka-1:
-    image: confluentinc/cp-kafka:7.1.0
-    hostname: kafka-1
-    container_name: kafka-1
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
     ports:
-      - 9092:9092
+      - "10000:8080"
+    restart: always
     environment:
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-1:9092
-      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
-      - KAFKA_BROKER_ID=1
-      - BOOTSTRAP_SERVERS=kafka-1:9092,kafka-2:9093,kafka-3:9094
-      - ZOOKEEPER=zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
-    volumes:
-      - type: bind
-        source: ./data/kafka-cluster/kafka-1/data
-        target: /var/lib/kafka/data
-        read_only: false
-    depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=PLAINTEXT://kafka-1:9092,PLAINTEXT://kafka-2:9093,PLAINTEXT://kafka-3:9094
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
 
-  kafka-2:
-    image: confluentinc/cp-kafka:7.1.0
-    hostname: kafka-2
-    container_name: kafka-2
-    ports:
-      - 9093:9093
-    environment:
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-2:9093
-      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9093
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
-      - KAFKA_BROKER_ID=2
-      - BOOTSTRAP_SERVERS=kafka-1:9092,kafka-2:9093,kafka-3:9094
-      - ZOOKEEPER=zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
-    volumes:
-      - type: bind
-        source: ./data/kafka-cluster/kafka-2/data
-        target: /var/lib/kafka/data
-        read_only: false
-    depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
-
-  kafka-3:
-    image: confluentinc/cp-kafka:7.1.0
-    hostname: kafka-3
-    container_name: kafka-3
-    ports:
-      - 9094:9094
-    environment:
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-3:9094
-      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9094
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
-      - KAFKA_BROKER_ID=3
-      - BOOTSTRAP_SERVERS=kafka-1:9092,kafka-2:9093,kafka-3:9094
-      - ZOOKEEPER=zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
-    volumes:
-      - type: bind
-        source: ./data/kafka-cluster/kafka-3/data
-        target: /var/lib/kafka/data
-        read_only: false
-    depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
   mongodb:
     image: mongo
     container_name: mongodb
