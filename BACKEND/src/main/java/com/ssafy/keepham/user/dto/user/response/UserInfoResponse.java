@@ -18,8 +18,6 @@ public record UserInfoResponse(
         String nickName,
         @Schema(description = "회원 이메일")
         String email,
-        @Schema(description = "회원 휴대폰 번호")
-        String phoneNumber,
         @Schema(description = "회원 나이")
         Integer age,
         @Schema(description = "회원 유형")
@@ -35,7 +33,6 @@ public record UserInfoResponse(
                 user.getPassword(),
                 user.getName(),
                 user.getNickName(),
-                user.getPhoneNumber(),
                 user.getEmail(),
                 user.getAddress(),
                 user.getAge(),

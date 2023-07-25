@@ -2,7 +2,6 @@ package com.ssafy.keepham.user.dto.signup.response;
 
 import com.ssafy.keepham.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 
 public record SignUpResponse(
         @Schema(description = "회원 고유키")
@@ -17,7 +16,6 @@ public record SignUpResponse(
         Integer age
 
 ) {
-    @Builder
     public static SignUpResponse toEntity(User user){
         return new SignUpResponse(
                 user.getId(),

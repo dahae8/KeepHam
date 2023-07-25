@@ -2,6 +2,7 @@ package com.ssafy.keepham.user.entity;
 
 import com.ssafy.keepham.user.common.GenderType;
 import com.ssafy.keepham.user.common.UserRole;
+import com.ssafy.keepham.user.dto.signup.request.SignUpRequest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,7 +25,6 @@ public class User {
     private String password;
     private String name;
     private String nickName;
-    private String phoneNumber;
     private String email;
     private String address;
     private String birthday;
@@ -32,5 +32,12 @@ public class User {
     private UserRole userRole;
     private GenderType genderType;
 
-
+    public static User toEntity(SignUpRequest request){
+        return User.builder()
+                .userId(request.userId())
+                .password(request.password())
+                .name(request.name())
+                .nickName(request.nickName())
+                .build();
+    }
 }
