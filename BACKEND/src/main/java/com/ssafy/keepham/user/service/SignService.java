@@ -1,5 +1,8 @@
 package com.ssafy.keepham.user.service;
 
+import com.ssafy.keepham.user.common.UserRole;
+import com.ssafy.keepham.user.dto.signin.request.SignInRequest;
+import com.ssafy.keepham.user.dto.signin.response.SignInResponse;
 import com.ssafy.keepham.user.dto.signup.request.SignUpRequest;
 import com.ssafy.keepham.user.dto.signup.response.SignUpResponse;
 
@@ -20,11 +23,19 @@ public class SignService {
     @Transactional
     public SignUpResponse registUser(SignUpRequest request){
         User user = userRepository.save(User.toEntity(request));
-//        try {
-//            userRepository.flush();
-//        }catch (DataIntegrityViolationException e){
-//            throw new IllegalArgumentException("이미 사용중인 아이디입니다.");
-//        }
+        try {
+            userRepository.flush();
+        }catch (DataIntegrityViolationException e){
+            throw new IllegalArgumentException("이미 사용중인 아이디입니다.");
+        }
         return SignUpResponse.toEntity(user);
+    }
+
+    @Transactional
+    public SignInResponse signIn(SignInRequest request){
+        User user = userRepository.findByUserId(request.getUserId())
+                .filter(u -> u.getPassword().equals(request.getPassword()))
+                .orElseThrow(() ->new IllegalArgumentException("아이디 또는 비밀번호가 틀렸습니다."));
+        return new SignInResponse(user.getName(), user.getUserRole());
     }
 }

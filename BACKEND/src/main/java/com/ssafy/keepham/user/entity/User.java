@@ -40,6 +40,7 @@ public class User {
                 .nickName(request.getNickName())
                 .email(request.getEmail())
                 .age(request.getAge())
+                .userRole(UserRole.USER)
                 .build();
     }
 }
