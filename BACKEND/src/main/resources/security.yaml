@@ -1,0 +1,6 @@
+security:
+  user: ssafy
+  password: ssafy
+  secret-key: hC8KPh33mPgKgZfQ3hG5dZRNTlohi9Ob
+  expiration-hours: 3
+  issuer: ssafy

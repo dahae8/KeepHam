@@ -46,7 +46,7 @@ public class UserUpdateTest {
             .password("ssafy")
             .build());
 
-        UserDeleteResponse result = userService.userDelete(savedUser.getId());
+        UserDeleteResponse result = userService.userDelete(savedUser.getUserId());
         assertThat(result.isResult()).isEqualTo(true);
     }
 }

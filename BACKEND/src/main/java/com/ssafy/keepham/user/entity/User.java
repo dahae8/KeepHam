@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,10 +34,10 @@ public class User {
     private UserRole userRole;
     private GenderType genderType;
 
-    public static User toEntity(SignUpRequest request){
+    public static User toEntity(SignUpRequest request, PasswordEncoder encoder){
         return User.builder()
                 .userId(request.getUserId())
-                .password(request.getPassword())
+                .password(encoder.encode(request.getPassword()))
                 .name(request.getName())
                 .nickName(request.getNickName())
                 .email(request.getEmail())
@@ -44,8 +45,8 @@ public class User {
                 .userRole(UserRole.USER)
                 .build();
     }
-    public void update(UserUpdateRequest newUser){
-        this.password = newUser.getNewPassword() == null || newUser.getNewPassword().isBlank() ? this.password : newUser.getPassword();
+    public void update(UserUpdateRequest newUser, PasswordEncoder encoder){
+        this.password = newUser.getNewPassword() == null || newUser.getNewPassword().isBlank() ? this.password : encoder.encode(newUser.getPassword());
         this.email = newUser.getEmail();
         this.nickName = newUser.getNickName();
     }
