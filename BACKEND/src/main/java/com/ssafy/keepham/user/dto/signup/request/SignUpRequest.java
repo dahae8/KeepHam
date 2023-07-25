@@ -1,20 +1,23 @@
 package com.ssafy.keepham.user.dto.signup.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 
-
-public record SignUpRequest(
+@Getter
+@NoArgsConstructor
+public class SignUpRequest {
         @Schema(description = "유저 아이디")
-        String userId,
+        private String userId;
         @Schema(description = "비밀번호")
-        String password,
+        private String password;
         @Schema(description = "이름")
-        String name,
+        private String name;
         @Schema(description = "별명")
-        String nickName,
+        private String nickName;
         @Schema(description = "이메일")
-        String email,
+        private String email;
         @Schema(description = "나이")
-        Integer age
-) {
+        private Integer age;
 }

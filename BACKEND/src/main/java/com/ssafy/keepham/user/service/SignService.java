@@ -19,9 +19,7 @@ public class SignService {
 
     @Transactional
     public SignUpResponse registUser(SignUpRequest request){
-        log.info("hi");
         User user = userRepository.save(User.toEntity(request));
-        log.info(user.toString());
 //        try {
 //            userRepository.flush();
 //        }catch (DataIntegrityViolationException e){

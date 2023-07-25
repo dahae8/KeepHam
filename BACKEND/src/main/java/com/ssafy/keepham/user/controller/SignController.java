@@ -18,10 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class SignController {
     private final SignService signService;
 
-    @Operation(description = "회원가입")
+    @Operation(summary = "회원가입")
     @PostMapping("/sign-up")
     public ApiResponse signUp(@RequestBody SignUpRequest request){
-        log.info("여기는 옴?");
         return ApiResponse.success(signService.registUser(request));
     }
 }

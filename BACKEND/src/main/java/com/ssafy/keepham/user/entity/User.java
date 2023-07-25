@@ -34,10 +34,12 @@ public class User {
 
     public static User toEntity(SignUpRequest request){
         return User.builder()
-                .userId(request.userId())
-                .password(request.password())
-                .name(request.name())
-                .nickName(request.nickName())
+                .userId(request.getUserId())
+                .password(request.getPassword())
+                .name(request.getName())
+                .nickName(request.getNickName())
+                .email(request.getEmail())
+                .age(request.getAge())
                 .build();
     }
 }
