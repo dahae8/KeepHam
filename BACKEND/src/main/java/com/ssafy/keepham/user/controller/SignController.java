@@ -22,7 +22,7 @@ public class SignController {
         return ApiResponse.success(signService.registUser(request));
     }
     @Operation(summary = "회원 로그인")
-    @PostMapping("/login")
+    @PostMapping("/sign-in")
     public ApiResponse signIn(@RequestBody SignInRequest request){
         return ApiResponse.success(signService.signIn(request));
     }
