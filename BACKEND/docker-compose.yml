@@ -1,0 +1,146 @@
+version: '2.1'
+
+services:
+
+  zookeeper-1:
+    hostname: zookeeper-1
+    container_name: zookeeper-1
+    image: zookeeper:3.6
+    restart: always
+    ports:
+      - 2181:2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
+    volumes:
+      - type: bind
+        source: ./data/zk-cluster/zookeeper-1/data
+        target: /data
+        read_only: false
+
+  zookeeper-2:
+    hostname: zookeeper-2
+    container_name: zookeeper-2
+    image: zookeeper:3.6
+    restart: always
+    ports:
+      - 2182:2181
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
+    volumes:
+      - type: bind
+        source: ./data/zk-cluster/zookeeper-2/data
+        target: /data
+        read_only: false
+
+  zookeeper-3:
+    hostname: zookeeper-3
+    container_name: zookeeper-3
+    image: zookeeper:3.6
+    restart: always
+    ports:
+      - 2183:2181
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zookeeper-1:2888:3888;2181 server.2=zookeeper-2:2888:3888;2181 server.3=zookeeper-3:2888:3888;2181
+    volumes:
+      - type: bind
+        source: ./data/zk-cluster/zookeeper-3/data
+        target: /data
+        read_only: false
+
+  zookeeper-navigator:
+    hostname: zookeeper-navigator
+    container_name: zookeeper-navigator
+    image: elkozmon/zoonavigator:1.1.2
+    restart: always
+    ports:
+      - 9000:9000
+    environment:
+      HTTP_PORT: 9000
+    depends_on:
+      - zookeeper-1
+      - zookeeper-2
+      - zookeeper-3
+
+  kafka-1:
+    image: confluentinc/cp-kafka:7.1.0
+    hostname: kafka-1
+    container_name: kafka-1
+    ports:
+      - 9092:9092
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-1:9092
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+      - KAFKA_BROKER_ID=1
+      - BOOTSTRAP_SERVERS=kafka-1:9092,kafka-2:9093,kafka-3:9094
+      - ZOOKEEPER=zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+    volumes:
+      - type: bind
+        source: ./data/kafka-cluster/kafka-1/data
+        target: /var/lib/kafka/data
+        read_only: false
+    depends_on:
+      - zookeeper-1
+      - zookeeper-2
+      - zookeeper-3
+
+  kafka-2:
+    image: confluentinc/cp-kafka:7.1.0
+    hostname: kafka-2
+    container_name: kafka-2
+    ports:
+      - 9093:9093
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-2:9093
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9093
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+      - KAFKA_BROKER_ID=2
+      - BOOTSTRAP_SERVERS=kafka-1:9092,kafka-2:9093,kafka-3:9094
+      - ZOOKEEPER=zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+    volumes:
+      - type: bind
+        source: ./data/kafka-cluster/kafka-2/data
+        target: /var/lib/kafka/data
+        read_only: false
+    depends_on:
+      - zookeeper-1
+      - zookeeper-2
+      - zookeeper-3
+
+  kafka-3:
+    image: confluentinc/cp-kafka:7.1.0
+    hostname: kafka-3
+    container_name: kafka-3
+    ports:
+      - 9094:9094
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-3:9094
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9094
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+      - KAFKA_BROKER_ID=3
+      - BOOTSTRAP_SERVERS=kafka-1:9092,kafka-2:9093,kafka-3:9094
+      - ZOOKEEPER=zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+    volumes:
+      - type: bind
+        source: ./data/kafka-cluster/kafka-3/data
+        target: /var/lib/kafka/data
+        read_only: false
+    depends_on:
+      - zookeeper-1
+      - zookeeper-2
+      - zookeeper-3
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongodb:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=mydb
