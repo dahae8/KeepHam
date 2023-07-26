@@ -1,16 +1,19 @@
 package com.ssafy.keepham.user.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+import java.util.UUID;
+
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 public class UserRefreshToken {
     @Id
-    private Long id;
+    private UUID userId;
 
     @OneToOne
     private User user;
@@ -30,7 +33,7 @@ public class UserRefreshToken {
         return this.refreshToken.equals(refreshToken);
     }
 
-    public void increaseReissue(int reissueCount){
+    public void increaseReissueCount(){
         reissueCount++;
     }
 }

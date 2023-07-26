@@ -8,6 +8,8 @@ import com.ssafy.keepham.user.dto.signup.request.SignUpRequest;
 import com.ssafy.keepham.user.dto.signup.response.SignUpResponse;
 
 import com.ssafy.keepham.user.entity.User;
+import com.ssafy.keepham.user.entity.UserRefreshToken;
+import com.ssafy.keepham.user.repository.UserRefreshTokenRepository;
 import com.ssafy.keepham.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class SignService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final TokenProvider tokenProvider;
+    private final UserRefreshTokenRepository userRefreshTokenRepository;
 
     @Transactional
     public SignUpResponse registUser(SignUpRequest request){
@@ -40,7 +43,12 @@ public class SignService {
         User user = userRepository.findByUserId(request.getUserId())
                 .filter(u -> encoder.matches(request.getPassword(), u.getPassword()))
                 .orElseThrow(() ->new IllegalArgumentException("아이디 또는 비밀번호가 틀렸습니다."));
-        String token = tokenProvider.createToken(String.format("%s:%s",user.getUserId(),user.getUserRole()));
-        return new SignInResponse(user.getName(), user.getUserRole(), token);
+        String accessToken = tokenProvider.createAccessToken(String.format("%s:%s",user.getUserId(),user.getUserRole()));
+        String refreshToken = tokenProvider.createRefreshToken();
+        userRefreshTokenRepository.findById(user.getId())
+                .ifPresentOrElse(it -> it.updateRefreshToken(refreshToken),
+                () -> userRefreshTokenRepository.save(new UserRefreshToken(user, refreshToken))
+                    );
+        return new SignInResponse(user.getName(), user.getUserRole(), accessToken, refreshToken);
     }
 }

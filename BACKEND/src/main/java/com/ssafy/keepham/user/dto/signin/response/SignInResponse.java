@@ -12,10 +12,12 @@ public class SignInResponse {
     String name;
     @Schema(description = "회원 유형")
     UserRole userRole;
-    String token;
-    public SignInResponse(String name, UserRole userRole, String token) {
+    String accessToken;
+    String refreshToken;
+    public SignInResponse(String name, UserRole userRole, String accessToken, String refreshToken) {
         this.name = name;
         this.userRole = userRole;
-        this.token = token;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 }
