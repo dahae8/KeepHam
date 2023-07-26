@@ -1,4 +1,4 @@
-package com.ssafy.keepham.domain.chat.service;
+package com.ssafy.keepham.domain.chat.consumer;
 
 import com.ssafy.keepham.domain.chat.db.Message;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ public class MessageListener {
 
     @KafkaListener(
             topics = "kafka-chat",
-            groupId = "chat"
+            groupId = "chatting"
     )
     public void listen(Message message){
         System.out.println("kafka 리스너를 통해 보내느중");

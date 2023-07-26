@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/kafka")
+@RequestMapping(value = "/api")
 @RequiredArgsConstructor
 @CrossOrigin(originPatterns = "*")
 public class ChatController {

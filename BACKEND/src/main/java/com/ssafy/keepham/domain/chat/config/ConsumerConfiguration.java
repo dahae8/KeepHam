@@ -3,6 +3,7 @@ package com.ssafy.keepham.domain.chat.config;
 import com.ssafy.keepham.domain.chat.db.Message;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -17,6 +18,11 @@ import java.util.Map;
 @EnableKafka
 @Configuration
 public class ConsumerConfiguration {
+
+    @Value("${spring.kafka.consumer.bootstrap-servers}")
+    private String bootstrapServer;
+    @Value("${spring.kafka.consumer.group-id}")
+    private String groupId;
 
     @Bean
     ConcurrentKafkaListenerContainerFactory<String, Message> kafkaListenerContainerFactory() {
@@ -35,8 +41,8 @@ public class ConsumerConfiguration {
     @Bean
     public Map<String, Object> consumerConfigs(){
         Map<String, Object> configs = new HashMap<>();
-        configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:19092,localhost:19093,localhost:19094");
-        configs.put(ConsumerConfig.GROUP_ID_CONFIG,"chat");
+        configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServer);
+        configs.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         configs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");

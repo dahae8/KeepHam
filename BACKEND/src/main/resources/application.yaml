@@ -14,6 +14,12 @@ spring:
   data:
     mongodb:
       url: mongodb://localhost:27017/chat
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:19091,localhost:19093,localhost:19094
+      group-id: chatting
+    producer:
+      bootstrap-servers: localhost:19091,localhost:19093,localhost:19094
 
 
 springdoc:
@@ -30,4 +36,6 @@ springdoc:
         enabled: true
     cache:
       disabled: true
+
+
 
