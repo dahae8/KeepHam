@@ -14,7 +14,15 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Jwts;
 
-
+/*
+TODO: 회원의 리프레시 토큰을 관리할 엔티티
+       로그인하면 리프레시 토큰을 발급한다.
+       리프레시 토큰을 생성하는 메소드
+       로그인 API 응답에 리프레시 토큰 추가
+       리프레시 토큰을 통해 액세스 토큰을 갱신
+       리프레시 토큰 검증 및 새로운 액세스 토큰 발급
+       핸들러 구현
+ */
 @Service
 @Getter
 @PropertySource("classpath:security.yaml")
