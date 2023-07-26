@@ -15,12 +15,15 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import javax.crypto.spec.SecretKeySpec;
 
 import jakarta.transaction.Transactional;
 import lombok.Getter;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 /*
@@ -44,19 +47,22 @@ public class TokenProvider {
         private final String issuer;
         private final long reissueLimit;
         private final ObjectMapper objectMapper = new ObjectMapper();
+        private final RedisTemplate<?,?> redisTemplate;
+        private UserRefreshToken userRefreshToken;
 
         public TokenProvider(
                 UserRefreshTokenRepository userRefreshTokenRepository,
                 @Value("${secret-key}") String secretKey,
                 @Value("${expiration-minutes}") long expirationMinutes,
                 @Value("${refresh-expiration-hours}") long refreshExpirationHours,
-                @Value("${issuer}") String issuer
-        ){
+                @Value("${issuer}") String issuer,
+                RedisTemplate<?, ?> redisTemplate){
                 this.userRefreshTokenRepository = userRefreshTokenRepository;
                 this.secretKey = secretKey;
                 this.expirationMinutes = expirationMinutes;
                 this.refreshExpirationHours = refreshExpirationHours;
                 this.issuer = issuer;
+                this.redisTemplate = redisTemplate;
                 this.reissueLimit = refreshExpirationHours * 60 / expirationMinutes;
         }
 
@@ -91,12 +97,18 @@ public class TokenProvider {
 
         //Refresh Token 생성
         public String createRefreshToken(){
-                return Jwts.builder()
+                Date now = new Date();
+                long refreshExpirationMillis = refreshExpirationHours * 60 * 60 * 1000;
+                Date expireDate = new Date(now.getTime() + refreshExpirationHours);
+                String refreshToken = Jwts.builder()
                         .signWith(new SecretKeySpec(secretKey.getBytes(),SignatureAlgorithm.HS512.getJcaName()))
                         .setIssuer(issuer)
                         .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
                         .setExpiration(Date.from(Instant.now().plus(refreshExpirationHours, ChronoUnit.HOURS)))
                         .compact();
+                // TODO: 레디스에 값 넣는 값 삽입 필요
+//                redisTemplate.opsForValue().set(refreshExpirationMillis, TimeUnit.MILLISECONDS);
+                return refreshToken;
         }
         @Transactional
         public void validateRefreshToken(String refreshToken, String oldAccessToken) throws  JsonProcessingException{
