@@ -11,4 +11,5 @@ public class SwaggerConfig {
     public ModelResolver modelResolver(ObjectMapper objectMapper){
         return new ModelResolver(objectMapper);
     }
+
 }

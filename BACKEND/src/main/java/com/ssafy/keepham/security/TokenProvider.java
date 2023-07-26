@@ -7,21 +7,24 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import javax.crypto.spec.SecretKeySpec;
+
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Jwts;
 
-@Configuration
-@Service
-@PropertySource("classpath:security.yml")
-public class TokenProvider {
 
+@Service
+@Getter
+@PropertySource("classpath:security.yaml")
+public class TokenProvider {
         @Value("${secret-key}")
         private String secretKey;
         @Value("${expiration-hours}")
         private long expirationHours;
+        @Value("${refresh-expiration-hours}")
+        private long refreshExpirationHours;
         @Value("${issuer}")
         private String issuer;
 

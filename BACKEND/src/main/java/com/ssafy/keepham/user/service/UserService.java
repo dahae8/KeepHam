@@ -4,6 +4,7 @@ import com.ssafy.keepham.user.dto.user.request.UserUpdateRequest;
 import com.ssafy.keepham.user.dto.user.response.UserDeleteResponse;
 import com.ssafy.keepham.user.dto.user.response.UserInfoResponse;
 import com.ssafy.keepham.user.dto.user.response.UserUpdateResponse;
+import com.ssafy.keepham.user.entity.User;
 import com.ssafy.keepham.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
@@ -30,19 +31,19 @@ public class UserService {
     @Transactional
     public Optional<UserUpdateResponse> userUpdate(String userId, UserUpdateRequest request){
         return Optional.ofNullable(userRepository.findByUserId(userId)
-            .filter(user -> user.getPassword().equals(request.getPassword()))
-            .map(user -> {
-                user.update(request,encoder);
-                return UserUpdateResponse.of(true, user);
-            })
-            .orElseThrow(() -> new NoSuchElementException("아이디 또는 비밀번호가 일치하지 않습니다.")));
+                .filter(user -> encoder.matches(request.getPassword(), user.getPassword()))
+                .map(user -> {
+                    user.update(request, encoder);
+                    return UserUpdateResponse.of(true, user);
+                })
+                .orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호가 틀립니다")));
     }
 
     //회원 탈퇴
     @Transactional
-    public UserDeleteResponse userDelete(String id){
-        if(!userRepository.existsById(id)) return new UserDeleteResponse(false);
-        userRepository.deleteById(id);
+    public UserDeleteResponse userDelete(String userId){
+        if(!(userRepository.findByUserId(userId).isPresent())) return new UserDeleteResponse(false);
+        userRepository.deleteById(userRepository.findByUserId(userId).get().getId());
         return new UserDeleteResponse(true);
     }
 }

@@ -46,7 +46,8 @@ public class User {
                 .build();
     }
     public void update(UserUpdateRequest newUser, PasswordEncoder encoder){
-        this.password = newUser.getNewPassword() == null || newUser.getNewPassword().isBlank() ? this.password : encoder.encode(newUser.getPassword());
+        this.password = newUser.getNewPassword();
+//                == null || newUser.getNewPassword().isBlank() ? this.password : encoder.encode(newUser.getPassword());
         this.email = newUser.getEmail();
         this.nickName = newUser.getNickName();
     }

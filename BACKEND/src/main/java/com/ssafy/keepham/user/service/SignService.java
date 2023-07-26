@@ -38,9 +38,9 @@ public class SignService {
     @Transactional
     public SignInResponse signIn(SignInRequest request){
         User user = userRepository.findByUserId(request.getUserId())
-                .filter(u -> u.getPassword().equals(request.getPassword()))
+                .filter(u -> encoder.matches(request.getPassword(), u.getPassword()))
                 .orElseThrow(() ->new IllegalArgumentException("아이디 또는 비밀번호가 틀렸습니다."));
         String token = tokenProvider.createToken(String.format("%s:%s",user.getUserId(),user.getUserRole()));
-        return new SignInResponse(user.getName(), user.getUserRole(),token);
+        return new SignInResponse(user.getName(), user.getUserRole(), token);
     }
 }

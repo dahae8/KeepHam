@@ -3,9 +3,11 @@ package com.ssafy.keepham.user.dto.signup.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class SignUpRequest {
         @Schema(description = "유저 아이디")

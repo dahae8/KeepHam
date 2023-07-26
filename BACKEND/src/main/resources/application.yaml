@@ -1,4 +1,6 @@
 spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
   jpa:
     show-sql: true
     properties:
@@ -7,10 +9,14 @@ spring:
     hibernate:
       ddl-auto: create-drop
   datasource:
-    url: jdbc:mysql://localhost:3306/keepham
+    url: jdbc:mysql://localhost:3306/ssafy
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: root
+    password: ssafy
+  security:
+    user:
+      name: ssafy
+      password: ssafy
 
 springdoc:
   packages-to-scan: com.ssafy.keepham

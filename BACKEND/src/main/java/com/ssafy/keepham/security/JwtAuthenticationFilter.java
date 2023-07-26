@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String split[] = Optional.ofNullable(token)
             .filter(subject -> 10 <= subject.length())
             .map(tokenProvider::validateTokenAndGetSubJect)
-            .orElse("ssafy:ssafy")
+            .orElse("123:123")
             .split(":");
         return new User(split[0],"", List.of(new SimpleGrantedAuthority(split[1])));
     }
