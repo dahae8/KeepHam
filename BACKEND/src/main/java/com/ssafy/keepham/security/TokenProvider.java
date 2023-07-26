@@ -38,6 +38,15 @@ public class TokenProvider {
                     .compact();
         }
 
+        //
+        public String createRefreshToken(){
+                return Jwts.builder()
+                        .signWith(new SecretKeySpec(secretKey.getBytes(),SignatureAlgorithm.HS512.getJcaName()))
+                        .setIssuer(issuer)
+                        .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
+                        .setExpiration(Date.from(Instant.now().plus(refreshExpirationHours, ChronoUnit.HOURS)))
+                        .compact();
+        }
         public String validateTokenAndGetSubJect(String token){
                 return Jwts.parserBuilder()
                     .setSigningKey(secretKey.getBytes())
