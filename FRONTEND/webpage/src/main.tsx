@@ -8,7 +8,7 @@ import App from "./App/App.tsx";
 import SignUp, { action as signUpAction } from "./Components/SignUp/signUp.tsx";
 
 // Styles
-import "./Styles/global.ts";
+import "./styles/global.ts";
 
 const router = createBrowserRouter([
   {
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <RouterProvider router={router} />
   </React.StrictMode>
