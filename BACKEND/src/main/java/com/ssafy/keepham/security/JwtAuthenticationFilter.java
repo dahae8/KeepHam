@@ -30,11 +30,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String accessToken = parseBearerToken(request, HttpHeaders.AUTHORIZATION);
             User user = parseUserSpecification(accessToken);
-            AbstractAuthenticationToken authenticated = UsernamePasswordAuthenticationToken.authenticated(user,token,user.getAuthorities());
+            AbstractAuthenticationToken authenticated = UsernamePasswordAuthenticationToken.authenticated(user,accessToken,user.getAuthorities());
             authenticated.setDetails(new WebAuthenticationDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticated);
         }catch (ExpiredJwtException e){
-            rei
+            request.setAttribute("exception", e);
         }
         filterChain.doFilter(request,response);
     }
@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
     private void reissueAccessToken(HttpServletRequest request, HttpServletResponse response, Exception exception){
         try {
-            String refreshToken = parseBearerToken(request,"Refresh-Token")
+            String refreshToken = parseBearerToken(request,"Refresh-Token");
                     if(refreshToken == null){
                         throw exception;
                     }
