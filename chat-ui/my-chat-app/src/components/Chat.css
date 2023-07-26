@@ -1,0 +1,47 @@
+
+/* 채팅창 전체 영역 스타일 */
+.chat-container {
+    background-color: #f0f0f0;
+    padding: 20px;
+    height: 500px;
+    overflow-y: scroll;
+  }
+  
+  /* 채팅 메시지 스타일 */
+  .message-box {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 송신 메시지 스타일 */
+  .message-box.sent {
+    float: right;
+    background-color: #e6f2ff;
+  }
+  
+  /* 수신 메시지 스타일 */
+  .message-box.received {
+    float: left;
+    background-color: #f0f0f0;
+  }
+  
+  /* 메시지 작성 폼 스타일 */
+  .message-form {
+    margin-top: 20px;
+  }
+  
+  .message-form input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .message-form button {
+    padding: 10px;
+    font-size: 16px;
+  }
+  

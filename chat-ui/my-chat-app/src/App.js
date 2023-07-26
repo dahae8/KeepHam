@@ -1,13 +1,16 @@
-// src/App.js
-
 import React from 'react';
-import Chat from './components/Chat';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import ChatRoomList from './components/ChatRoomList';
+import ChatRoom from './components/ChatRoom';
 
 const App = () => {
   return (
-    <div>
-      <Chat />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<ChatRoomList />} />
+        <Route path="/chat/:roomId" element={<ChatRoom />} />
+      </Routes>
+    </Router>
   );
 };
 
