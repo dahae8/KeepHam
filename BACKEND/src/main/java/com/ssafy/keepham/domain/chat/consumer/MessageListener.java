@@ -18,7 +18,7 @@ public class MessageListener {
     )
     public void listen(Message message){
         System.out.println("kafka 리스너를 통해 보내느중");
-        template.convertAndSend("/topic/group",message);
+        template.convertAndSend("/topic/group/"+message.getRoomId(),message);
     }
 
 }

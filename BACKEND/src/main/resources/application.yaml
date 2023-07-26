@@ -13,13 +13,17 @@ spring:
     password: root
   data:
     mongodb:
-      url: mongodb://localhost:27017/chat
+      url: mongodb://localhost:27017/chatting
+      username: root
+      password: root
   kafka:
     consumer:
       bootstrap-servers: localhost:19091,localhost:19093,localhost:19094
       group-id: chatting
     producer:
       bootstrap-servers: localhost:19091,localhost:19093,localhost:19094
+    template:
+      default-topic: kafka-chat
 
 
 springdoc:
