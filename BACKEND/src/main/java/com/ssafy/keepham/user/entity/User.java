@@ -4,10 +4,7 @@ import com.ssafy.keepham.user.common.GenderType;
 import com.ssafy.keepham.user.common.UserRole;
 import com.ssafy.keepham.user.dto.signup.request.SignUpRequest;
 import com.ssafy.keepham.user.dto.user.request.UserUpdateRequest;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Builder
 @Getter
 @Entity
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

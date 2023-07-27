@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +25,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
@@ -55,13 +57,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
             String oldAccessToken = parseBearerToken(request,HttpHeaders.AUTHORIZATION);
                     tokenProvider.validateRefreshToken(refreshToken,oldAccessToken);
-//                    String newAccessToken = tokenProvider.recreateAccessToken(oldAccessToken);
-//            User user = parseUserSpecification(newAccessToken);
-//            AbstractAuthenticationToken abstractAuthenticationToken = UsernamePasswordAuthenticationToken.authenticated(user,newAcessToken,user.getAuthorities())
-//            authenticated.setDetails(new WebAuthenticationDetails(request));
-//            SecurityContextHolder.getContext().setAuthentication(authenticated);
-//
-//            response.setHeader("New-Access-Token", newAccessToken);
+                    String newAccessToken = tokenProvider.recreateAccessToken(oldAccessToken);
+            User user = parseUserSpecification(newAccessToken);
+            AbstractAuthenticationToken authenticated = UsernamePasswordAuthenticationToken.authenticated(user,newAccessToken,user.getAuthorities());
+            authenticated.setDetails(new WebAuthenticationDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authenticated);
+
+            response.setHeader("New-Access-Token", newAccessToken);
         } catch (Exception e) {
 
             request.setAttribute("exception", e);

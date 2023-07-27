@@ -13,9 +13,11 @@ import java.util.UUID;
 @Entity
 public class UserRefreshToken {
     @Id
-    private UUID userId;
+    private Long userId;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "user_id")
     private User user;
     private String refreshToken;
     private int reissueCount = 0;

@@ -1,16 +1,10 @@
 package com.ssafy.keepham;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import com.ssafy.keepham.user.dto.user.request.UserUpdateRequest;
-import com.ssafy.keepham.user.dto.user.response.UserDeleteResponse;
-import com.ssafy.keepham.user.dto.user.response.UserUpdateResponse;
+
 import com.ssafy.keepham.user.entity.User;
 import com.ssafy.keepham.user.repository.UserRepository;
 import com.ssafy.keepham.user.service.UserService;
-import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

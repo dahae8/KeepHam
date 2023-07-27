@@ -11,16 +11,13 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import javax.crypto.spec.SecretKeySpec;
 
 import jakarta.transaction.Transactional;
 import lombok.Getter;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -37,6 +34,7 @@ TODO: 회원의 리프레시 토큰을 관리할 엔티티
  */
 @Service
 @Getter
+@Slf4j
 @PropertySource("classpath:security.yaml")
 public class TokenProvider {
 
@@ -47,8 +45,7 @@ public class TokenProvider {
         private final String issuer;
         private final long reissueLimit;
         private final ObjectMapper objectMapper = new ObjectMapper();
-        private final RedisTemplate<?,?> redisTemplate;
-        private UserRefreshToken userRefreshToken;
+        private final RedisTemplate<String,String> redisTemplate;
 
         public TokenProvider(
                 UserRefreshTokenRepository userRefreshTokenRepository,
@@ -56,7 +53,7 @@ public class TokenProvider {
                 @Value("${expiration-minutes}") long expirationMinutes,
                 @Value("${refresh-expiration-hours}") long refreshExpirationHours,
                 @Value("${issuer}") String issuer,
-                RedisTemplate<?, ?> redisTemplate){
+                RedisTemplate<String, String> redisTemplate){
                 this.userRefreshTokenRepository = userRefreshTokenRepository;
                 this.secretKey = secretKey;
                 this.expirationMinutes = expirationMinutes;
@@ -87,13 +84,26 @@ public class TokenProvider {
 //        public String recreateAccessToken(String oldAccessToken) throws JsonProcessingException{
 //                String subject = decodeJwtPayloadSubject(oldAccessToken);
 //                userRefreshTokenRepository.findByUserIdAndReissueCountLessThan(UUID.fromString(subject.split(":")[0]),reissueLimit)
-//                        .ifPresentOrElse(
-//                                UserRefreshToken::increaseReissueCount,
-//                                () -> {throw new ExpiredJwtException(null,null,"Refresh Token expir");
+//                        .ifPresentOrElse(UserRefreshToken::increaseReissueCount,
+//                                () -> {throw new ExpiredJwtException(null,null,"Refresh Token expire");
 //                                }
 //                        );
 //                return createAccessToken(subject);
 //        }
+        @Transactional
+        public String recreateAccessToken(String oldAccessToken) throws JsonProcessingException {
+                String subject = decodeJwtPayloadSubject(oldAccessToken);
+                Optional<UserRefreshTokenRepository> userRefreshTokenOptional = userRefreshTokenRepository.findByUserIdAndReissueCountLessThan(UUID.fromString(subject.split(":")[0]), reissueLimit);
+
+                if (userRefreshTokenOptional.isPresent()) {
+                        UserRefreshToken userRefreshToken = (UserRefreshToken) userRefreshTokenOptional.get();
+                        userRefreshToken.increaseReissueCount();
+                } else {
+                        throw new ExpiredJwtException(null, null, "Refresh Token expire");
+                }
+
+                return createAccessToken(subject);
+        }
 
         //Refresh Token 생성
         public String createRefreshToken(){
@@ -106,8 +116,7 @@ public class TokenProvider {
                         .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
                         .setExpiration(Date.from(Instant.now().plus(refreshExpirationHours, ChronoUnit.HOURS)))
                         .compact();
-                // TODO: 레디스에 값 넣는 값 삽입 필요
-//                redisTemplate.opsForValue().set(refreshExpirationMillis, TimeUnit.MILLISECONDS);
+                redisTemplate.opsForValue().set("test",refreshToken,refreshExpirationMillis, TimeUnit.MILLISECONDS);
                 return refreshToken;
         }
         @Transactional
@@ -115,7 +124,7 @@ public class TokenProvider {
                 validateAndparserToken(refreshToken);
                 String userId = decodeJwtPayloadSubject(oldAccessToken).split(":")[0];
                 userRefreshTokenRepository.findByUserIdAndReissueCountLessThan(UUID.fromString(userId),reissueLimit)
-                        .orElseThrow(() -> new ExpiredJwtException(null,null,"Refresh Token expir"));
+                        .orElseThrow(() -> new ExpiredJwtException(null,null,"Refresh Token expire"));
         }
         private Jws<Claims> validateAndparserToken(String token){
                 return Jwts.parserBuilder()
