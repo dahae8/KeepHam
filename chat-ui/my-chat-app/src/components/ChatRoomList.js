@@ -10,8 +10,8 @@ const ChatRoomList = () => {
   ]);
   const [newRoomName, setNewRoomName] = useState('');
 
-  const handleEnterChatRoom = (roomId) => {
-    navigate(`/chat/${roomId}`);
+  const handleEnterChatRoom = (room_id) => {
+    navigate(`/chat/${room_id}`);
   };
 
   const handleCreateRoom = () => {

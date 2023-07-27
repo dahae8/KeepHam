@@ -5,7 +5,7 @@ import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 
 const ChatRoom = () => {
-  const { roomId } = useParams();
+  const { room_id } = useParams();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [nickname, setNickname] = useState('');
@@ -20,7 +20,7 @@ const ChatRoom = () => {
     stompClient.connect({}, () => {
       // 연결 성공 시
       socketRef.current = stompClient;
-      socketRef.current.subscribe(`/topic/group/${roomId}`, (message) => {
+      socketRef.current.subscribe(`/topic/group/${room_id}`, (message) => {
         const messageData = JSON.parse(message.body);
         setMessages((prevMessages) => [...prevMessages, messageData]);
       });
@@ -33,13 +33,13 @@ const ChatRoom = () => {
         socketRef.current.disconnect();
       }
     };
-  }, [roomId]);
+  }, [room_id]);
 
   useEffect(() => {
     // 서버로부터 채팅 내용을 가져오는 함수
     const fetchChatMessages = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/chat-rooms/${roomId}/messages`);
+        const response = await axios.get(`http://localhost:8080/api/chat-rooms/${room_id}/messages`);
         setMessages(response.data);
       } catch (error) {
         console.log('Error fetching chat messages:', error);
@@ -47,12 +47,12 @@ const ChatRoom = () => {
     };
 
     fetchChatMessages();
-  }, [roomId]);
+  }, [room_id]);
 
   const handleSendMessage = () => {
     if (socketRef.current && newMessage.trim() !== '') {
       // WebSocket을 통해 서버로 메시지를 보내는 함수
-      socketRef.current.send(`/app/sendMessage/${roomId}`, {}, JSON.stringify({ roomId, author: nickname, content: newMessage }));
+      socketRef.current.send(`/app/sendMessage/${room_id}`, {}, JSON.stringify({ room_id, author: nickname, content: newMessage }));
       setNewMessage('');
     }
   };
@@ -65,7 +65,7 @@ const ChatRoom = () => {
 
   return (
     <div>
-      <h2>채팅방 {roomId}</h2>
+      <h2>채팅방 {room_id}</h2>
       <div>
         {messages.map((message) => (
           <div key={message.id}>
