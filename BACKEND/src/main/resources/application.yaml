@@ -16,6 +16,7 @@ spring:
       url: mongodb://localhost:27017/chatting
       username: root
       password: root
+      authentication-database: admin
   kafka:
     consumer:
       bootstrap-servers: localhost:19091,localhost:19093,localhost:19094
@@ -24,6 +25,8 @@ spring:
       bootstrap-servers: localhost:19091,localhost:19093,localhost:19094
     template:
       default-topic: kafka-chat
+
+
 
 
 springdoc:

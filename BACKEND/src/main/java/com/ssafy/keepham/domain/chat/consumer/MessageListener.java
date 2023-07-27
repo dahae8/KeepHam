@@ -2,6 +2,7 @@ package com.ssafy.keepham.domain.chat.consumer;
 
 import com.ssafy.keepham.domain.chat.db.Message;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -11,7 +12,6 @@ public class MessageListener {
 
     @Autowired
     SimpMessagingTemplate template;
-
     @KafkaListener(
             topics = "kafka-chat",
             groupId = "chatting"

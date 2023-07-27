@@ -36,8 +36,8 @@ public class ChatController {
     @MessageMapping("/sendMessage/{roomId}")
     @SendTo("/topic/group/{roomId}")
     public Message broadcastGroupMessage(@Payload Message message, @DestinationVariable Long roomId){
-        message.setRoomId(roomId);
-        log.info("{}",message);
+        message.setTimestamp(LocalDateTime.now().toString());
+        messageRepository.save(message);
         return message;
     }
 
