@@ -8,8 +8,10 @@ import App from "./App/App.tsx";
 import SignUp, { action as signUpAction } from "./Components/SignUp/signUp.tsx";
 
 // Styles
-import "./Styles/global.ts";
+import "./styles/global.ts";
+import { createTheme, ThemeProvider } from "@mui/material";
 
+// React Router
 const router = createBrowserRouter([
   {
     path: "/",
@@ -24,8 +26,31 @@ const router = createBrowserRouter([
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+// Mui Theme
+declare module '@mui/material/styles' {
+  interface Theme {
+    status: {
+      danger: string;
+    };
+  }
+  interface ThemeOptions {
+    status?: {
+      danger?: string;
+    }
+  }
+}
+
+const theme = createTheme({
+  typography: {
+    fontFamily: 'Pretendard',
+    htmlFontSize: 10,
+  }
+})
+
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider theme={theme}>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </React.StrictMode>
 );

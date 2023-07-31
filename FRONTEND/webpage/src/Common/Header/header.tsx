@@ -22,7 +22,9 @@ function header() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             News
           </Typography>
-          <Link to={`SignUp`}>회원가입</Link>
+          <Link to={`SignUp`}>
+            <Typography variant="body2">회원가입</Typography>
+          </Link>
         </Toolbar>
       </AppBar>
     </>
