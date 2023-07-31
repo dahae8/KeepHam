@@ -12,6 +12,7 @@
 /build
 ./practice
 .practice
+..practice
 
 # misc
 .DS_Store
