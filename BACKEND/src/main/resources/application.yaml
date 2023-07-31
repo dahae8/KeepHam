@@ -1,13 +1,15 @@
 spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
   jpa:
     show-sql: true
     properties:
       format_sql: true
       dialect: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   datasource:
-    url: jdbc:mysql://localhost:3306/keepham
+    url: jdbc:mysql://localhost:3306/ssafy
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: keepham@mysql!@#$
@@ -26,7 +28,10 @@ spring:
     template:
       default-topic: kafka-chat
 
-
+  security:
+    user:
+      name: ssafy
+      password: ssafy
 
 
 springdoc:
