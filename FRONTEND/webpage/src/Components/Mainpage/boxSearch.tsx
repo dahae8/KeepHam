@@ -1,9 +1,15 @@
 import { useState } from "react";
 import "./boxSearch.css";
 import MapContainer from "./MapContainer";
+import BoxLists from "./boxLists";
 
 function BoxSearch() {
   const [boxLocation, searchlocation] = useState("");
+  const myData = [
+    { name: "아이템 1", count: 3 },
+    { name: "아이템 2", count: 1 },
+    { name: "아이템 3", count: 10 },
+  ];
   return (
     <>
       <div>
@@ -15,7 +21,14 @@ function BoxSearch() {
             onChange={(e) => searchlocation(e.target.value)}
           />
           <button>검색</button>
-          <MapContainer />
+          <div className="map_boxlistcontainer">
+            <div className="mapcontainer">
+              <MapContainer />
+            </div>
+            <div>
+              <BoxLists data={myData} />
+            </div>
+          </div>
         </label>
       </div>
     </>
