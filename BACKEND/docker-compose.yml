@@ -1,4 +1,6 @@
 version: '3'
+
+
 services:
   zookeeper-1:
     image: confluentinc/cp-zookeeper:7.1.0
@@ -9,11 +11,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
-    volumes:
-      - type: bind
-        source: ./data/zk-cluster/zookeeper-1/data
-        target: /data
-        read_only: false
+
 
   zookeeper-2:
     image: confluentinc/cp-zookeeper:7.1.0
@@ -24,11 +22,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2182:2181"
-    volumes:
-      - type: bind
-        source: ./data/zk-cluster/zookeeper-2/data
-        target: /data
-        read_only: false
+
 
   zookeeper-3:
     image: confluentinc/cp-zookeeper:7.1.0
@@ -39,11 +33,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2183:2181"
-    volumes:
-      - type: bind
-        source: ./data/zk-cluster/zookeeper-3/data
-        target: /data
-        read_only: false
+
 
   kafka-1:
     image: confluentinc/cp-kafka:7.1.0
@@ -55,18 +45,14 @@ services:
     ports:
       - "9092:9092"
       - "19092:19092"
-    volumes:
-      - type: bind
-        source: ./data/kafka-cluster/kafka-1/data
-        target: /var/lib/kafka/data
-        read_only: false
+
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092,PLAINTEXT_HOST://localhost:19092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
   kafka-2:
     image: confluentinc/cp-kafka:7.1.0
@@ -78,18 +64,13 @@ services:
     ports:
       - "9093:9092"
       - "19093:19093"
-    volumes:
-      - type: bind
-        source: ./data/kafka-cluster/kafka-2/data
-        target: /var/lib/kafka/data
-        read_only: false
     environment:
       KAFKA_BROKER_ID: 2
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:9092,PLAINTEXT_HOST://localhost:19093
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
 
   kafka-3:
@@ -102,18 +83,14 @@ services:
     ports:
       - "9094:9092"
       - "19094:19094"
-    volumes:
-      - type: bind
-        source: ./data/kafka-cluster/kafka-3/data
-        target: /var/lib/kafka/data
-        read_only: false
+
     environment:
       KAFKA_BROKER_ID: 3
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:9092,PLAINTEXT_HOST://localhost:19094
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
 
   zookeeper-navigator:
@@ -150,5 +127,17 @@ services:
       - ./mongodb:/data/db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_ROOT_PASSWORD=keepham@mongodb!@#$
       - MONGO_INITDB_DATABASE=mydb
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - 3306:3306 # HOST:CONTAINER
+    environment:
+      MYSQL_ROOT_PASSWORD: keepham@mysql!@#$
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
