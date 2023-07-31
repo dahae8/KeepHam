@@ -8,12 +8,11 @@ public class Box {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long boxId;
+    //키값
 
     @Column(length = 255, nullable = false)
     private String address;
-
-    @Column(nullable = false)
-    private int capacity;
+    //주소
 
     @Column(length = 255, nullable = false)
     private String status;
@@ -21,26 +20,36 @@ public class Box {
 
     @Column(length = 255, nullable = false)
     private String type;
-    //공용, 개인
+    //유형 => 공용, 개인
+
+    @Column(nullable = false)
+    private boolean isValid;
+    //삭제된것인가 => true(삭제된 상태), false(삭제 되지 않은 상태)
 
     //기본 생성자
     public Box(){}
 
     // INSERT시 사용
-    public Box(String address, int capacity, String status, String type) {
+    public Box(String address, String status, String type) {
         this.address = address;
-        this.capacity = capacity;
         this.status = status;
         this.type = type;
     }
 
     //SELECT시 사용
-    public Box(long boxId, String address, int capacity, String status, String type) {
+    public Box(long boxId, String address, String status, String type) {
         this.boxId = boxId;
         this.address = address;
-        this.capacity = capacity;
         this.status = status;
         this.type = type;
+    }
+
+    public Box(long boxId, String address, String status, String type, boolean isValid) {
+        this.boxId = boxId;
+        this.address = address;
+        this.status = status;
+        this.type = type;
+        this.isValid = isValid;
     }
 
     public long getBoxId() {
@@ -59,14 +68,6 @@ public class Box {
         this.address = address;
     }
 
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -81,5 +82,13 @@ public class Box {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean getIsValid() {
+        return isValid;
+    }
+
+    public void setIsValid(boolean isValid) {
+        this.isValid = isValid;
     }
 }
