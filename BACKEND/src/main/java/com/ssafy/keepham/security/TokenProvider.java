@@ -2,8 +2,8 @@ package com.ssafy.keepham.security;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.keepham.user.entity.UserRefreshToken;
-import com.ssafy.keepham.user.repository.UserRefreshTokenRepository;
+import com.ssafy.keepham.domain.user.entity.UserRefreshToken;
+import com.ssafy.keepham.domain.user.repository.UserRefreshTokenRepository;
 import io.jsonwebtoken.*;
 
 import java.nio.charset.StandardCharsets;

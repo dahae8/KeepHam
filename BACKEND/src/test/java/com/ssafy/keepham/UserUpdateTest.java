@@ -2,9 +2,9 @@ package com.ssafy.keepham;
 
 
 
-import com.ssafy.keepham.user.entity.User;
-import com.ssafy.keepham.user.repository.UserRepository;
-import com.ssafy.keepham.user.service.UserService;
+import com.ssafy.keepham.domain.user.entity.User;
+import com.ssafy.keepham.domain.user.repository.UserRepository;
+import com.ssafy.keepham.domain.user.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
