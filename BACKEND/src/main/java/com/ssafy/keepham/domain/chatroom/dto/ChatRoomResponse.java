@@ -1,4 +1,4 @@
-package com.ssafy.keepham.domain.chatroom.db;
+package com.ssafy.keepham.domain.chatroom.dto;
 
 import com.ssafy.keepham.domain.chatroom.db.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.common.BaseEntity;
@@ -9,18 +9,13 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "chat_room")
 @Getter
 @Setter
-@ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class ChatRoomEntity extends BaseEntity {
+public class ChatRoomResponse extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private ChatRoomStatus status;

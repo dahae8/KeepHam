@@ -3,6 +3,8 @@ package com.ssafy.keepham.domain.chatroom.controller;
 import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.domain.chatroom.db.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.db.enums.ChatRoomStatus;
+import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
+import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,25 +20,21 @@ public class ChatRoomApiController {
 
     private final ChatRoomService chatRoomService;
 
-    @PostMapping("/chatrooms")
-    private Api<ChatRoomEntity> createRoom(
-            String title
+    @PostMapping("/rooms/create")
+    private Api<ChatRoomResponse> createRoom(
+            @RequestBody ChatRoomRequest chatRoomRequest
     ){
-        var room = ChatRoomEntity.builder()
-                .title(title)
-                .build();
-        var res = chatRoomService.createRoom(room);
+        var res = chatRoomService.createRoom(chatRoomRequest);
         return Api.OK(res);
     }
 
-//    @GetMapping("")
-//    private Api<List<ChatRoomEntity>> findOpenedChatRoom(){
-//        var res = chatRoomService.openedRoom();
-//        return Api.OK(res);
-//    }
-    @GetMapping("/chatrooms")
-    public ResponseEntity<List<ChatRoomEntity>> getChatRooms() {
-        List<ChatRoomEntity> chatRooms = chatRoomService.openedRoom();
-        return ResponseEntity.ok(chatRooms);
+    @GetMapping("/rooms")
+    private Api<List<ChatRoomResponse>> findAllOpenedRoom(
+            @RequestParam ChatRoomStatus status,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "6") int pageSize
+    ){
+        return Api.OK(chatRoomService.openedRoom(status, page, pageSize));
     }
+
 }
