@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./boxSearch.css";
 import MapContainer from "./MapContainer";
 import BoxLists from "./boxLists";
+import StoreLists from "./getdata";
 
 function BoxSearch() {
   const [boxLocation, searchlocation] = useState("");
@@ -21,13 +22,9 @@ function BoxSearch() {
             onChange={(e) => searchlocation(e.target.value)}
           />
           <button>검색</button>
-          <div className="map_boxlistcontainer">
-            <div className="mapcontainer">
-              <MapContainer />
-            </div>
-            <div>
-              <BoxLists data={myData} />
-            </div>
+          <div className="mapcontainer">
+            <MapContainer />
+            <StoreLists />
           </div>
         </label>
       </div>

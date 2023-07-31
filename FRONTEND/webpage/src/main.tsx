@@ -22,6 +22,10 @@ const router = createBrowserRouter([
         action: signUpAction,
       },
       {
+        path: "Login",
+        element: <SignUp />,
+      },
+      {
         path: "BoxSearch",
         element: <BoxSearch />,
       },
@@ -32,9 +36,5 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <RouterProvider router={router} />
-    <script
-      type="text/javascript"
-      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d0845b17f7524197f834876a2b8d46da"
-    ></script>
   </React.StrictMode>
 );
