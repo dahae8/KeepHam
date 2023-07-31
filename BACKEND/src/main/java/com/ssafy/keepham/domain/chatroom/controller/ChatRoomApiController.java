@@ -20,12 +20,21 @@ public class ChatRoomApiController {
 
     private final ChatRoomService chatRoomService;
 
-    @PostMapping("/chatrooms")
+    @PostMapping("/rooms/create")
     private Api<ChatRoomResponse> createRoom(
             @RequestBody ChatRoomRequest chatRoomRequest
     ){
         var res = chatRoomService.createRoom(chatRoomRequest);
         return Api.OK(res);
+    }
+
+    @GetMapping("/rooms")
+    private Api<List<ChatRoomResponse>> findAllOpenedRoom(
+            @RequestParam ChatRoomStatus status,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "6") int pageSize
+    ){
+        return Api.OK(chatRoomService.openedRoom(status, page, pageSize));
     }
 
 }

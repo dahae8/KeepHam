@@ -47,6 +47,8 @@ public class ChatRoomConverter {
                             .maxPeopleNumber(chatRoomEntity.getMaxPeopleNumber())
                             .superUserId(chatRoomEntity.getSuperUserId())
                             .locked(chatRoomEntity.isLocked())
+                            .createdAt(chatRoomEntity.getCreatedAt())
+                            .updatedAt(chatRoomEntity.getUpdatedAt())
                             .build();
 
                 }).orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT));

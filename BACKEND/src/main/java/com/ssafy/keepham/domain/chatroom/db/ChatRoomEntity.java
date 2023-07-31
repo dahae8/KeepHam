@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class ChatRoomEntity extends BaseEntity {
 
     @Id

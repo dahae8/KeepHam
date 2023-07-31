@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class ChatRoomResponse{
+@SuperBuilder
+public class ChatRoomResponse extends BaseEntity{
 
     private Long id;
     private String title;
