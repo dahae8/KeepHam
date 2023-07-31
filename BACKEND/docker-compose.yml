@@ -11,6 +11,9 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
+    volumes:
+      - zookeeper1_data:/var/lib/zookeeper/data
+      - zookeeper1_datalog:/var/lib/zookeeper/log
 
 
   zookeeper-2:
@@ -22,6 +25,9 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2182:2181"
+    volumes:
+      - zookeeper2_data:/var/lib/zookeeper/data
+      - zookeeper2_datalog:/var/lib/zookeeper/log
 
 
   zookeeper-3:
@@ -33,6 +39,9 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2183:2181"
+    volumes:
+      - zookeeper3_data:/var/lib/zookeeper/data
+      - zookeeper3_datalog:/var/lib/zookeeper/log
 
 
   kafka-1:
@@ -45,7 +54,8 @@ services:
     ports:
       - "9092:9092"
       - "19092:19092"
-
+    volumes:
+      - kafka1_data:/var/lib/kafka/data
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
@@ -64,6 +74,8 @@ services:
     ports:
       - "9093:9092"
       - "19093:19093"
+    volumes:
+      - kafka2_data:/var/lib/kafka/data
     environment:
       KAFKA_BROKER_ID: 2
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
@@ -83,7 +95,8 @@ services:
     ports:
       - "9094:9092"
       - "19094:19094"
-
+    volumes:
+      - kafka3_data:/var/lib/kafka/data
     environment:
       KAFKA_BROKER_ID: 3
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
@@ -140,4 +153,25 @@ services:
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
-
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "22:22"
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://lab.ssafy.com/s09-webmobile3-sub2/S09P12C104'
+    volumes:
+      - ./gitlab/config:/etc/gitlab
+      - ./gitlab/logs:/var/log/gitlab
+      - ./gitlab/data:/var/opt/gitlab
+volumes:
+  zookeeper1_data:
+  zookeeper2_data:
+  zookeeper3_data:
+  kafka1_data:
+  kafka2_data:
+  kafka3_data:
