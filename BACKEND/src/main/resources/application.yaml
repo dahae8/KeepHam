@@ -12,11 +12,27 @@ spring:
     url: jdbc:mysql://localhost:3306/ssafy
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: ssafy
+    password: keepham@mysql!@#$
+  data:
+    mongodb:
+      url: mongodb://localhost:27017/chatting
+      username: root
+      password: keepham@mongodb!@#$
+      authentication-database: admin
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:19091,localhost:19093,localhost:19094
+      group-id: chatting
+    producer:
+      bootstrap-servers: localhost:19091,localhost:19093,localhost:19094
+    template:
+      default-topic: kafka-chat
+
   security:
     user:
       name: ssafy
       password: ssafy
+
 
 springdoc:
   packages-to-scan: com.ssafy.keepham
@@ -32,5 +48,6 @@ springdoc:
         enabled: true
     cache:
       disabled: true
+
 
 
