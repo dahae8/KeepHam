@@ -11,6 +11,7 @@
 # production
 /build
 ./practice
+.practice
 
 # misc
 .DS_Store
