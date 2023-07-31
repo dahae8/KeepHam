@@ -23,7 +23,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-.practice
+..practice
 
 # API KEY
 .env
