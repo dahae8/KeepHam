@@ -1,94 +1,97 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import SockJS from 'sockjs-client';
+// components/ChatRoom.js
+import React, { useState, useEffect } from 'react';
+import api from '../services/api';
 import Stomp from 'stompjs';
+import SockJS from 'sockjs-client';
 
-const ChatRoom = () => {
-  const { room_id } = useParams();
+const ChatRoom = ({ roomId, nickname }) => {
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [nickname, setNickname] = useState('');
+  const [inputMessage, setInputMessage] = useState('');
+  const [stompClient, setStompClient] = useState(null); // Declare stompClient in the component's state
 
-  // WebSocket 연결 상태를 나타내는 ref 변수
-  const socketRef = useRef(null);
+  // Function to fetch chat messages for the current chat room
+  const fetchMessages = async () => {
+    try {
+      const response = await api.get(`/chat-rooms/${roomId}/messages`);
+      setMessages(response.data.body);
+    } catch (error) {
+      alert('Error fetching chat messages.');
+    }
+  };
 
+  // Function to handle sending a new message
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim()) return;
+    try {
+      const message = {
+        room_id: roomId,
+        author: nickname,
+        content: inputMessage,
+        type: 'TALK',
+      };
+      // Use stompClient.send() to send the chat message
+      stompClient.send('/app/sendMessage/' + roomId, {}, JSON.stringify(message));
+      setInputMessage('');
+    } catch (error) {
+      alert('Error sending message.');
+    }
+  };
+
+  // Subscribe to the chat room WebSocket topic for real-time updates
   useEffect(() => {
-    // WebSocket 연결
     const socket = new SockJS('http://localhost:8080/my-chat');
-    const stompClient = Stomp.over(socket);
-    stompClient.connect({}, () => {
-      // 연결 성공 시
-      socketRef.current = stompClient;
-      socketRef.current.subscribe(`/topic/group/${room_id}`, (message) => {
-        const messageData = JSON.parse(message.body);
-        setMessages((prevMessages) => [...prevMessages, messageData]);
+    const stomp = Stomp.over(socket);
+    stomp.connect({}, () => {
+      setStompClient(stomp); // Store stompClient in the state
+      stomp.subscribe(`/topic/group/${roomId}`, (message) => {
+        const newMessage = JSON.parse(message.body);
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
       });
-      
+
+      const enterMessage = {
+        room_id:roomId,
+        author: nickname,
+        content: nickname + '님이 입장하셨습니다.',
+        type: 'ENTER',
+      };
+      stomp.send('/app/joinUser/' + roomId, {}, JSON.stringify(enterMessage));
     });
 
-    // 컴포넌트 언마운트 시 WebSocket 연결 해제
     return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
+      const exitMessage = {
+        room_id:roomId,
+        author: nickname,
+        content: nickname + '님이 퇴장하셨습니다.',
+        type: 'EXIT',
+      };
+      stomp.send('/app/joinUser/' + roomId, {}, JSON.stringify(exitMessage));
+      stomp.disconnect();
     };
-  }, [room_id]);
+  }, [roomId, nickname]);
 
+  // Fetch chat messages on component mount
   useEffect(() => {
-    // 서버로부터 채팅 내용을 가져오는 함수
-    const fetchChatMessages = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/chat-rooms/${room_id}/messages`);
-        setMessages(response.data);
-      } catch (error) {
-        console.log('Error fetching chat messages:', error);
-      }
-    };
-
-    fetchChatMessages();
-  }, [room_id]);
-
-  const handleSendMessage = () => {
-    if (socketRef.current && newMessage.trim() !== '') {
-      // WebSocket을 통해 서버로 메시지를 보내는 함수
-      socketRef.current.send(`/app/sendMessage/${room_id}`, {}, JSON.stringify({ room_id, author: nickname, content: newMessage }));
-      setNewMessage('');
-    }
-  };
-
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      handleSendMessage();
-    }
-  };
+    fetchMessages();
+  }, [roomId]);
 
   return (
     <div>
-      <h2>채팅방 {room_id}</h2>
-      <div>
+      <h2>Chat Room {roomId}</h2>
+      <div className="message-list">
         {messages.map((message) => (
-          <div key={message.id}>
-            <strong>{message.author}: </strong>
-            {message.content}
+          <div key={message.id} className="message">
+            <strong>{message.author}</strong>: {message.content}
           </div>
         ))}
       </div>
-      <div>
+      <div className="input-box">
         <input
           type="text"
-          placeholder="닉네임을 입력하세요"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
+          placeholder="Type your message..."
         />
-        <input
-          type="text"
-          placeholder="메시지를 입력하세요"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={handleKeyPress} // 엔터 키 이벤트 처리
-        />
-        <button onClick={handleSendMessage}>전송</button>
+        <button onClick={handleSendMessage}>Send</button>
       </div>
     </div>
   );

@@ -1,46 +1,27 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// components/ChatRoomList.js
+import React from 'react';
 
-const ChatRoomList = () => {
-  const navigate = useNavigate();
-  const [rooms, setRooms] = useState([
-    { id: 1, name: '채팅방 1' },
-    { id: 2, name: '채팅방 2' },
-    { id: 3, name: '채팅방 3' },
-  ]);
-  const [newRoomName, setNewRoomName] = useState('');
+const ChatRoomList = ({ chatRooms, onEnterChatRoom, setNickname }) => {
 
-  const handleEnterChatRoom = (room_id) => {
-    navigate(`/chat/${room_id}`);
-  };
-
-  const handleCreateRoom = () => {
-    // 임시로 새 채팅방을 생성하여 rooms 상태에 추가
-    if (newRoomName) {
-      const newRoom = { id: rooms.length + 1, name: newRoomName };
-      setRooms([...rooms, newRoom]);
-      setNewRoomName('');
+  const handleJoinRoom = (roomId) => {
+    const nickname = prompt('Please enter your nickname:');
+    if (nickname) {
+      setNickname(nickname);
+      onEnterChatRoom(roomId, nickname); // Pass roomId and nickname to onEnterChatRoom
     }
   };
 
   return (
     <div>
-      <h2>채팅방 목록</h2>
+      <h2>Available Chat Rooms</h2>
       <ul>
-        {rooms.map((room) => (
-          <li key={room.id} onClick={() => handleEnterChatRoom(room.id)}>
-            {room.name}
+        {chatRooms.map((room) => (
+          <li key={room.id}>
+            <button onClick={() => handleJoinRoom(room.id)}>Join Room {room.id}</button>
           </li>
         ))}
       </ul>
-      <div>
-        <input
-          type="text"
-          value={newRoomName}
-          onChange={(e) => setNewRoomName(e.target.value)}
-        />
-        <button onClick={handleCreateRoom}>채팅방 생성</button>
-      </div>
+      
     </div>
   );
 };
