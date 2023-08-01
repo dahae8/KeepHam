@@ -7,6 +7,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App/App.tsx";
 import SignUp, { action as signUpAction } from "./Components/SignUp/signUp.tsx";
 import BoxSearch from "./Components/Mainpage/boxSearch.tsx";
+import ChatList from "./Components/Mainpage/chatList.tsx";
 
 // Styles
 import "./styles/global.ts";
@@ -28,8 +29,12 @@ const router = createBrowserRouter([
         element: <SignUp />,
       },
       {
-        path: "BoxSearch",
+        path: "/",
         element: <BoxSearch />,
+      },
+      {
+        path: "/chatList/:boxId",
+        element: <ChatList />,
       },
     ],
   },

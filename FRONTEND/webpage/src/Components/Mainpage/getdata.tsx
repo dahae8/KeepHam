@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
-function StoreLists() {
+function BoxLists() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -13,22 +14,22 @@ function StoreLists() {
       const response = await axios.get("http://localhost:8000/");
       const dataFromServer = response.data;
       setData(dataFromServer);
-    } catch (error) {
-      console.error("Error fetching data:", error.message);
-    }
+    } catch (error) {}
   }
 
   return (
     <div>
       <ul>
         {data.map((item: any) => (
-          <li key={item._id}>
-            name : {item.name}, belong : {item.belong}, phone : {item.phone}
-          </li>
+          <p>
+            <Link to={"chatList/" + item._id} key={item._id}>
+              name : {item.name}, belong : {item.belong}, phone : {item.phone}
+            </Link>
+          </p>
         ))}
       </ul>
     </div>
   );
 }
 
-export default StoreLists;
+export default BoxLists;

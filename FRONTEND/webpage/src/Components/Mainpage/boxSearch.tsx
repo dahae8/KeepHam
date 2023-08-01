@@ -1,16 +1,24 @@
 import { useState } from "react";
 import "./boxSearch.css";
 import MapContainer from "./MapContainer";
-import BoxLists from "./boxLists";
-import StoreLists from "./getdata";
+import BoxLists from "./getdata";
 
 function BoxSearch() {
   const [boxLocation, searchlocation] = useState("");
-  const myData = [
-    { name: "아이템 1", count: 3 },
-    { name: "아이템 2", count: 1 },
-    { name: "아이템 3", count: 10 },
-  ];
+  const [showMode, setShowMode] = useState(false);
+  let content = null;
+  const changeShowMode = () => {
+    setShowMode(true);
+  };
+
+  if (showMode) {
+    content = (
+      <div className="mapcontainer">
+        <MapContainer />
+        <BoxLists />
+      </div>
+    );
+  }
   return (
     <>
       <div>
@@ -21,11 +29,11 @@ function BoxSearch() {
             value={boxLocation}
             onChange={(e) => searchlocation(e.target.value)}
           />
-          <button>검색</button>
-          <div className="mapcontainer">
-            <MapContainer />
-            <StoreLists />
-          </div>
+          <button type="submit" onClick={changeShowMode}>
+            검색
+          </button>
+          {content}
+          {boxLocation}
         </label>
       </div>
     </>
