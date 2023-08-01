@@ -3,10 +3,11 @@
 // - 비밀번호 : 유효성검사(8~16자리, 특수문자, 대문자, 숫자 포함필수)
 // - 닉네임 : 3~8 글자, 영어,한글,숫자만 가능
 
+// eslint-disable-next-line import/named
 import { ActionFunctionArgs, Form } from "react-router-dom";
 import { TextField, Button } from "@mui/material";
 
-export async function action( {request}: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   console.log(request);
 
   const formData = await request.formData();
