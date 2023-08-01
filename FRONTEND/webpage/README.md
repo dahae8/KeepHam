@@ -68,13 +68,19 @@ pnpm preview
 
 ### 코드컨벤션
 
-1. 컴포넌트 '\*.tsx'파일은 CamelCase로 작성
-2. /public 폴더에 저장한 이미지는 자동으로 root (`/`) 디렉토리에 저장된다
+1. **CamelCase**
+   - 컴포넌트 : **UpperCamelCase**
+   - 함수 : **lowerCamelCase**
+2. /public 이미지 폴더
+   - 빌드시 자동으로 root (`/`) 디렉토리에 저장된다
    - `[파일명]`으로 바로 import 가능
+   - 실행 중 변하지 않는 파일만 삽입
 3. `App.tsx`, `index.html` 파일은 수정하지 않는다
-4. 페이지 컴포넌트는 `/src/Pages`에 저장
-5. 페이지 내부 컴포넌트는 `/src/Components/[페이지명]`에 저장
-6. 하기의 태그는 대체하여 사용한다
+4. 컴포넌트
+   - 페이지 컴포넌트는 `/src/Pages`에 저장
+   - 페이지 내부 컴포넌트는 `/src/Components/[페이지명]`에 저장
+   - 최신 문법에서 Main 하위의 모든 컴포넌트는 `React` import 할 필요없음
+   - 하기의 태그는 대체하여 사용한다
 
 ```jsx
 // Mui
@@ -85,3 +91,17 @@ pnpm preview
 // React Router
 <a /> => <Link />
 ```
+
+## 디자인 / CSS
+
+### className으로 style 적용하기
+
+- UI 디자인 용
+- 일반 HTML 태그에서만 사용
+- `className` 속성에 적용
+
+[Tailwind CSS](https://tailwindcss.com/docs/flex)
+
+### MUI
+
+[MUI](https://mui.com/material-ui/react-button/)

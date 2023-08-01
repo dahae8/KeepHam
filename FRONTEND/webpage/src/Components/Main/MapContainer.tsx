@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import loadKakaoMapScript from "./kakaoMap";
+import { useEffect } from "react";
+import loadKakaoMapScript from "./KakaoMap.tsx";
 
 declare global {
   interface Window {
