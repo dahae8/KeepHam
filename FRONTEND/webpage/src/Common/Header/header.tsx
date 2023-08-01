@@ -20,7 +20,7 @@ function header() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            News
+            <Link to="/">logo</Link>
           </Typography>
           <Link to={`SignUp`}>
             <Typography variant="body2">회원가입</Typography>
