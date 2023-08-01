@@ -6,11 +6,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 // Pages
 import App from "./App/App.tsx";
 import SignUp, { action as signUpAction } from "@/Pages/SignUp/SignUp.tsx";
-import BoxSearch from "@/Pages/Mainpage/Mainpage.tsx";
-import ChatList from "@/Components/Mainpage/ChatList.tsx";
+import Main from "@/Pages/Main/Main.tsx";
+import ChatList from "@/Components/Main/ChatList.tsx";
 
 // Styles
-import "./styles/global.ts";
+import "./Styles/global.ts";
 import { createTheme, ThemeProvider } from "@mui/material";
 
 // React Router
@@ -30,7 +30,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/",
-        element: <BoxSearch />,
+        element: <Main />,
       },
       {
         path: "/chatList/:boxId",

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import "./Mainpage.css";
-import MapContainer from "@/Components/Mainpage/MapContainer.tsx";
-import BoxLists from "@/Components/Mainpage/Getdata.tsx";
+import "./Main.css";
+import MapContainer from "@/Components/Main/MapContainer.tsx";
+import BoxLists from "@/Components/Main/Getdata.tsx";
 
 function BoxSearch() {
   const [boxLocation, searchlocation] = useState("");

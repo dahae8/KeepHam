@@ -7,7 +7,7 @@ function App() {
     <>
       <Header />
       <div className="w-screen bg-[url('/bg.jpg')] bg-cover flex justify-center items-center flex-col">
-        <div className="w-[70vw] min-h-[80vh] bg-white rounded-[48px] m-8">
+        <div className="w-[70vw] min-h-[80vh] bg-white rounded-[48px] m-8 p-10">
           <Outlet />
         </div>
       </div>
