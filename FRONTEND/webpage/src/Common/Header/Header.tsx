@@ -1,18 +1,23 @@
-import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import { Link } from "react-router-dom";
 import userSrc from "@/Assets/icons/user.svg";
+import MenuIcon from "@mui/icons-material/Menu";
+import {
+  Container,
+  Box,
+  AppBar,
+  Typography,
+  Toolbar,
+  Tooltip,
+  Menu,
+  MenuItem,
+  IconButton,
+  Button,
+  Avatar,
+} from "@mui/material";
+import * as React from "react";
+import { Link } from "react-router-dom";
+
+import { useAppSelector, useAppDispatch } from '@/Store/hooks.ts'
+import { signIn } from "@/Store/userSlice.ts";
 
 const pages = ["서비스 소개", "관리자 페이지"];
 const settings = ["사용자명", "알림", "사용자 정보", "주문내역", "로그아웃"];
@@ -39,6 +44,13 @@ function Header() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const isLoggedIn = useAppSelector((state) => state.user.isLoggedIn)
+  const dispatch = useAppDispatch()
+
+  function loginHandler() {
+    dispatch(signIn({name: "안녕?"}))
+  }
 
   return (
     <AppBar position="static">
@@ -109,7 +121,8 @@ function Header() {
           </Box>
 
           {/* 사용자 아이콘 */}
-          <Box sx={{ flexGrow: 0 }}>
+          {isLoggedIn ? 
+          (<Box sx={{ flexGrow: 0}}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="프로필" src={userSrc} variant="rounded" />
@@ -138,7 +151,9 @@ function Header() {
                 </MenuItem>
               ))}
             </Menu>
-          </Box>
+          </Box>) : (
+            <button onClick={loginHandler}>로그인</button>
+          )}
         </Toolbar>
       </Container>
     </AppBar>
