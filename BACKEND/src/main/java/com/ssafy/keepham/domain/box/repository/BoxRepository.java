@@ -1,10 +1,7 @@
 package com.ssafy.keepham.domain.box.repository;
 
-import com.ssafy.keepham.domain.box.dto.BoxDTO;
 import com.ssafy.keepham.domain.box.entity.Box;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
 import java.util.List;
 
 public interface BoxRepository extends JpaRepository<Box,Long> {

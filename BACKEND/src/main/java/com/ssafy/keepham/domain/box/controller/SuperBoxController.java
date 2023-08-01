@@ -31,7 +31,7 @@ public class SuperBoxController {
         return boxService.getBoxById(boxId);
     }
 
-    //삭제로 변환 box들 조회
+    //삭제로 변환 안된 box들 조회
     @GetMapping
     public List<BoxDTO> getAllBox(){
         return boxService.getAllBox();

@@ -36,7 +36,6 @@ public class Box {
         this.type = type;
     }
 
-    //SELECT시 사용
     public Box(long boxId, String address, String status, String type) {
         this.boxId = boxId;
         this.address = address;
