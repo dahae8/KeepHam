@@ -5,9 +5,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // Pages
 import App from "./App/App.tsx";
-import SignUp, { action as signUpAction } from "./Components/SignUp/signUp.tsx";
-import BoxSearch from "./Components/Mainpage/boxSearch.tsx";
-import ChatList from "./Components/Mainpage/chatList.tsx";
+import SignUp, { action as signUpAction } from "@/Pages/SignUp/SignUp.tsx";
+import BoxSearch from "@/Pages/Mainpage/Mainpage.tsx";
+import ChatList from "@/Components/Mainpage/ChatList.tsx";
 
 // Styles
 import "./styles/global.ts";
