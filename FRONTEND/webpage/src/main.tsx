@@ -6,6 +6,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 // Pages
 import App from "./App/App.tsx";
 import SignUp, { action as signUpAction } from "./Components/SignUp/signUp.tsx";
+import BoxSearch from "./Components/Mainpage/boxSearch.tsx";
+import ChatList from "./Components/Mainpage/chatList.tsx";
 
 // Styles
 import "./styles/global.ts";
@@ -22,12 +24,24 @@ const router = createBrowserRouter([
         element: <SignUp />,
         action: signUpAction,
       },
+      {
+        path: "Login",
+        element: <SignUp />,
+      },
+      {
+        path: "/",
+        element: <BoxSearch />,
+      },
+      {
+        path: "/chatList/:boxId",
+        element: <ChatList />,
+      },
     ],
   },
 ]);
 
 // Mui Theme
-declare module '@mui/material/styles' {
+declare module "@mui/material/styles" {
   interface Theme {
     status: {
       danger: string;
@@ -36,16 +50,16 @@ declare module '@mui/material/styles' {
   interface ThemeOptions {
     status?: {
       danger?: string;
-    }
+    };
   }
 }
 
 const theme = createTheme({
   typography: {
-    fontFamily: 'Pretendard',
+    fontFamily: "Pretendard",
     htmlFontSize: 10,
-  }
-})
+  },
+});
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
