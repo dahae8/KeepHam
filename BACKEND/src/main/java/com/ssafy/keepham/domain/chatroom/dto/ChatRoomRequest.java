@@ -13,11 +13,10 @@ public class ChatRoomRequest {
     private String title;
     private Long storeId;
     private Long boxId;
-    private String extensionNumber;
-    private String type;
+    private Integer extensionNumber;
     private int maxPeopleNumber;
     private String superUserId;
     private boolean locked;
-
+    private String password;
 
 }

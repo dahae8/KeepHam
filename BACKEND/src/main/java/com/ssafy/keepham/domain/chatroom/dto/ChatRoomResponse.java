@@ -17,8 +17,7 @@ public class ChatRoomResponse extends BaseEntity{
     private ChatRoomStatus status;
     private Long storeId;
     private Long boxId;
-    private String extensionNumber;
-    private String type;
+    private int extensionNumber;
     private int maxPeopleNumber;
     private String superUserId;
     private boolean locked;

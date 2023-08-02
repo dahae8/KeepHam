@@ -106,30 +106,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
 
-  zookeeper-navigator:
-    hostname: zookeeper-navigator
-    container_name: zookeeper-navigator
-    image: elkozmon/zoonavigator:1.1.2
-    restart: always
-    ports:
-      - "9000:9000"
-    environment:
-      HTTP_PORT: 9000
-    depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    container_name: kafka-ui
-    ports:
-      - "10000:8080"
-    restart: always
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=PLAINTEXT://kafka-1:9092,PLAINTEXT://kafka-2:9093,PLAINTEXT://kafka-3:9094
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
-
   mongodb:
     image: mongo
     container_name: mongodb
@@ -141,11 +117,12 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=keepham@mongodb!@#$
-      - MONGO_INITDB_DATABASE=mydb
+      - MONGO_INITDB_DATABASE=ssafy
 
   mysql:
     image: mysql:8.0
     container_name: mysql
+    restart: always
     ports:
       - "3306:3306" # HOST:CONTAINER
     environment:
@@ -153,18 +130,30 @@ services:
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
-  gitlab:
-    image: gitlab/gitlab-ce:latest
-    container_name: gitlab
+
+  redis:
+    image: redis:alpine
+    command: redis-server --port 3679
+    container_name: redis
     restart: always
+    hostname: redis_boot
+    labels:
+      - "name=redis"
+      - "mode=standalone"
     ports:
-      - "480:480"
-      - "443:443"
-      - "422:422"
-    environment:
-      GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://lab.ssafy.com/s09-webmobile3-sub2/S09P12C104'
-    volumes:
-      - ./gitlab/config:/etc/gitlab
-      - ./gitlab/logs:/var/log/gitlab
-      - ./gitlab/data:/var/opt/gitlab
+      - "6379:6379"
+#  gitlab:
+#    image: gitlab/gitlab-ce:latest
+#    container_name: gitlab
+#    restart: always
+#    ports:
+#      - "480:480"
+#      - "443:443"
+#      - "422:422"
+#    environment:
+#      GITLAB_OMNIBUS_CONFIG: |
+#        external_url 'https://lab.ssafy.com/s09-webmobile3-sub2/S09P12C104'
+#    volumes:
+#      - ./gitlab/config:/etc/gitlab
+#      - ./gitlab/logs:/var/log/gitlab
+#      - ./gitlab/data:/var/opt/gitlab

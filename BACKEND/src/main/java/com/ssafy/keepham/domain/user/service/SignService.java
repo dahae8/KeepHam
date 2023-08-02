@@ -48,6 +48,7 @@ public class SignService {
                 .ifPresentOrElse(it -> it.updateRefreshToken(refreshToken),
                 () -> userRefreshTokenRepository.save(new UserRefreshToken(user, refreshToken))
                     );
+        log.info("로그인성공");
         return new SignInResponse(user.getName(), user.getUserRole(), accessToken, refreshToken);
     }
 }

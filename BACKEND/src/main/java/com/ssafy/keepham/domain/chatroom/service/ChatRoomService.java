@@ -8,6 +8,7 @@ import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
 import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
+import com.ssafy.keepham.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,8 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomConverter chatRoomConverter;
+    private final TokenProvider tokenProvider;
+    //TODO TokenProvider 유호성 검사 후 내부 정보에 맞춰 수정하기
 
     public ChatRoomResponse createRoom(ChatRoomRequest chatRoomRequest){
         var entity = chatRoomConverter.toEntity(chatRoomRequest);

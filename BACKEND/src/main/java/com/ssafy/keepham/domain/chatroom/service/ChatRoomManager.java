@@ -1,22 +1,18 @@
 package com.ssafy.keepham.domain.chatroom.service;
 
-import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
-import com.ssafy.keepham.domain.chat.controller.ChatController;
 import com.ssafy.keepham.domain.chat.db.Message;
-import com.ssafy.keepham.domain.chat.db.MessageRepository;
 import com.ssafy.keepham.domain.chat.db.enums.Type;
 import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
+import com.ssafy.keepham.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,9 +27,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChatRoomManager {
 
     private final ChatRoomRepository chatRoomRepository;
-    private final MessageRepository messageRepository;
     private final KafkaTemplate<String, Message> kafkaTemplate;
     private final Map<Long, Set<String>> chatRoomUsers = new ConcurrentHashMap<>();
+    //TODO: Map에 저장하는 것이 아니라 redis에 저장한느 방식으로 변경
+
+    public boolean isChatRoomFull(Long roomId){
+        int currentUserCount = getUserCountInChatRoom(roomId);
+        int maxUserCount = getMaxUsersInChatRoom(roomId);
+        return currentUserCount >= maxUserCount;
+    }
 
     // 채팅방에 user 접속하면 해당 방 인원 1 증가
     public void userJoin(Long roomId, String userNickname){
@@ -84,7 +86,6 @@ public class ChatRoomManager {
 
     // 채팅방 현재 접속자 수
     public int getUserCountInChatRoom(Long roomId){
-        //TODO : DB에 현재인원 칼럼을 생성해 숫자변경?
         return chatRoomUsers.getOrDefault(roomId, new HashSet<>()).size();
     }
 
