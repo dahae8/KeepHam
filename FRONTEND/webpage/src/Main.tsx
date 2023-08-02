@@ -2,18 +2,20 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Provider } from 'react-redux'
-import { store } from '@/Store/store.ts'
+import { Provider } from "react-redux";
+import { store } from "@/Store/store.ts";
 
 // Pages
 import App from "./App/App.tsx";
-import SignUp, { action as signUpAction } from "@/Pages/SignUp/SignUp.tsx";
+import SignUp, { action as signUpAction } from "@/Components/SignUp/SignUp.tsx";
+import LogIn, { action as logInAction } from "@/Components/LogIn/LogIn.tsx";
 import Main from "@/Pages/Main/Main.tsx";
 import ChatList from "@/Components/Main/ChatList.tsx";
 
 // Styles
 import "./Styles/global.ts";
 import { createTheme, ThemeProvider } from "@mui/material";
+import User from "./Pages/User/User.tsx";
 
 // React Router
 const router = createBrowserRouter([
@@ -22,21 +24,28 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "SignUp",
-        element: <SignUp />,
-        action: signUpAction,
-      },
-      {
-        path: "Login",
-        element: <SignUp />,
-      },
-      {
         path: "/",
         element: <Main />,
       },
       {
         path: "/chatList/:boxId",
         element: <ChatList />,
+      },
+    ],
+  },
+  {
+    path: "User",
+    element: <User />,
+    children: [
+      {
+        path: "LogIn",
+        element: <LogIn />,
+        action: logInAction,
+      },
+      {
+        path: "SignUp",
+        element: <SignUp />,
+        action: signUpAction,
       },
     ],
   },

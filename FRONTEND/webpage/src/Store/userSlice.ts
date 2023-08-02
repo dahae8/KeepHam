@@ -1,30 +1,32 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit'
-import type { RootState } from './store';
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import type { RootState } from "./store";
 
 interface UserState {
-  isLoggedIn: boolean,
-  name: string | null,
+  isLoggedIn: boolean;
+  name: string | null;
+  id: string | null;
 }
 
 const initialState: UserState = {
   isLoggedIn: false,
-  name: null
-}
+  name: null,
+  id: null,
+};
 
 export const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
-    signIn: (state, action: PayloadAction<{name: string}>) => {
-      state.isLoggedIn = true
-      state.name = action.payload.name
-    }
-  }
-})
+    signIn: (state, action: PayloadAction<{ id: string }>) => {
+      state.isLoggedIn = true;
+      state.id = action.payload.id;
+    },
+  },
+});
 
-export const { signIn } = userSlice.actions
+export const { signIn } = userSlice.actions;
 
-export const selectUser = (state: RootState) => state.user.isLoggedIn
+export const selectUser = (state: RootState) => state.user.isLoggedIn;
 
-export default userSlice.reducer
+export default userSlice.reducer;

@@ -14,10 +14,11 @@ import {
   Avatar,
 } from "@mui/material";
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-import { useAppSelector, useAppDispatch } from '@/Store/hooks.ts'
+import { useAppSelector, useAppDispatch } from "@/Store/hooks.ts";
 import { signIn } from "@/Store/userSlice.ts";
+import { switchTab } from "@/Store/tabSlice.ts";
 
 const pages = ["서비스 소개", "관리자 페이지"];
 const settings = ["사용자명", "알림", "사용자 정보", "주문내역", "로그아웃"];
@@ -45,12 +46,25 @@ function Header() {
     setAnchorElUser(null);
   };
 
-  const isLoggedIn = useAppSelector((state) => state.user.isLoggedIn)
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
-  function loginHandler() {
-    dispatch(signIn({name: "안녕?"}))
+  function checkSession() {
+    const loginState = sessionStorage.getItem("loginState");
+
+    if (loginState === "isLoggedIn") {
+      const loginUser: string = sessionStorage.getItem("loginUser")!;
+
+      dispatch(signIn({ name: loginUser }));
+
+      console.log(`로그인 유저명 ${loginUser}`);
+    }
   }
+
+  checkSession();
+
+  const isLoggedIn: boolean = useAppSelector((state) => state.user.isLoggedIn);
+
+  const navigate = useNavigate();
 
   return (
     <AppBar position="static">
@@ -121,38 +135,58 @@ function Header() {
           </Box>
 
           {/* 사용자 아이콘 */}
-          {isLoggedIn ? 
-          (<Box sx={{ flexGrow: 0}}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="프로필" src={userSrc} variant="rounded" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <div>test</div>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>) : (
-            <button onClick={loginHandler}>로그인</button>
+          {isLoggedIn ? (
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="프로필" src={userSrc} variant="rounded" />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting) => (
+                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <div>test</div>
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          ) : (
+            <>
+              <button
+                className="mx-10"
+                onClick={() => {
+                  dispatch(switchTab({ setIdx: 0 }));
+                  navigate("User/LogIn");
+                }}
+              >
+                <Typography>로그인</Typography>
+              </button>
+              <button
+                className="mx-10"
+                onClick={() => {
+                  dispatch(switchTab({ setIdx: 1 }));
+                  navigate("User/SignUp");
+                }}
+              >
+                <Typography>회원가입</Typography>
+              </button>
+            </>
           )}
         </Toolbar>
       </Container>
