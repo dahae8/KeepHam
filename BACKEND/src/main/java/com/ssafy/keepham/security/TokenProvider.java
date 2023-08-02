@@ -2,19 +2,23 @@ package com.ssafy.keepham.security;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.keepham.common.error.TokenErrorCode;
+import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.user.entity.UserRefreshToken;
 import com.ssafy.keepham.domain.user.repository.UserRefreshTokenRepository;
 import io.jsonwebtoken.*;
 
 import java.nio.charset.StandardCharsets;
+import java.sql.Array;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import javax.crypto.spec.SecretKeySpec;
 
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -74,8 +78,8 @@ public class TokenProvider {
                     .compact();
         }
 
-        public String validateTokenAndGetSubJect(String token){
-                return validateAndparserToken(token)
+        public String validateTokenAndGetSubject(String token){
+                return validateAndParserToken(token)
                         .getBody()
                         .getSubject();
         }
@@ -116,21 +120,47 @@ public class TokenProvider {
                         .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
                         .setExpiration(Date.from(Instant.now().plus(refreshExpirationHours, ChronoUnit.HOURS)))
                         .compact();
-                redisTemplate.opsForValue().set("test",refreshToken,refreshExpirationMillis, TimeUnit.MILLISECONDS);
+//                redisTemplate.opsForValue().set("test",refreshToken,refreshExpirationMillis, TimeUnit.MILLISECONDS);
                 return refreshToken;
         }
         @Transactional
         public void validateRefreshToken(String refreshToken, String oldAccessToken) throws  JsonProcessingException{
-                validateAndparserToken(refreshToken);
+                validateAndParserToken(refreshToken);
                 String userId = decodeJwtPayloadSubject(oldAccessToken).split(":")[0];
                 userRefreshTokenRepository.findByUserIdAndReissueCountLessThan(UUID.fromString(userId),reissueLimit)
                         .orElseThrow(() -> new ExpiredJwtException(null,null,"Refresh Token expire"));
         }
-        private Jws<Claims> validateAndparserToken(String token){
-                return Jwts.parserBuilder()
+//        private Jws<Claims> validateAndParserToken(String token){
+//                return Jwts.parserBuilder()
+//                        .setSigningKey(secretKey.getBytes())
+//                        .build()
+//                        .parseClaimsJws(token);
+//        }
+        private Jws<Claims> validateAndParserToken(String auth){
+                var key = Keys.hmacShaKeyFor(secretKey.getBytes());
+                var parser = Jwts.parserBuilder()
                         .setSigningKey(secretKey.getBytes())
-                        .build()
-                        .parseClaimsJws(token);
+                        .build();
+
+                try {
+                        String token ="";
+                        String[] parts = auth.split("\\s+");
+                        if(parts.length == 2){
+                                token = parts[1];
+                        } else {
+                                token = parts[0];
+                        }
+                        var result = parser.parseClaimsJws(token);
+                        return result;
+                } catch (Exception e){
+                        if(e instanceof SignatureException) {
+                                throw new ApiException(TokenErrorCode.INVALID_TOKEN);
+                        } else if (e instanceof ExpiredJwtException) {
+                                throw new ApiException(TokenErrorCode.EXPIRED_TOKEN);
+                        } else {
+                                throw new ApiException(TokenErrorCode.TOKEN_EXCEPTION);
+                        }
+                }
         }
         private String decodeJwtPayloadSubject(String oldAccessToken) throws JsonProcessingException {
                 return objectMapper.readValue(
