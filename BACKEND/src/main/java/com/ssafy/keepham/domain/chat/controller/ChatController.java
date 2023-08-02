@@ -40,6 +40,7 @@ public class ChatController {
     @SendTo("/topic/group/{roomId}")
     public Message sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
         log.info("message : {}", message);
+//        messageRepository.save(message);
         return chatRoomManager.sendMessageToRoom(message, roomId);
     }
 

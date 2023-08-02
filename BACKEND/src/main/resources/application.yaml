@@ -9,17 +9,18 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mysql://localhost:3306/ssafy
+    url: jdbc:mysql://i9c104.p.ssafy.io:43306/ssafy
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: keepham@mysql!@#$
   data:
     mongodb:
-      url: mongodb://localhost:27017/ssafy
+      url: mongodb://i9c104.p.ssafy.io:47017
       username: root
-      password: keepham@mongodb!@#$
-      authentication-database: admin
-      database: ssafy
+      password: root
+#      authentication-database: admin
+#      database: ssafy
+
   kafka:
     consumer:
       bootstrap-servers: localhost:19091,localhost:19093,localhost:19094

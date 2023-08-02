@@ -119,6 +119,7 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=keepham@mongodb!@#$
       - MONGO_INITDB_DATABASE=ssafy
 
+
   mysql:
     image: mysql:8.0
     container_name: mysql
