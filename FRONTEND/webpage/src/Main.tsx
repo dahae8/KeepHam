@@ -7,15 +7,17 @@ import { store } from "@/Store/store.ts";
 
 // Pages
 import App from "./App/App.tsx";
-import SignUp, { action as signUpAction } from "@/Components/SignUp/SignUp.tsx";
-import LogIn, { action as logInAction } from "@/Components/LogIn/LogIn.tsx";
+import SignUp, { action as signUpAction } from "@/Components/User/SignUp.tsx";
+import LogIn, { action as logInAction } from "@/Components/User/LogIn.tsx";
 import Main from "@/Pages/Main/Main.tsx";
 import ChatList from "@/Components/Main/ChatList.tsx";
+import User from "./Pages/User/User.tsx";
+import RoomList, {loader as roomListLoader} from "./Pages/RoomList/RoomList.tsx";
+
 
 // Styles
 import "./Styles/global.ts";
 import { createTheme, ThemeProvider } from "@mui/material";
-import User from "./Pages/User/User.tsx";
 
 // React Router
 const router = createBrowserRouter([
@@ -31,6 +33,11 @@ const router = createBrowserRouter([
         path: "/chatList/:boxId",
         element: <ChatList />,
       },
+      {
+        path: "/RoomList/:boxId",
+        element: <RoomList />,
+        loader: roomListLoader,
+      }
     ],
   },
   {

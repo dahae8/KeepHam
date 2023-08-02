@@ -17,11 +17,11 @@ import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { useAppSelector, useAppDispatch } from "@/Store/hooks.ts";
-import { signIn } from "@/Store/userSlice.ts";
+import { signIn, signOut } from "@/Store/userSlice.ts";
 import { switchTab } from "@/Store/tabSlice.ts";
 
 const pages = ["서비스 소개", "관리자 페이지"];
-const settings = ["사용자명", "알림", "사용자 정보", "주문내역", "로그아웃"];
+const settings = ["🪪사용자명", "🔔알림", "📝사용자 정보", "🛒주문내역", "🗝️로그아웃"];
 
 function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -52,11 +52,9 @@ function Header() {
     const loginState = sessionStorage.getItem("loginState");
 
     if (loginState === "isLoggedIn") {
-      const loginUser: string = sessionStorage.getItem("loginUser")!;
+      const loginId: string = sessionStorage.getItem("loginId")!;
 
-      dispatch(signIn({ name: loginUser }));
-
-      console.log(`로그인 유저명 ${loginUser}`);
+      dispatch(signIn({ id: loginId }));
     }
   }
 
@@ -158,9 +156,15 @@ function Header() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <div>test</div>
+                {settings.map((setting, idx) => (
+                  <MenuItem key={setting} onClick={() => {
+                    handleCloseUserMenu()
+                    
+                    if (idx === 4) {
+                      sessionStorage.setItem("loginState", "isLoggedOut");
+                      dispatch(signOut());
+                    }
+                  }}>
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
                 ))}

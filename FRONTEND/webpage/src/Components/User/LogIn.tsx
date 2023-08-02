@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/named
-import { ActionFunctionArgs, Form } from "react-router-dom";
+import { ActionFunctionArgs, Form, redirect } from "react-router-dom";
 import { TextField, Button, Grid } from "@mui/material";
 import { store } from "@/Store/store.ts";
 import { signIn } from "@/Store/userSlice.ts";
@@ -10,26 +10,25 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const formDatas = Object.fromEntries(formData);
 
-  // userName: string = formDatas.id;
-
-  // store.dispatch(signIn({ name: formDatas.id }));
-
   // 로그인 버튼 눌렀을 경우
 
-  store.dispatch(signIn({ id: formDatas.id.toString() }));
+  const userId = formDatas.id.toString()
+  const userPw = formDatas.pw.toString()
 
-  return null;
+  console.log(userPw);
+
+  // 검증코드 작성 필요!
+
+  store.dispatch(signIn({ id: userId }));
+
+  const sessionStorage = window.sessionStorage;
+  sessionStorage.setItem("loginState", "isLoggedIn");
+  sessionStorage.setItem("loginId", userId);
+
+  return redirect('/');
 }
 
 function LogIn() {
-  // function loginHandler() {
-  //   dispatch(signIn({ name: "안녕" }));
-  //   sessionStorage.setItem("loginState", "isLoggedIn");
-  //   sessionStorage.setItem("loginUser", "안녕");
-  // }
-
-  // const sessionStorage = window.sessionStorage;
-
   return (
     <>
       <div className="flex items-center justify-center">

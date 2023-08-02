@@ -22,10 +22,13 @@ export const userSlice = createSlice({
       state.isLoggedIn = true;
       state.id = action.payload.id;
     },
+    signOut: (state) => {
+      state.isLoggedIn = false;
+    }
   },
 });
 
-export const { signIn } = userSlice.actions;
+export const { signIn, signOut } = userSlice.actions;
 
 export const selectUser = (state: RootState) => state.user.isLoggedIn;
 
