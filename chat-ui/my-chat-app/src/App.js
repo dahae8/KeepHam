@@ -1,16 +1,22 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import ChatRoomList from './components/ChatRoomList';
-import ChatRoom from './components/ChatRoom';
+import React, { useState } from 'react';
+import LoginForm from './components/LoginForm';
+import ChatRoomList from './components/ChatRoomList'
 
 const App = () => {
+  const [token, setToken] = useState('');
+
+  const handleSetToken = (newToken) => {
+    setToken(newToken);
+  };
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<ChatRoomList />} />
-        <Route path="/chat/:room_id" element={<ChatRoom />} />
-      </Routes>
-    </Router>
+    <div>
+      {token ? (
+        <ChatRoomList token={token} />
+      ) : (
+        <LoginForm onSetToken={handleSetToken} />
+      )}
+    </div>
   );
 };
 

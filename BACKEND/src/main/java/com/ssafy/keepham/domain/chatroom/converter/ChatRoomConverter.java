@@ -2,7 +2,7 @@ package com.ssafy.keepham.domain.chatroom.converter;
 
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
-import com.ssafy.keepham.domain.chatroom.db.ChatRoomEntity;
+import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
 import org.springframework.stereotype.Component;
@@ -19,11 +19,9 @@ public class ChatRoomConverter {
                 .map(it -> {
                     return ChatRoomEntity.builder()
                             .title(chatRoomRequest.getTitle())
-                            .status(chatRoomRequest.getStatus())
                             .storeId(chatRoomRequest.getStoreId())
                             .boxId(chatRoomRequest.getBoxId())
                             .extensionNumber(chatRoomRequest.getExtensionNumber())
-                            .type(chatRoomRequest.getType())
                             .maxPeopleNumber(chatRoomRequest.getMaxPeopleNumber())
                             .superUserId(chatRoomRequest.getSuperUserId())
                             .locked(chatRoomRequest.isLocked())
@@ -43,7 +41,6 @@ public class ChatRoomConverter {
                             .storeId(chatRoomEntity.getStoreId())
                             .boxId(chatRoomEntity.getBoxId())
                             .extensionNumber(chatRoomEntity.getExtensionNumber())
-                            .type(chatRoomEntity.getType())
                             .maxPeopleNumber(chatRoomEntity.getMaxPeopleNumber())
                             .superUserId(chatRoomEntity.getSuperUserId())
                             .locked(chatRoomEntity.isLocked())

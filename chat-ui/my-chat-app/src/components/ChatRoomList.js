@@ -1,46 +1,59 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import api from '../services/api';
+import ChatRoom from './ChatRoom';
 
-const ChatRoomList = () => {
-  const navigate = useNavigate();
-  const [rooms, setRooms] = useState([
-    { id: 1, name: '채팅방 1' },
-    { id: 2, name: '채팅방 2' },
-    { id: 3, name: '채팅방 3' },
-  ]);
-  const [newRoomName, setNewRoomName] = useState('');
+const ChatRoomList = ({ token }) => {
+  const [rooms, setRooms] = useState([]);
+  const [selectedRoomId, setSelectedRoomId] = useState(null); // 선택한 채팅방의 ID를 저장하는 상태 추가
+  const [nickname, setNickname] = useState(""); // 사용자의 닉네임을 저장하는 상태 추가
 
-  const handleEnterChatRoom = (room_id) => {
-    navigate(`/chat/${room_id}`);
-  };
+  useEffect(() => {
+    const fetchChatRooms = async () => {
+      try {
+        const response = await api.get('/rooms', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setRooms(response.data.body);
+      } catch (error) {
+        console.error('Error fetching chat rooms:', error);
+      }
+    };
+    fetchChatRooms();
+  }, [token]);
 
-  const handleCreateRoom = () => {
-    // 임시로 새 채팅방을 생성하여 rooms 상태에 추가
-    if (newRoomName) {
-      const newRoom = { id: rooms.length + 1, name: newRoomName };
-      setRooms([...rooms, newRoom]);
-      setNewRoomName('');
+  const handleRoomClick = async (roomId) => {
+    setSelectedRoomId(roomId); // 클릭한 채팅방의 ID를 저장합니다.
+    try {
+      const response = await api.get(`/${roomId}/enter`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const userNickname = response.data.body.userId;
+      setNickname(userNickname); // 사용자의 닉네임을 설정합니다.
+    } catch (error) {
+      console.error('Error entering chat room:', error);
     }
   };
 
   return (
     <div>
-      <h2>채팅방 목록</h2>
-      <ul>
-        {rooms.map((room) => (
-          <li key={room.id} onClick={() => handleEnterChatRoom(room.id)}>
-            {room.name}
-          </li>
-        ))}
-      </ul>
-      <div>
-        <input
-          type="text"
-          value={newRoomName}
-          onChange={(e) => setNewRoomName(e.target.value)}
-        />
-        <button onClick={handleCreateRoom}>채팅방 생성</button>
-      </div>
+      {selectedRoomId ? ( // 선택한 채팅방이 있다면 해당 채팅방으로 렌더링
+        <ChatRoom roomId={selectedRoomId} nickname={nickname} />
+      ) : (
+        <div>
+          <h1>Chat Room List</h1>
+          <ul>
+            {rooms.map((room) => (
+              <li key={room.id} onClick={() => handleRoomClick(room.id)}> {/* 클릭 이벤트 추가 */}
+                {room.title}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
