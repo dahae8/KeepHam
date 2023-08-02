@@ -15,18 +15,18 @@ spring:
     password: keepham@mysql!@#$
   data:
     mongodb:
-      url: mongodb://i9c104.p.ssafy.io:47017
+      uri: mongodb://i9c104.p.ssafy.io:47017/ssafy
       username: root
       password: root
 #      authentication-database: admin
-#      database: ssafy
+
 
   kafka:
     consumer:
-      bootstrap-servers: localhost:19091,localhost:19093,localhost:19094
+      bootstrap-servers: i9c104.p.ssafy.io:19091,i9c104.p.ssafy.io:19093,i9c104.p.ssafy.io:19094
       group-id: chatting
     producer:
-      bootstrap-servers: localhost:19091,localhost:19093,localhost:19094
+      bootstrap-servers: i9c104.p.ssafy.io:19091,i9c104.p.ssafy.io:19093,i9c104.p.ssafy.io:19094
     template:
       default-topic: kafka-chat
 
