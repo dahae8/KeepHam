@@ -3,11 +3,12 @@ package com.ssafy.keepham.domain.chatroom.service;
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.chatroom.converter.ChatRoomConverter;
-import com.ssafy.keepham.domain.chatroom.db.ChatRoomEntity;
+import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
 import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
-import com.ssafy.keepham.domain.chatroom.db.enums.ChatRoomStatus;
+import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
+import com.ssafy.keepham.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +27,8 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomConverter chatRoomConverter;
+    private final TokenProvider tokenProvider;
+    //TODO TokenProvider 유호성 검사 후 내부 정보에 맞춰 수정하기
 
     public ChatRoomResponse createRoom(ChatRoomRequest chatRoomRequest){
         var entity = chatRoomConverter.toEntity(chatRoomRequest);
@@ -44,5 +49,8 @@ public class ChatRoomService {
         return chatRooms.stream().map(chatRoomConverter::toResponse)
                 .collect(Collectors.toList());
     }
+
+
+
 
 }

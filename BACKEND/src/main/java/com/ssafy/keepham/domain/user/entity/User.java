@@ -1,7 +1,5 @@
 package com.ssafy.keepham.domain.user.entity;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ssafy.keepham.domain.user.common.GenderType;
 import com.ssafy.keepham.domain.user.common.UserRole;
 import com.ssafy.keepham.domain.user.dto.signup.request.SignUpRequest;
@@ -33,6 +31,7 @@ public class User {
     private Integer age;
     private UserRole userRole;
     private GenderType genderType;
+
 
     public static User toEntity(SignUpRequest request, PasswordEncoder encoder){
         return User.builder()

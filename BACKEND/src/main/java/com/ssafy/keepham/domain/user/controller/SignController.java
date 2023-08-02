@@ -1,7 +1,9 @@
 package com.ssafy.keepham.domain.user.controller;
 
+import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.domain.user.dto.ApiResponse;
 import com.ssafy.keepham.domain.user.dto.signin.request.SignInRequest;
+import com.ssafy.keepham.domain.user.dto.signin.response.SignInResponse;
 import com.ssafy.keepham.domain.user.dto.signup.request.SignUpRequest;
 import com.ssafy.keepham.domain.user.service.SignService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping
+@RequestMapping("/api")
 @RestController
 @Slf4j
 public class SignController {
@@ -23,7 +25,8 @@ public class SignController {
     }
     @Operation(summary = "회원 로그인")
     @PostMapping("/sign-in")
-    public ApiResponse signIn(@RequestBody SignInRequest request){
-        return ApiResponse.success(signService.signIn(request));
+    @CrossOrigin("http://localhost:3000")
+    public Api<SignInResponse> signIn(@RequestBody SignInRequest request){
+        return Api.OK(signService.signIn(request));
     }
 }

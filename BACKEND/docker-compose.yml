@@ -12,8 +12,8 @@ services:
     ports:
       - "2181:2181"
     volumes:
-      - zookeeper1_data:/var/lib/zookeeper/data
-      - zookeeper1_datalog:/var/lib/zookeeper/log
+      - /var/lib/zookeeper-1/data
+      - /var/lib/zookeeper-1/log
 
 
   zookeeper-2:
@@ -26,8 +26,8 @@ services:
     ports:
       - "2182:2181"
     volumes:
-      - zookeeper2_data:/var/lib/zookeeper/data
-      - zookeeper2_datalog:/var/lib/zookeeper/log
+      - /var/lib/zookeeper-2/data
+      - /var/lib/zookeeper-2/log
 
 
   zookeeper-3:
@@ -40,8 +40,8 @@ services:
     ports:
       - "2183:2181"
     volumes:
-      - zookeeper3_data:/var/lib/zookeeper/data
-      - zookeeper3_datalog:/var/lib/zookeeper/log
+      - /var/lib/zookeeper-3/data
+      - /var/lib/zookeeper-3/log
 
 
   kafka-1:
@@ -55,7 +55,7 @@ services:
       - "9092:9092"
       - "19092:19092"
     volumes:
-      - kafka1_data:/var/lib/kafka/data
+      - /var/lib/kafka-1/data
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
@@ -75,7 +75,7 @@ services:
       - "9093:9092"
       - "19093:19093"
     volumes:
-      - kafka2_data:/var/lib/kafka/data
+      - /var/lib/kafka-2/data
     environment:
       KAFKA_BROKER_ID: 2
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
@@ -96,7 +96,7 @@ services:
       - "9094:9092"
       - "19094:19094"
     volumes:
-      - kafka3_data:/var/lib/kafka/data
+      - /var/lib/kafka-3/data
     environment:
       KAFKA_BROKER_ID: 3
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
@@ -106,72 +106,41 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
 
-  zookeeper-navigator:
-    hostname: zookeeper-navigator
-    container_name: zookeeper-navigator
-    image: elkozmon/zoonavigator:1.1.2
-    restart: always
-    ports:
-      - 9000:9000
-    environment:
-      HTTP_PORT: 9000
-    depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    container_name: kafka-ui
-    ports:
-      - "10000:8080"
-    restart: always
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=PLAINTEXT://kafka-1:9092,PLAINTEXT://kafka-2:9093,PLAINTEXT://kafka-3:9094
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
-
   mongodb:
     image: mongo
     container_name: mongodb
     restart: always
     ports:
-      - 27017:27017
+      - "47017:27017"
     volumes:
       - ./mongodb:/data/db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=keepham@mongodb!@#$
-      - MONGO_INITDB_DATABASE=mydb
+      - MONGO_INITDB_DATABASE=ssafy
 
   mysql:
     image: mysql:8.0
     container_name: mysql
+    restart: always
     ports:
-      - 3306:3306 # HOST:CONTAINER
+      - "43306:3306" # HOST:CONTAINER
     environment:
       MYSQL_ROOT_PASSWORD: keepham@mysql!@#$
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
-  gitlab:
-    image: gitlab/gitlab-ce:latest
-    container_name: gitlab
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-      - "22:22"
-    environment:
-      GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://lab.ssafy.com/s09-webmobile3-sub2/S09P12C104'
     volumes:
-      - ./gitlab/config:/etc/gitlab
-      - ./gitlab/logs:/var/log/gitlab
-      - ./gitlab/data:/var/opt/gitlab
-volumes:
-  zookeeper1_data:
-  zookeeper2_data:
-  zookeeper3_data:
-  kafka1_data:
-  kafka2_data:
-  kafka3_data:
+      - /var/lib/mysql
+
+  redis:
+    image: redis:alpine
+    command: redis-server --port 3679
+    container_name: redis
+    restart: always
+    hostname: redis_boot
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - "46379:6379"
