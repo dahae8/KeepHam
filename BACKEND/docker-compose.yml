@@ -111,7 +111,7 @@ services:
     container_name: mongodb
     restart: always
     ports:
-      - "27017:27017"
+      - "47017:27017"
     volumes:
       - ./mongodb:/data/db
     environment:
@@ -124,12 +124,14 @@ services:
     container_name: mysql
     restart: always
     ports:
-      - "3306:3306" # HOST:CONTAINER
+      - "43306:3306" # HOST:CONTAINER
     environment:
       MYSQL_ROOT_PASSWORD: keepham@mysql!@#$
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - /var/lib/mysql
 
   redis:
     image: redis:alpine
@@ -141,19 +143,4 @@ services:
       - "name=redis"
       - "mode=standalone"
     ports:
-      - "6379:6379"
-#  gitlab:
-#    image: gitlab/gitlab-ce:latest
-#    container_name: gitlab
-#    restart: always
-#    ports:
-#      - "480:480"
-#      - "443:443"
-#      - "422:422"
-#    environment:
-#      GITLAB_OMNIBUS_CONFIG: |
-#        external_url 'https://lab.ssafy.com/s09-webmobile3-sub2/S09P12C104'
-#    volumes:
-#      - ./gitlab/config:/etc/gitlab
-#      - ./gitlab/logs:/var/log/gitlab
-#      - ./gitlab/data:/var/opt/gitlab
+      - "46379:6379"
