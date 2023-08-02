@@ -47,10 +47,10 @@ public class ChatController {
     @MessageMapping("/joinUser/{roomId}")
     @SendTo("/topic/group/{roomId}")
     public Message joinUser(@Payload Message message, @DestinationVariable Long roomId) {
-        log.info("User '{}' joined/left chat room {}", message.getAuthor(), roomId);
         if (message.getType() == Type.ENTER) {
-            chatRoomManager.userJoin(roomId, message.getAuthor());
+            log.info("User '{}' joined chat room {}", message.getAuthor(), roomId);
         } else if (message.getType() == Type.EXIT) {
+            log.info("User '{}' left chat room {}", message.getAuthor(), roomId);
             chatRoomManager.userLeft(roomId, message.getAuthor());
         }
         return message;

@@ -1,29 +1,20 @@
 package com.ssafy.keepham.domain.chatroom.controller;
 
 import com.ssafy.keepham.common.api.Api;
-import com.ssafy.keepham.domain.chat.db.Message;
-import com.ssafy.keepham.domain.chat.db.MessageRepository;
-import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
+import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomService;
 import com.ssafy.keepham.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(originPatterns = "http://localhost:3000")
+@CrossOrigin(originPatterns = "*")
 @RequestMapping("/api")
 public class ChatRoomApiController {
 
@@ -45,15 +36,15 @@ public class ChatRoomApiController {
 
     @GetMapping("/rooms")
     private Api<List<ChatRoomResponse>> findAllOpenedRoom(
-//            @RequestParam ChatRoomStatus status,
+            @RequestParam ChatRoomStatus status,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "6") int pageSize,
             @RequestHeader("Authorization") String token
     ){
-//        return Api.OK(chatRoomService.openedRoom(status, page, pageSize));
         System.out.println("방 목록 토큰 : " + token);
         tokenProvider.validateTokenAndGetSubject(token);
-        return Api.OK(chatRoomService.openedRoom(ChatRoomStatus.OPEN, page, pageSize));
+        return Api.OK(chatRoomService.openedRoom(status, page, pageSize));
+
     }
 
     @GetMapping("/rooms/{roomId}/isFull")
@@ -63,13 +54,12 @@ public class ChatRoomApiController {
     }
 
     @GetMapping("/{roomId}/enter")
-    public Api<Map<String, String>> enterRoom(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
+    public Api<Object> enterRoom(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
         String user = tokenProvider.validateTokenAndGetSubject(token);
-        chatRoomManager.userJoin(roomId, user);
-        Map<String, String> res = new HashMap<>();
-        res.put("userId", user);
-        return Api.OK(res);
+        if (chatRoomManager.isChatRoomFull(roomId)){
+            return Api.OK(true); //풀방 여부 리턴
+        }
+        return Api.OK(chatRoomManager.userJoin(roomId, user));
     }
-
 
 }

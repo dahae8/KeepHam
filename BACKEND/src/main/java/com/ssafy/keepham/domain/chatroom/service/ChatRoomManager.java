@@ -7,7 +7,6 @@ import com.ssafy.keepham.domain.chat.db.enums.Type;
 import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
-import com.ssafy.keepham.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -38,27 +37,18 @@ public class ChatRoomManager {
     }
 
     // 채팅방에 user 접속하면 해당 방 인원 1 증가
-    public void userJoin(Long roomId, String userNickname){
+    public Set<String> userJoin(Long roomId, String userNickname){
         int currentUserCount = getUserCountInChatRoom(roomId);
         int maxUserCount = getMaxUsersInChatRoom(roomId);
-
-        if (currentUserCount >= maxUserCount) {
-            log.info("풀방");
-        }
 
         chatRoomUsers.computeIfAbsent(roomId, k -> new HashSet<>()).add(userNickname);
 
         log.info("입장 현재 {}", currentUserCount);
         log.info("입장 최대 {}", maxUserCount);
         log.info("입장 {}", chatRoomUsers.toString());
-        Message entryMessage = Message.builder()
-                .roomId(roomId)
-                .author(userNickname)
-                .content(userNickname + "님이 입장하셨습니다.")
-                .type(Type.ENTER)
-                .timestamp(LocalDateTime.now())
-                .build();
-        sendMessageToRoom(entryMessage, roomId);
+
+        return chatRoomUsers.getOrDefault(roomId, new HashSet<>());
+
     }
     // 채팅방에서 user가 떠나면 해당 방 인원 감소
     public void userLeft(Long roomId, String userNickname){
@@ -72,15 +62,6 @@ public class ChatRoomManager {
         log.info("퇴장 현재 {}", currentUserCount);
         log.info("퇴장 최대 {}", maxUserCount);
         log.info("퇴장 {}", chatRoomUsers.toString());
-
-        Message exitMessage = Message.builder()
-                .roomId(roomId)
-                .author(userNickname)
-                .content(userNickname + "님이 퇴장하셨습니다.")
-                .type(Type.EXIT)
-                .timestamp(LocalDateTime.now())
-                .build();
-        sendMessageToRoom(exitMessage, roomId);
 
     }
 
@@ -98,9 +79,9 @@ public class ChatRoomManager {
     }
 
 
-    public Message sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
-        message.setTimestamp(LocalDateTime.now());
-        kafkaTemplate.send("kafka-chat", message);
-        return message;
-    }
+//    public Message sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
+//        message.setTimestamp(LocalDateTime.now());
+//        kafkaTemplate.send("kafka-chat", message);
+//        return message;
+//    }
 }
