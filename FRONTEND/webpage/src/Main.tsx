@@ -6,8 +6,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 // Pages
 import App from "./App/App.tsx";
 import SignUp, { action as signUpAction } from "@/Pages/SignUp/SignUp.tsx";
-import Main from "@/Pages/Main/Main.tsx";
-import ChatList from "@/Components/Main/ChatList.tsx";
+import Main from "./Pages/Main/Landing.tsx";
+import ChatList from "./Components/Landing/ChatList.tsx";
+import ChatRoom from "./Pages/Chatroom/ChatRoom.tsx";
 
 // Styles
 import "./Styles/global.ts";
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: "/chatList/:boxId",
         element: <ChatList />,
+      },
+      {
+        path: "chatRoom/:RoomId",
+        element: <ChatRoom />,
       },
     ],
   },
