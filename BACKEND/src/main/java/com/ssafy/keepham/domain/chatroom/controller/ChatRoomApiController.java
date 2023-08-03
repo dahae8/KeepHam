@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,20 +55,18 @@ public class ChatRoomApiController {
     }
 
 
-
-    @GetMapping("/rooms/{roomId}/isFull")
-    private Api<Boolean> isFull(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
-        tokenProvider.validateTokenAndGetSubject(token);
-        return Api.OK(chatRoomManager.isChatRoomFull(roomId));
-    }
-
     @GetMapping("/{roomId}/enter")
     public Api<Object> enterRoom(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
         String user = tokenProvider.validateTokenAndGetSubject(token);
-        if (chatRoomManager.isChatRoomFull(roomId)){
-            return Api.OK(true); //풀방 여부 리턴
-        }
-        return Api.OK(chatRoomManager.userJoin(roomId, user));
+        return Api.OK(user);
     }
+
+    @GetMapping("/{roomId}/clear")
+    public Api<String> clearRoom(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
+        chatRoomManager.allUserClear(roomId);
+        return Api.OK("전체 삭제 성공");
+    }
+
+
 
 }

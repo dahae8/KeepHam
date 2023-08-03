@@ -27,6 +27,7 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomConverter chatRoomConverter;
+    private final ChatRoomManager chatRoomManager;
     private final TokenProvider tokenProvider;
     //TODO TokenProvider 유호성 검사 후 내부 정보에 맞춰 수정하기
 
@@ -47,6 +48,11 @@ public class ChatRoomService {
 
         List<ChatRoomEntity> chatRooms = chatRoomEntityPage.getContent();
         return chatRooms.stream().map(chatRoomConverter::toResponse)
+                .map(it -> {
+                    var currentNumber = chatRoomManager.getUserCountInChatRoom(it.getId());
+                    it.setCurrentPeopleNumber(currentNumber);
+                    return it;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -56,6 +62,11 @@ public class ChatRoomService {
 
         List<ChatRoomEntity> chatRooms = chatRoomEntityPage.getContent();
         return chatRooms.stream().map(chatRoomConverter::toResponse)
+                .map(it -> {
+                    var currentNumber = chatRoomManager.getUserCountInChatRoom(it.getId());
+                    it.setCurrentPeopleNumber(currentNumber);
+                    return it;
+                })
                 .collect(Collectors.toList());
     }
 

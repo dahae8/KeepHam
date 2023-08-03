@@ -1,40 +1,34 @@
-//package com.ssafy.keepham.config.redis;
-//
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.context.annotation.PropertySource;
-//import org.springframework.data.redis.connection.RedisConnectionFactory;
-//import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-//import org.springframework.data.redis.core.RedisTemplate;
-//import org.springframework.data.redis.serializer.StringRedisSerializer;
-//
-//@Configuration
-//@PropertySource("classpath:redis.yaml")
-//public class RedisConfig {
-//    private final String redisHost;
-//    private final int redisPort;
-//
-//    public RedisConfig(
-//            @Value("${spring.redis.host}")
-//            String redisHost,
-//            @Value("${spring.redis.port}")
-//            int redisPort
-//    ){
-//        this.redisHost = redisHost;
-//        this.redisPort = redisPort;
-//    }
-//    @Bean
-//    public RedisConnectionFactory redisConnectionFactory(){
-//        return new LettuceConnectionFactory(redisHost,redisPort);
-//    }
-//
-//    @Bean
-//    public RedisTemplate<String,String> redisTemplate(){
-//        RedisTemplate<String,String> redisTemplate = new RedisTemplate<>();
-//        redisTemplate.setKeySerializer(new StringRedisSerializer());
-//        redisTemplate.setValueSerializer(new StringRedisSerializer());
-//        redisTemplate.setConnectionFactory(redisConnectionFactory());
-//        return redisTemplate;
-//    }
-//}
+package com.ssafy.keepham.config.redis;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.util.Set;
+
+@Configuration
+@PropertySource("classpath:redis.yaml")
+@RequiredArgsConstructor
+@EnableRedisRepositories
+public class RedisConfig {
+
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory() {
+        return new LettuceConnectionFactory("i9c104.p.ssafy.io", 46379);
+    }
+
+    @Bean
+    public RedisTemplate<String, Set<String>> redisTemplate() {
+        RedisTemplate<String, Set<String>> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        return redisTemplate;
+    }
+}
