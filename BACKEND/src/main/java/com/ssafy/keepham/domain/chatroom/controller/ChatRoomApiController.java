@@ -45,7 +45,7 @@ public class ChatRoomApiController {
 
     @GetMapping("/rooms/{boxId}")
     private Api<List<ChatRoomResponse>> findOpenedRoomByBoxId(
-            @RequestParam Long boxId,
+            @PathVariable Long boxId,
             @RequestParam ChatRoomStatus status,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "6") int pageSize
