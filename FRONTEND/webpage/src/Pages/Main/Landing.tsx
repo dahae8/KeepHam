@@ -30,7 +30,7 @@ function BoxSearch() {
             onChange={(e) => searchlocation(e.target.value)}
           />
           <button type="submit" onClick={changeShowMode}>
-            검색
+            검색바껴라
           </button>
           {content}
           {boxLocation}
