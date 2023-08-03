@@ -1,13 +1,19 @@
 package com.ssafy.keepham.domain.address.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Getter
+@Setter
 @Table(name = "jibun_info")
 @Entity
 public class JibunInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long jibunInfoId;
     //키값
 
     @Column(length = 50, nullable = false)
@@ -19,62 +25,11 @@ public class JibunInfo {
     //시군구명
 
     @Column(length = 50)
-    private String lawUmdNm;
+    private String umdNm;
     //법정읍면동명
 
     @Column(length = 50)
-    private String lawRiNm;
+    private String riNm;
     //법정리명
 
-
-    public JibunInfo() {
-    }
-
-    public JibunInfo(long id, String sdNm, String sggNm, String lawUmdNm, String lawRiNm) {
-        this.id = id;
-        this.sdNm = sdNm;
-        this.sggNm = sggNm;
-        this.lawUmdNm = lawUmdNm;
-        this.lawRiNm = lawRiNm;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getSdNm() {
-        return sdNm;
-    }
-
-    public void setSdNm(String sdNm) {
-        this.sdNm = sdNm;
-    }
-
-    public String getSggNm() {
-        return sggNm;
-    }
-
-    public void setSggNm(String sggNm) {
-        this.sggNm = sggNm;
-    }
-
-    public String getLawUmdNm() {
-        return lawUmdNm;
-    }
-
-    public void setLawUmdNm(String lawUmdNm) {
-        this.lawUmdNm = lawUmdNm;
-    }
-
-    public String getLawRiNm() {
-        return lawRiNm;
-    }
-
-    public void setLawRiNm(String lawRiNm) {
-        this.lawRiNm = lawRiNm;
-    }
 }

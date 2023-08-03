@@ -17,10 +17,6 @@ public class Box {
     //키값
 
     @Column(length = 255, nullable = false)
-    private String address;
-    //주소
-
-    @Column(length = 255, nullable = false)
     private String status;
     //상태 => 정상, 고장, 수리중
 
@@ -32,4 +28,20 @@ public class Box {
     private boolean isValid;
     //삭제된것인가 => true(삭제 되지 않은상태), false(삭제된 상태)
 
+    //주소
+    @Column(length = 255, nullable = false)
+    private String address;
+    // 도로명*지번 주소
+
+    @Column(length = 255, nullable = false)
+    private String detailedAddress;
+    // 상세 주소
+
+    @Column(nullable = false)
+    private long jibunId;
+    //지번id
+
+    @Column
+    private long chatRoomId;
+    //점유된 체팅방 id
 }

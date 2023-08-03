@@ -5,17 +5,14 @@ import com.ssafy.keepham.domain.chat.db.Message;
 import com.ssafy.keepham.domain.chat.db.MessageRepository;
 import com.ssafy.keepham.domain.chat.db.enums.Type;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
-import com.ssafy.keepham.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -40,16 +37,17 @@ public class ChatController {
     @SendTo("/topic/group/{roomId}")
     public Message sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
         log.info("message : {}", message);
+//        messageRepository.save(message);
         return chatRoomManager.sendMessageToRoom(message, roomId);
     }
 
     @MessageMapping("/joinUser/{roomId}")
     @SendTo("/topic/group/{roomId}")
     public Message joinUser(@Payload Message message, @DestinationVariable Long roomId) {
-        log.info("User '{}' joined/left chat room {}", message.getAuthor(), roomId);
         if (message.getType() == Type.ENTER) {
-            chatRoomManager.userJoin(roomId, message.getAuthor());
+            log.info("User '{}' joined chat room {}", message.getAuthor(), roomId);
         } else if (message.getType() == Type.EXIT) {
+            log.info("User '{}' left chat room {}", message.getAuthor(), roomId);
             chatRoomManager.userLeft(roomId, message.getAuthor());
         }
         return message;

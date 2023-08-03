@@ -1,6 +1,6 @@
 package com.ssafy.keepham.domain.address.controller;
 
-import com.ssafy.keepham.domain.address.entity.JibunInfo;
+import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.domain.address.service.JibunInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +21,7 @@ public class JibunInfoController {
     }
 
     @GetMapping
-    public List<String> getAllJibunInfo(){
-        return jibunInfoService.getAllJIbunInfo();
+    public Api<List<String>> getAllJibunInfo(){
+        return Api.OK(jibunInfoService.getAllJIbunInfo());
     }
 }

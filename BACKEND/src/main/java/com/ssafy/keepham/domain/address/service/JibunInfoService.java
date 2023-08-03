@@ -26,8 +26,8 @@ public class JibunInfoService {
         for (JibunInfo jibunInfo :jibunInfos ){
             String jibun = jibunInfo.getSdNm()+division+jibunInfo.getSggNm();
 
-            String lawUmdNm = jibunInfo.getLawUmdNm();
-            String lawRiNm = jibunInfo.getLawRiNm();
+            String lawUmdNm = jibunInfo.getUmdNm();
+            String lawRiNm = jibunInfo.getRiNm();
 
             if (lawUmdNm.length() != 0){
                 jibun +=division +lawUmdNm;

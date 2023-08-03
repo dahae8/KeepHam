@@ -1,13 +1,18 @@
 package com.ssafy.keepham.domain.box.service;
 
+import com.ssafy.keepham.common.api.Api;
+import com.ssafy.keepham.common.error.BoxError;
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.box.convert.BoxConvert;
 import com.ssafy.keepham.domain.box.dto.BoxDTO;
 import com.ssafy.keepham.domain.box.dto.BoxRequest;
 import com.ssafy.keepham.domain.box.dto.BoxResponse;
+import com.ssafy.keepham.domain.box.dto.BoxSaveRequest;
 import com.ssafy.keepham.domain.box.entity.Box;
 import com.ssafy.keepham.domain.box.repository.BoxRepository;
+import com.ssafy.keepham.domain.box.repository.ZipCodeRepository;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +25,13 @@ import java.util.Optional;
 public class BoxService {
     private final BoxRepository boxRepository;
     private final BoxConvert boxConvert;
+    private  final ZipCodeRepository zipCodeRepository;
 
     //db에 박스 저장
-    public BoxResponse saveBox(BoxRequest boxRequest){
+    public BoxResponse saveBox(BoxSaveRequest boxSaveRequest){
+        Long jibunId = Null;
 
-        var entity =boxConvert.toEntity(boxRequest);
+        var entity =boxConvert.toSaveEntity(boxSaveRequest,jibunId);
 
         return Optional.ofNullable(entity)
                 .map(it -> {
@@ -40,19 +47,31 @@ public class BoxService {
 
     //특정 id 박스 조회
     public BoxResponse getBoxById(Long boxId){
-        var entity = boxRepository.findById(boxId).orElse(null);
+        var entity = boxRepository.findById(boxId)
+                .orElseThrow(() -> new ApiException(BoxError.BOX_NOT_FOUND, String.format("[%d]은/는 존재하지 않는 함의 id입니다.", boxId)));
         return boxConvert.toResponse(entity);
     }
 
     //삭제로 변환 안된 box들 조회
-    public List<BoxDTO> getAllBox(){
-        //return boxRepository.findAll();
-        return convertToListDTO(boxRepository.findByisValid(true));
+        public List<BoxResponse> getAllBox(){
+            List<BoxResponse> resList = new ArrayList<>();
+            List<Box> boxs = boxRepository.findByisValid(true);
+
+            for (Box box: boxs){
+                BoxResponse res = boxConvert.toResponse(box);
+                resList.add(res);
+            }
+
+        return resList;
     }
 
     //박스수정
-    public Box updateBox(Box box){
-        return boxRepository.save(box);
+    public BoxResponse updateBox(Long boxId, BoxRequest boxRequest){
+        Box box =boxConvert.toEntity(boxRequest);
+        box.setBoxId(boxId);
+        box.setValid(true);
+        var res = boxConvert.toResponse(boxRepository.save(box));
+        return res;
     }
 
     //박스 삭제 상태로 전환
