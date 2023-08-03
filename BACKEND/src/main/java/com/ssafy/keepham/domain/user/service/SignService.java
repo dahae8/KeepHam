@@ -44,7 +44,7 @@ public class SignService {
     public SignInResponse signIn(SignInRequest request){
         User user = userRepository.findByUserId(request.getUserId())
                 .filter(u -> encoder.matches(request.getPassword(), u.getPassword()))
-                .orElseThrow(() ->new ApiException(UserErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() ->new ApiException(UserErrorCode.INVALID_USER));
         String accessToken = tokenProvider.createAccessToken(String.format("%s:%s",user.getUserId(),user.getUserRole()));
         String refreshToken = tokenProvider.createRefreshToken();
         userRefreshTokenRepository.findById(user.getId())
