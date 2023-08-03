@@ -10,7 +10,7 @@ const ChatRoomList = ({ token }) => {
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
-        const response = await api.get('/rooms', {
+        const response = await api.get('/rooms?status=OPEN', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

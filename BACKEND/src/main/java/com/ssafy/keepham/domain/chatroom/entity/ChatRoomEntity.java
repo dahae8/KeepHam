@@ -1,5 +1,6 @@
 package com.ssafy.keepham.domain.chatroom.entity;
 
+import com.ssafy.keepham.domain.box.entity.Box;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.common.BaseEntity;
 import jakarta.persistence.*;

@@ -8,7 +8,8 @@ import {
 import { TextField, Button, Grid } from "@mui/material";
 import { store } from "@/Store/store.ts";
 import { signIn } from "@/Store/userSlice.ts";
-import axios from "axios";
+
+import React from "react";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export async function action({ request }: ActionFunctionArgs) {
@@ -51,7 +52,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
 function LogIn() {
   const error = useActionData();
-
   console.log(error);
 
   if (error === "로그인실패") {

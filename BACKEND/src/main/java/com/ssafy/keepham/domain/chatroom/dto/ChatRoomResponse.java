@@ -19,6 +19,7 @@ public class ChatRoomResponse extends BaseEntity{
     private Long boxId;
     private int extensionNumber;
     private int maxPeopleNumber;
+    private Long currentPeopleNumber;
     private String superUserId;
     private boolean locked;
 
