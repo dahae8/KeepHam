@@ -7,7 +7,7 @@ import { store } from "@/Store/store.ts";
 
 // Pages
 import App from "./App/App.tsx";
-import SignUp, { action as signUpAction } from "@/Pages/SignUp/SignUp.tsx";
+import SignUp, { action as signUpAction } from "@/Components/User/SignUp.tsx";
 import LogIn, { action as logInAction } from "@/Components/User/LogIn.tsx";
 import Main from "./Pages/Main/Landing.tsx";
 import ChatList from "./Components/Landing/ChatList.tsx";
