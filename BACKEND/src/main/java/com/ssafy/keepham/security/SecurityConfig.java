@@ -27,6 +27,7 @@ public class SecurityConfig {
 //                .formLogin().disable()
 //                .httpBasic().disable()
             .csrf().disable()
+            .cors().disable()
 ////            .headers(headers -> headers.frameOptions().sameOrigin())
             .authorizeHttpRequests(request -> request.requestMatchers(ALLOW_URL).permitAll()
                 .anyRequest().authenticated())

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Typography } from "@mui/material";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
-export default function StoreInfo() {
+function BoxLists() {
   const [data, setData] = useState([]);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -13,14 +14,23 @@ export default function StoreInfo() {
       const response = await axios.get("http://localhost:8000/");
       const dataFromServer = response.data;
       setData(dataFromServer);
+      console.log(data);
     } catch (error) {}
   }
 
   return (
     <div>
-      <Typography variant="h3" gutterBottom>
-        StoreInfo
-      </Typography>
+      <ul>
+        {data.map((item: any) => (
+          <p>
+            <Link to={"chatList/" + item._id} key={item._id}>
+              name : {item.name}, belong : {item.belong}, phone : {item.phone}
+            </Link>
+          </p>
+        ))}
+      </ul>
     </div>
   );
 }
+
+export default BoxLists;

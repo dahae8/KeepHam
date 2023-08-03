@@ -1,8 +1,10 @@
 package com.ssafy.keepham.domain.chatroom.controller;
 
 import com.ssafy.keepham.common.api.Api;
+import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
+import com.ssafy.keepham.domain.chatroom.dto.RoomPassword;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomService;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,29 +41,53 @@ public class ChatRoomApiController {
     private Api<List<ChatRoomResponse>> findAllOpenedRoom(
             @RequestParam ChatRoomStatus status,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "6") int pageSize,
-            @RequestHeader("Authorization") String token
+            @RequestParam(defaultValue = "6") int pageSize
     ){
-        System.out.println("방 목록 토큰 : " + token);
-        tokenProvider.validateTokenAndGetSubject(token);
         return Api.OK(chatRoomService.openedRoom(status, page, pageSize));
-//        return Api.OK(chatRoomService.openedRoom(ChatRoomStatus.OPEN, page, pageSize));
-
     }
 
-    @GetMapping("/rooms/{roomId}/isFull")
-    private Api<Boolean> isFull(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
-        tokenProvider.validateTokenAndGetSubject(token);
-        return Api.OK(chatRoomManager.isChatRoomFull(roomId));
+    @GetMapping("/rooms/{boxId}")
+    private Api<List<ChatRoomResponse>> findOpenedRoomByBoxId(
+            @PathVariable Long boxId,
+            @RequestParam ChatRoomStatus status,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "6") int pageSize
+    ){
+        return Api.OK(chatRoomService.findOpenedRoomByBoxId(status, page, pageSize, boxId));
     }
+
 
     @GetMapping("/{roomId}/enter")
     public Api<Object> enterRoom(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
         String user = tokenProvider.validateTokenAndGetSubject(token);
-        if (chatRoomManager.isChatRoomFull(roomId)){
-            return Api.OK(true); //풀방 여부 리턴
-        }
-        return Api.OK(chatRoomManager.userJoin(roomId, user));
+        chatRoomManager.userJoin(roomId, user);
+        return Api.OK(user);
     }
+
+    @PostMapping("/{roomId}/enter")
+    public Api<Object> enterSecretRoom(@PathVariable Long roomId, @RequestBody RoomPassword password, @RequestHeader("Authorization") String token){
+        String user = tokenProvider.validateTokenAndGetSubject(token);
+        if (chatRoomManager.isPasswordCorrect(roomId, password.getPassword())){
+            chatRoomManager.userJoin(roomId, user);
+            return Api.OK(user);
+        } else {
+            return Api.ERROR(ErrorCode.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+
+    @GetMapping("/{roomId}/clear")
+    public Api<String> clearRoom(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
+        chatRoomManager.allUserClear(roomId);
+        return Api.OK("전체 삭제 성공");
+    }
+
+    @GetMapping("/{roomId}/getAllUser")
+    private Api<Set<String>> getAllUser(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
+        tokenProvider.validateTokenAndGetSubject(token);
+        return Api.OK(chatRoomManager.getAllUser(roomId));
+    }
+
+
 
 }

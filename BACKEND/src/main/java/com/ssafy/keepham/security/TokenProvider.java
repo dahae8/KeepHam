@@ -49,21 +49,20 @@ public class TokenProvider {
         private final String issuer;
         private final long reissueLimit;
         private final ObjectMapper objectMapper = new ObjectMapper();
-        private final RedisTemplate<String,String> redisTemplate;
+
 
         public TokenProvider(
                 UserRefreshTokenRepository userRefreshTokenRepository,
                 @Value("${secret-key}") String secretKey,
                 @Value("${expiration-minutes}") long expirationMinutes,
                 @Value("${refresh-expiration-hours}") long refreshExpirationHours,
-                @Value("${issuer}") String issuer,
-                RedisTemplate<String, String> redisTemplate){
+                @Value("${issuer}") String issuer
+                ){
                 this.userRefreshTokenRepository = userRefreshTokenRepository;
                 this.secretKey = secretKey;
                 this.expirationMinutes = expirationMinutes;
                 this.refreshExpirationHours = refreshExpirationHours;
                 this.issuer = issuer;
-                this.redisTemplate = redisTemplate;
                 this.reissueLimit = refreshExpirationHours * 60 / expirationMinutes;
         }
 

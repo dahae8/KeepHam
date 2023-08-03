@@ -4,6 +4,7 @@ import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.domain.chat.db.Message;
 import com.ssafy.keepham.domain.chat.db.MessageRepository;
 import com.ssafy.keepham.domain.chat.db.enums.Type;
+import com.ssafy.keepham.domain.chat.service.MessageService;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,22 +23,21 @@ import java.util.List;
 @CrossOrigin(originPatterns = "*")
 public class ChatController {
 
-    private final MessageRepository messageRepository;
+    private final MessageService messageService;
     private final ChatRoomManager chatRoomManager;
 
 
     String topic = "kafka-chat";
 
-      @GetMapping(value = "/chat-rooms/{roomId}/messages", produces = "application/json")
+    @GetMapping(value = "/chat-rooms/{roomId}/messages", produces = "application/json")
     public Api<List<Message>> getChatRoomMessages(@PathVariable Long roomId) {
-        return Api.OK(messageRepository.findAllByRoomIdOrderByTimestampAsc(roomId));
+        return Api.OK(messageService.findMessageLog(roomId));
     }
 
     @MessageMapping("/sendMessage/{roomId}")
     @SendTo("/topic/group/{roomId}")
     public Message sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
         log.info("message : {}", message);
-//        messageRepository.save(message);
         return chatRoomManager.sendMessageToRoom(message, roomId);
     }
 

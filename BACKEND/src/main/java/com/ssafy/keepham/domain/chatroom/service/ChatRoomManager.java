@@ -3,12 +3,14 @@ package com.ssafy.keepham.domain.chatroom.service;
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.chat.db.Message;
+import com.ssafy.keepham.domain.chat.db.MessageRepository;
 import com.ssafy.keepham.domain.chat.db.enums.Type;
 import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -20,6 +22,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -27,47 +31,59 @@ public class ChatRoomManager {
 
     private final ChatRoomRepository chatRoomRepository;
     private final KafkaTemplate<String, Message> kafkaTemplate;
-    private final Map<Long, Set<String>> chatRoomUsers = new ConcurrentHashMap<>();
+    private final MessageRepository messageRepository;
+    private final RedisTemplate<String, String> redisTemplate;
     //TODO: Map에 저장하는 것이 아니라 redis에 저장한느 방식으로 변경
 
-    public boolean isChatRoomFull(Long roomId){
-        int currentUserCount = getUserCountInChatRoom(roomId);
-        int maxUserCount = getMaxUsersInChatRoom(roomId);
-        return currentUserCount >= maxUserCount;
+    public boolean isPasswordCorrect(Long roomId, String password){
+        var room = chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN);
+        log.info("room password : {}", room.getPassword());
+        log.info("입력받은 비밀번호 : ", password);
+        return room.getPassword().equals(password);
     }
 
     // 채팅방에 user 접속하면 해당 방 인원 1 증가
     public Set<String> userJoin(Long roomId, String userNickname){
-        int currentUserCount = getUserCountInChatRoom(roomId);
-        int maxUserCount = getMaxUsersInChatRoom(roomId);
 
-        chatRoomUsers.computeIfAbsent(roomId, k -> new HashSet<>()).add(userNickname);
+        redisTemplate.opsForSet().add(String.valueOf(roomId),userNickname);
+        redisTemplate.expire(String.valueOf(roomId), 3600*3, TimeUnit.SECONDS);
+        Long currentUserCount = getUserCountInChatRoom(roomId);
+        int maxUserCount = getMaxUsersInChatRoom(roomId);
+        //        chatRoomUsers.computeIfAbsent(roomId, k -> new HashSet<>()).add(userNickname);
 
         log.info("입장 현재 {}", currentUserCount);
         log.info("입장 최대 {}", maxUserCount);
-        log.info("입장 {}", chatRoomUsers.toString());
+        log.info("입장 {}", redisTemplate.opsForSet().members(String.valueOf(roomId)));
 
-        return chatRoomUsers.getOrDefault(roomId, new HashSet<>());
+        return redisTemplate.opsForSet().members(String.valueOf(roomId));
 
     }
     // 채팅방에서 user가 떠나면 해당 방 인원 감소
     public void userLeft(Long roomId, String userNickname){
-        Set<String> users = chatRoomUsers.get(roomId);
-        if (users != null) {
-            users.remove(userNickname);
+        if (redisTemplate.opsForSet().isMember(String.valueOf(roomId),userNickname)){
+            redisTemplate.opsForSet().remove(String.valueOf(roomId), userNickname);
         }
-        int currentUserCount = getUserCountInChatRoom(roomId);
+
+        Long currentUserCount = getUserCountInChatRoom(roomId);
         int maxUserCount = getMaxUsersInChatRoom(roomId);
 
         log.info("퇴장 현재 {}", currentUserCount);
         log.info("퇴장 최대 {}", maxUserCount);
-        log.info("퇴장 {}", chatRoomUsers.toString());
+        log.info("퇴장 {}", redisTemplate.opsForSet().members(String.valueOf(roomId)));
+    }
 
+    public boolean allUserClear(Long roomId){
+        redisTemplate.delete(String.valueOf(roomId));
+        return true;
+    }
+
+    public Set<String> getAllUser(Long roomID){
+        return redisTemplate.opsForSet().members(String.valueOf(roomID));
     }
 
     // 채팅방 현재 접속자 수
-    public int getUserCountInChatRoom(Long roomId){
-        return chatRoomUsers.getOrDefault(roomId, new HashSet<>()).size();
+    public Long getUserCountInChatRoom(Long roomId){
+        return redisTemplate.opsForSet().size(String.valueOf(roomId));
     }
 
     // 채팅방 최대 인원
@@ -82,6 +98,7 @@ public class ChatRoomManager {
     public Message sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
         message.setTimestamp(LocalDateTime.now());
         log.info("sendMessageToRoom 을 통해 전송중");
+        messageRepository.save(message);
         kafkaTemplate.send("kafka-chat", message);
         return message;
     }
