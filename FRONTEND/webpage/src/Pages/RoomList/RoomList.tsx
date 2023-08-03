@@ -1,5 +1,3 @@
-import * as React from "react";
-import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
@@ -12,17 +10,17 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MailIcon from "@mui/icons-material/Mail";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Typography } from '@mui/material';
-
-export async function loader({ params }: LoaderFunctionArgs) {
-  const roomNo = params.roomNo
-  return { roomNo };
-}
+import { LoaderFunctionArgs } from "react-router-dom";
+import * as React from "react";
 
 const drawerWidth = 240;
 
+export async function loader({ params }: LoaderFunctionArgs) {
+  const roomNo = params.roomNo;
+  return { roomNo };
+}
+
 export default function RoomList() {
-  const { roomNo } = useLoaderData();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
@@ -59,10 +57,9 @@ export default function RoomList() {
         >
           <MenuIcon />
         </IconButton>
-        <Typography>가게 상호명</Typography>
       </div>
       <Divider />
-      <div className="relative w-full min-h-[600px]">
+      <div className="relative w-full min-h-[600px]" id="drawer-container">
         <div className="flex">
           {/* 네비바 */}
           <Box
@@ -74,7 +71,11 @@ export default function RoomList() {
               variant="temporary"
               open={mobileOpen}
               onClose={handleDrawerToggle}
+              PaperProps={{ style: { position: "absolute" } }}
+              BackdropProps={{ style: { position: "absolute" } }}
               ModalProps={{
+                container: document.getElementById("drawer-container"),
+                style: { position: "absolute" },
                 keepMounted: true,
               }}
               sx={{
@@ -89,18 +90,25 @@ export default function RoomList() {
             </Drawer>
             <Drawer
               variant="permanent"
+              PaperProps={{ style: { position: "absolute" } }}
+              BackdropProps={{ style: { position: "absolute" } }}
+              ModalProps={{
+                container: document.getElementById("drawer-container"),
+                style: { position: "absolute" },
+                keepMounted: true,
+              }}
               sx={{
                 display: { xs: "none", md: "block" },
                 "& .MuiDrawer-paper": {
                   boxSizing: "border-box",
                   width: drawerWidth,
                 },
-                "& .MuiDrawer-root": {
-                  position: "absolute",
-                },
-                "& .MuiPaper-root": {
-                  position: "absolute",
-                },
+                // "& .MuiDrawer-root": {
+                //   position: "absolute",
+                // },
+                // "& .MuiPaper-root": {
+                //   position: "absolute",
+                // },
               }}
               open
             >
@@ -115,8 +123,7 @@ export default function RoomList() {
               p: 3,
               width: { md: `calc(100% - ${drawerWidth}px)` },
             }}
-          >
-          </Box>
+          ></Box>
         </div>
       </div>
     </>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./Main.css";
-import MapContainer from "@/Components/Main/MapContainer.tsx";
+// import MapContainer from "@/Components/Main/MapContainer.tsx";
 import BoxLists from "@/Components/Main/Getdata.tsx";
 
 function BoxSearch() {
@@ -14,7 +14,7 @@ function BoxSearch() {
   if (showMode) {
     content = (
       <div className="mapcontainer">
-        <MapContainer />
+        {/* <MapContainer /> */}
         <BoxLists />
       </div>
     );

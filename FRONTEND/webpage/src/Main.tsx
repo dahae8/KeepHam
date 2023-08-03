@@ -12,8 +12,10 @@ import LogIn, { action as logInAction } from "@/Components/User/LogIn.tsx";
 import Main from "@/Pages/Main/Main.tsx";
 import ChatList from "@/Components/Main/ChatList.tsx";
 import User from "./Pages/User/User.tsx";
-import RoomList, {loader as roomListLoader} from "./Pages/RoomList/RoomList.tsx";
-
+import RoomList, {
+  loader as roomListLoader,
+} from "./Pages/RoomList/RoomList.tsx";
+import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
 
 // Styles
 import "./Styles/global.ts";
@@ -37,7 +39,11 @@ const router = createBrowserRouter([
         path: "/RoomList/:boxId",
         element: <RoomList />,
         loader: roomListLoader,
-      }
+      },
+      {
+        path: "/CreateRoom",
+        element: <CreateRoom />,
+      },
     ],
   },
   {

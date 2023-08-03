@@ -1,15 +1,24 @@
 import "./App.css";
 import { Outlet } from "react-router-dom";
 import { Header, Footer } from "../Common/common.ts";
+import { Box } from "@mui/material";
 
 function App() {
   return (
     <>
       <Header />
-      <div className="w-screen bg-[url('/bg.jpg')] bg-cover flex justify-center items-center flex-col min-w-[400px]">
-        <div className="w-[70vw] min-h-[80vh] bg-white rounded-[48px] my-8 p-10 min-w-[400px]">
+      <div className="w-screen bg-[url('/bg.jpg')] bg-cover flex justify-center items-center flex-col min-w-[500px] h-fit">
+        <Box
+          sx={{
+            width: { xs: "100%", md: "70%" },
+            backgroundColor: "white",
+            padding: 4,
+            marginY: { xs: 0, md: 8 },
+            borderRadius: { xs: 0, md: 12 },
+          }}
+        >
           <Outlet />
-        </div>
+        </Box>
       </div>
       <Footer />
     </>
