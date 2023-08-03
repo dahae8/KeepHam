@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 public enum UserErrorCode implements ErrorCodeIfs{
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND.value(), 1404, "존재하지 않는 유저입니다."),
+    INVALID_USER(HttpStatus.NOT_FOUND.value(), 1405, "아이디나 비밀번호가 틀립니다."),
     ;
 
     private final Integer httpStatusCode;
