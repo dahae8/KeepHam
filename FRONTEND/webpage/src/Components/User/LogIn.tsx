@@ -10,25 +10,6 @@ import { store } from "@/Store/store.ts";
 import { signIn } from "@/Store/userSlice.ts";
 import axios from "axios";
 
-
-//import { useState } from "react";
-// import Modal from "@mui/material/Modal";
-// import Box from "@mui/material/Box";
-// import Typography from "@mui/material/Typography";
-// import React from "react";
-
-// const style = {
-//   position: "absolute" as "absolute",
-//   top: "50%",
-//   left: "50%",
-//   transform: "translate(-50%, -50%)",
-//   width: 400,
-//   bgcolor: "background.paper",
-//   border: "2px solid #000",
-//   boxShadow: 24,
-//   p: 4,
-// };
-
 // eslint-disable-next-line react-refresh/only-export-components
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -70,9 +51,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
 function LogIn() {
   const error = useActionData();
-  // const [open, setOpen] = React.useState(false);
-  // const handleOpen = () => setOpen(true);
-  // const handleClose = () => setOpen(false);
   console.log(error);
 
   if (error === "로그인실패") {

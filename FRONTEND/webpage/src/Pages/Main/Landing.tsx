@@ -1,4 +1,5 @@
 import { useState } from "react";
+// import BoxLists from "@/Components/Landing/GetBoxList";
 
 function BoxSearch() {
   const [boxLocation, searchlocation] = useState("");
@@ -27,7 +28,7 @@ function BoxSearch() {
             onChange={(e) => searchlocation(e.target.value)}
           />
           <button type="submit" onClick={changeShowMode}>
-            검색바껴라
+            검색
           </button>
           {content}
           {boxLocation}
