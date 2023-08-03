@@ -9,13 +9,13 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mysql://localhost:3306/ssafy
+    url: jdbc:mysql://localhost:3306/keepham
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: keepham@mysql!@#$
+    password: root
   data:
     mongodb:
-      url: mongodb://localhost:27017/ssafy
+      uri: mongodb://localhost:27017/ssafy
       username: root
       password: keepham@mongodb!@#$
       authentication-database: admin
@@ -28,8 +28,7 @@ spring:
       bootstrap-servers: localhost:19091,localhost:19093,localhost:19094
     template:
       default-topic: kafka-chat
-
-  security:
+\  security:
     user:
       name: ssafy
       password: ssafy

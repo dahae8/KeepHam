@@ -1,4 +1,5 @@
-spring:
+
+ +spring:
 cache:
   type: redis
   redis:
