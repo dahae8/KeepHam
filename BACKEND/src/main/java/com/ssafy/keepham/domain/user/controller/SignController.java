@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 @RestController
 @Slf4j
+@CrossOrigin("*")
 public class SignController {
     private final SignService signService;
 
@@ -25,7 +26,6 @@ public class SignController {
     }
     @Operation(summary = "회원 로그인")
     @PostMapping("/sign-in")
-    @CrossOrigin("http://localhost:3000")
     public Api<SignInResponse> signIn(@RequestBody SignInRequest request){
         return Api.OK(signService.signIn(request));
     }

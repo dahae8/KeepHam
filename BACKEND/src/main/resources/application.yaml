@@ -16,17 +16,17 @@ spring:
   data:
     mongodb:
       uri: mongodb://i9c104.p.ssafy.io:47017/ssafy
-      username: root
-      password: root
-#      authentication-database: admin
+      username: ssafy
+      password: keepham@mongodb@1234
+      authentication-database: admin
 
 
   kafka:
     consumer:
-      bootstrap-servers: i9c104.p.ssafy.io:19091,i9c104.p.ssafy.io:19093,i9c104.p.ssafy.io:19094
+      bootstrap-servers: i9c104.p.ssafy.io:19092,i9c104.p.ssafy.io:19093,i9c104.p.ssafy.io:19094
       group-id: chatting
     producer:
-      bootstrap-servers: i9c104.p.ssafy.io:19091,i9c104.p.ssafy.io:19093,i9c104.p.ssafy.io:19094
+      bootstrap-servers: i9c104.p.ssafy.io:19092,i9c104.p.ssafy.io:19093,i9c104.p.ssafy.io:19094
     template:
       default-topic: kafka-chat
 

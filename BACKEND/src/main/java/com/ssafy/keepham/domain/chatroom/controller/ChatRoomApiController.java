@@ -44,6 +44,7 @@ public class ChatRoomApiController {
         System.out.println("방 목록 토큰 : " + token);
         tokenProvider.validateTokenAndGetSubject(token);
         return Api.OK(chatRoomService.openedRoom(status, page, pageSize));
+//        return Api.OK(chatRoomService.openedRoom(ChatRoomStatus.OPEN, page, pageSize));
 
     }
 

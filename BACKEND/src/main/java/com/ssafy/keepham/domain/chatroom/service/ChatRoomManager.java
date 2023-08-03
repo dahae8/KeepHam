@@ -79,9 +79,10 @@ public class ChatRoomManager {
     }
 
 
-//    public Message sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
-//        message.setTimestamp(LocalDateTime.now());
-//        kafkaTemplate.send("kafka-chat", message);
-//        return message;
-//    }
+    public Message sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
+        message.setTimestamp(LocalDateTime.now());
+        log.info("sendMessageToRoom 을 통해 전송중");
+        kafkaTemplate.send("kafka-chat", message);
+        return message;
+    }
 }
