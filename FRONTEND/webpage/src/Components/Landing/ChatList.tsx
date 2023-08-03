@@ -63,8 +63,12 @@ export default function ChatList() {
             <li key={item.id}>
               <Link to={"/chatRoom/" + item.id}>
                 RoomNum : {item.extension_number}
-                <p></p>
+                <br />
                 방이름 : {item.title}
+                <br />
+                현재인원 : {item.current_people_number}
+                <br />
+                최대인원 : {item.max_people_number}
               </Link>
             </li>
           ))}

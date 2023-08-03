@@ -1,10 +1,31 @@
 // eslint-disable-next-line import/named
-import { ActionFunctionArgs, Form, redirect } from "react-router-dom";
+import {
+  ActionFunctionArgs,
+  Form,
+  redirect,
+  useActionData,
+} from "react-router-dom";
 import { TextField, Button, Grid } from "@mui/material";
 import { store } from "@/Store/store.ts";
 import { signIn } from "@/Store/userSlice.ts";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import axios from "axios";
+import React from "react";
+
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 // eslint-disable-next-line react-refresh/only-export-components
 export async function action({ request }: ActionFunctionArgs) {
@@ -16,8 +37,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const userId = formDatas.id.toString();
   const userPw = formDatas.pw.toString();
-  console.log(userId);
-  console.log(userPw);
 
   const url = "http://i9c104.p.ssafy.io:48080/api/sign-in";
   const data = {
@@ -30,12 +49,11 @@ export async function action({ request }: ActionFunctionArgs) {
     const response = await axios.post(url, data);
 
     // 응답 데이터를 콘솔에 출력
-    console.log("Response:", response.data.body);
     localStorage.setItem("AccessToken", response.data.body.access_token);
-    const a = localStorage.getItem("AccessToken");
-    console.log("토큰 : ", a);
   } catch (error) {
-    console.error("Error sending request:", error);
+    // console.error("Error sending request:", error.response.data.result);
+    const errormessage = error.response.data.result.result_message;
+    return "로그인실패";
   }
 
   //TODO: 검증코드 작성 필요!
@@ -50,6 +68,14 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 function LogIn() {
+  const error = useActionData();
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  console.log(error);
+
+  if (error === "로그인실패") {
+  }
   return (
     <>
       <div className="flex items-center justify-center">
