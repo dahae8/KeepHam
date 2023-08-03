@@ -1,21 +1,47 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import MailIcon from "@mui/icons-material/Mail";
+import ListIcon from "@mui/icons-material/List";
+import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import MenuIcon from "@mui/icons-material/Menu";
+import {
+  Box,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from "@mui/material";
+import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 
-const drawerWidth = 240;
+const drawerWidth = 300;
+
+export async function loader({ params }: LoaderFunctionArgs) {
+  const boxId = params.boxId;
+  // 서버정보 필요
+  const boxName = "다농 오피스텔";
+  const boxAddress = "광주 장덕동";
+  const boxStatus = "정상";
+
+  return { boxId, boxName, boxAddress, boxStatus };
+}
+
+type boxInfoType = {
+  boxId: number;
+  boxName: string;
+  boxAddress: string;
+  boxStatus: string;
+};
 
 export default function RoomList() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [albumMode, setAlbumMode] = React.useState(false);
+
+  const boxInfo = useLoaderData() as boxInfoType;
+
+  console.log(boxInfo);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -24,11 +50,21 @@ export default function RoomList() {
   const drawer = (
     <div>
       <List>
-        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-          <ListItem key={text} disablePadding>
+        {["앨범형 보기", "목록형 보기"].map((text, index) => (
+          <ListItem
+            key={text}
+            disablePadding
+            onClick={() => {
+              if (index === 0) {
+                setAlbumMode(true);
+              } else {
+                setAlbumMode(false);
+              }
+            }}
+          >
             <ListItemButton>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                {index === 0 ? <PhotoLibraryIcon /> : <ListIcon />}
               </ListItemIcon>
               <ListItemText primary={text} />
             </ListItemButton>
@@ -51,9 +87,10 @@ export default function RoomList() {
         >
           <MenuIcon />
         </IconButton>
+        <Typography variant="h5">{boxInfo.boxName}</Typography>
       </div>
       <Divider />
-      <div className="relative w-full min-h-[600px]">
+      <div className="relative w-full min-h-[600px]" id="drawer-container">
         <div className="flex">
           {/* 네비바 */}
           <Box
@@ -65,7 +102,11 @@ export default function RoomList() {
               variant="temporary"
               open={mobileOpen}
               onClose={handleDrawerToggle}
+              PaperProps={{ style: { position: "absolute" } }}
+              BackdropProps={{ style: { position: "absolute" } }}
               ModalProps={{
+                container: document.getElementById("drawer-container"),
+                style: { position: "absolute" },
                 keepMounted: true,
               }}
               sx={{
@@ -80,17 +121,18 @@ export default function RoomList() {
             </Drawer>
             <Drawer
               variant="permanent"
+              PaperProps={{ style: { position: "absolute" } }}
+              BackdropProps={{ style: { position: "absolute" } }}
+              ModalProps={{
+                container: document.getElementById("drawer-container"),
+                style: { position: "absolute" },
+                keepMounted: true,
+              }}
               sx={{
                 display: { xs: "none", md: "block" },
                 "& .MuiDrawer-paper": {
                   boxSizing: "border-box",
                   width: drawerWidth,
-                },
-                "& .MuiDrawer-root": {
-                  position: "absolute",
-                },
-                "& .MuiPaper-root": {
-                  position: "absolute",
                 },
               }}
               open
@@ -107,6 +149,7 @@ export default function RoomList() {
               width: { md: `calc(100% - ${drawerWidth}px)` },
             }}
           >
+            {albumMode ? "albumMode" : "tableMode"}
           </Box>
         </div>
       </div>
