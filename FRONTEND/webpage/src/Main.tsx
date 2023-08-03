@@ -2,13 +2,21 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Provider } from "react-redux";
+import { store } from "@/Store/store.ts";
 
 // Pages
 import App from "./App/App.tsx";
 import SignUp, { action as signUpAction } from "@/Pages/SignUp/SignUp.tsx";
+import LogIn, { action as logInAction } from "@/Components/User/LogIn.tsx";
 import Main from "./Pages/Main/Landing.tsx";
 import ChatList from "./Components/Landing/ChatList.tsx";
 import ChatRoom from "./Pages/Chatroom/ChatRoom.tsx";
+import User from "./Pages/User/User.tsx";
+import RoomList, {
+  loader as roomListLoader,
+} from "./Pages/RoomList/RoomList.tsx";
+import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
 
 // Styles
 import "./Styles/global.ts";
@@ -21,15 +29,6 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "SignUp",
-        element: <SignUp />,
-        action: signUpAction,
-      },
-      {
-        path: "Login",
-        element: <SignUp />,
-      },
-      {
         path: "/",
         element: <Main />,
       },
@@ -40,6 +39,31 @@ const router = createBrowserRouter([
       {
         path: "chatRoom/:RoomId",
         element: <ChatRoom />,
+      },
+      {
+        path: "/RoomList/:boxId",
+        element: <RoomList />,
+        loader: roomListLoader,
+      },
+      {
+        path: "/CreateRoom",
+        element: <CreateRoom />,
+      },
+    ],
+  },
+  {
+    path: "User",
+    element: <User />,
+    children: [
+      {
+        path: "LogIn",
+        element: <LogIn />,
+        action: logInAction,
+      },
+      {
+        path: "SignUp",
+        element: <SignUp />,
+        action: signUpAction,
       },
     ],
   },
@@ -68,8 +92,10 @@ const theme = createTheme({
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </Provider>
   </React.StrictMode>
 );

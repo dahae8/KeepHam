@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private User parseUserSpecification(String token) {
         String split[] = Optional.ofNullable(token)
             .filter(subject -> 10 <= subject.length())
-            .map(tokenProvider::validateTokenAndGetSubJect)
+            .map(tokenProvider::validateTokenAndGetSubject)
             .orElse("123:123")
             .split(":");
         return new User(split[0],"", List.of(new SimpleGrantedAuthority(split[1])));

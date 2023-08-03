@@ -9,22 +9,24 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mysql://localhost:3307/
+    url: jdbc:mysql://i9c104.p.ssafy.io:43306/ssafy
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: keepham@mysql!@#$
   data:
     mongodb:
-      url: mongodb://localhost:27017/
-      username: root
-      password: keepham@mongodb!@#$
+      uri: mongodb://i9c104.p.ssafy.io:47017/ssafy
+      username: ssafy
+      password: keepham@mongodb@1234
       authentication-database: admin
+
+
   kafka:
     consumer:
-      bootstrap-servers: localhost:19091,localhost:19093,localhost:19094
+      bootstrap-servers: i9c104.p.ssafy.io:19092,i9c104.p.ssafy.io:19093,i9c104.p.ssafy.io:19094
       group-id: chatting
     producer:
-      bootstrap-servers: localhost:19091,localhost:19093,localhost:19094
+      bootstrap-servers: i9c104.p.ssafy.io:19092,i9c104.p.ssafy.io:19093,i9c104.p.ssafy.io:19094
     template:
       default-topic: kafka-chat
 
@@ -32,6 +34,7 @@ spring:
     user:
       name: ssafy
       password: ssafy
+
 
 
 springdoc:
