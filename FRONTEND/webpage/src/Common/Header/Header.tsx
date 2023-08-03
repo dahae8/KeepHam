@@ -122,7 +122,7 @@ function Header() {
                   className="mx-10"
                   onClick={() => {
                     dispatch(switchTab({ setIdx: 0 }));
-                    navigate("User/LogIn");
+                    navigate("Auth");
                   }}
                 >
                   <Typography>로그인</Typography>
@@ -131,7 +131,7 @@ function Header() {
                   className="mx-10"
                   onClick={() => {
                     dispatch(switchTab({ setIdx: 1 }));
-                    navigate("User/SignUp");
+                    navigate("Auth");
                   }}
                 >
                   <Typography>회원가입</Typography>

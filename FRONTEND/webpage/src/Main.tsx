@@ -7,11 +7,9 @@ import { store } from "@/Store/store.ts";
 
 // Pages
 import App from "./App/App.tsx";
-import SignUp, { action as signUpAction } from "@/Components/User/SignUp.tsx";
-import LogIn, { action as logInAction } from "@/Components/User/LogIn.tsx";
-import Main from "@/Pages/Main/Main.tsx";
-import ChatList from "@/Components/Main/ChatList.tsx";
-import User from "./Pages/User/User.tsx";
+import Landing from "@/Pages/Landing/Landing.tsx";
+import ChatList from "@/Components/Landing/ChatList.tsx";
+import Auth from "./Pages/Auth/Auth.tsx";
 import RoomList, {
   loader as roomListLoader,
 } from "./Pages/RoomList/RoomList.tsx";
@@ -25,42 +23,31 @@ import { createTheme, ThemeProvider } from "@mui/material";
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <Landing />,
+  },
+  {
+    path: "/App",
     element: <App />,
     children: [
+      
       {
-        path: "/",
-        element: <Main />,
-      },
-      {
-        path: "/chatList/:boxId",
+        path: "/App/chatList/:boxId",
         element: <ChatList />,
       },
       {
-        path: "/RoomList/:boxId",
+        path: "/App/RoomList/:boxId",
         element: <RoomList />,
         loader: roomListLoader,
       },
       {
-        path: "/CreateRoom",
+        path: "/App/CreateRoom",
         element: <CreateRoom />,
       },
     ],
   },
   {
-    path: "User",
-    element: <User />,
-    children: [
-      {
-        path: "LogIn",
-        element: <LogIn />,
-        action: logInAction,
-      },
-      {
-        path: "SignUp",
-        element: <SignUp />,
-        action: signUpAction,
-      },
-    ],
+    path: "Auth",
+    element: <Auth />,
   },
 ]);
 
