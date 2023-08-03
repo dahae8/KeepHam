@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Typography } from "@mui/material";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
-export default function BoxInfo() {
+function BoxLists() {
   const [data, setData] = useState([]);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -18,9 +19,17 @@ export default function BoxInfo() {
 
   return (
     <div>
-      <Typography variant="h3" gutterBottom>
-        BoxInfo
-      </Typography>
+      <ul>
+        {data.map((item: any) => (
+          <p>
+            <Link to={"chatList/" + item._id} key={item._id}>
+              name : {item.name}, belong : {item.belong}, phone : {item.phone}
+            </Link>
+          </p>
+        ))}
+      </ul>
     </div>
   );
 }
+
+export default BoxLists;
