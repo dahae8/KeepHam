@@ -17,7 +17,14 @@ export async function action({ request }: ActionFunctionArgs) {
 
   console.log(userPw);
 
-  // 검증코드 작성 필요!
+    // 응답 데이터를 콘솔에 출력
+    localStorage.setItem("AccessToken", response.data.body.access_token);
+  } catch (error) {
+    // console.error("Error sending request:", error.response.data.result);
+    return "로그인실패";
+  }
+
+  //TODO: 검증코드 작성 필요!
 
   store.dispatch(signIn({ id: userId }));
 
