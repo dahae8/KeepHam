@@ -52,7 +52,6 @@ export async function action({ request }: ActionFunctionArgs) {
     localStorage.setItem("AccessToken", response.data.body.access_token);
   } catch (error) {
     // console.error("Error sending request:", error.response.data.result);
-    const errormessage = error.response.data.result.result_message;
     return "로그인실패";
   }
 

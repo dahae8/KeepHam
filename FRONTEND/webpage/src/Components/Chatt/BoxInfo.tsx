@@ -13,6 +13,7 @@ export default function BoxInfo() {
       const response = await axios.get("http://localhost:8000/");
       const dataFromServer = response.data;
       setData(dataFromServer);
+      console.log(data);
     } catch (error) {}
   }
 
