@@ -1,8 +1,10 @@
 package com.ssafy.keepham.domain.chatroom.controller;
 
 import com.ssafy.keepham.common.api.Api;
+import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
+import com.ssafy.keepham.domain.chatroom.dto.RoomPassword;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomService;
@@ -62,10 +64,28 @@ public class ChatRoomApiController {
         return Api.OK(user);
     }
 
+    @PostMapping("/{roomId}/enter")
+    public Api<Object> enterSecretRoom(@PathVariable Long roomId, @RequestBody RoomPassword password, @RequestHeader("Authorization") String token){
+        String user = tokenProvider.validateTokenAndGetSubject(token);
+        if (chatRoomManager.isPasswordCorrect(roomId, password.getPassword())){
+            chatRoomManager.userJoin(roomId, user);
+            return Api.OK(user);
+        } else {
+            return Api.ERROR(ErrorCode.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+
     @GetMapping("/{roomId}/clear")
     public Api<String> clearRoom(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
         chatRoomManager.allUserClear(roomId);
         return Api.OK("전체 삭제 성공");
+    }
+
+    @GetMapping("/{roomId}/getAllUser")
+    private Api<Set<String>> getAllUser(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
+        tokenProvider.validateTokenAndGetSubject(token);
+        return Api.OK(chatRoomManager.getAllUser(roomId));
     }
 
 

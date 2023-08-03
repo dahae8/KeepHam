@@ -35,10 +35,11 @@ public class ChatRoomManager {
     private final RedisTemplate<String, String> redisTemplate;
     //TODO: Map에 저장하는 것이 아니라 redis에 저장한느 방식으로 변경
 
-    public boolean isChatRoomFull(Long roomId){
-        Long currentUserCount = getUserCountInChatRoom(roomId);
-        int maxUserCount = getMaxUsersInChatRoom(roomId);
-        return currentUserCount >= maxUserCount;
+    public boolean isPasswordCorrect(Long roomId, String password){
+        var room = chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN);
+        log.info("room password : {}", room.getPassword());
+        log.info("입력받은 비밀번호 : ", password);
+        return room.getPassword().equals(password);
     }
 
     // 채팅방에 user 접속하면 해당 방 인원 1 증가
@@ -74,6 +75,10 @@ public class ChatRoomManager {
     public boolean allUserClear(Long roomId){
         redisTemplate.delete(String.valueOf(roomId));
         return true;
+    }
+
+    public Set<String> getAllUser(Long roomID){
+        return redisTemplate.opsForSet().members(String.valueOf(roomID));
     }
 
     // 채팅방 현재 접속자 수
