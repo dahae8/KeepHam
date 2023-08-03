@@ -3,6 +3,7 @@ package com.ssafy.keepham.domain.chatroom.service;
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.chat.db.Message;
+import com.ssafy.keepham.domain.chat.db.MessageRepository;
 import com.ssafy.keepham.domain.chat.db.enums.Type;
 import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
@@ -27,6 +28,7 @@ public class ChatRoomManager {
 
     private final ChatRoomRepository chatRoomRepository;
     private final KafkaTemplate<String, Message> kafkaTemplate;
+    private final MessageRepository messageRepository;
     private final Map<Long, Set<String>> chatRoomUsers = new ConcurrentHashMap<>();
     //TODO: Map에 저장하는 것이 아니라 redis에 저장한느 방식으로 변경
 
@@ -82,6 +84,7 @@ public class ChatRoomManager {
     public Message sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
         message.setTimestamp(LocalDateTime.now());
         log.info("sendMessageToRoom 을 통해 전송중");
+        messageRepository.save(message);
         kafkaTemplate.send("kafka-chat", message);
         return message;
     }

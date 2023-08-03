@@ -50,6 +50,15 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
     }
 
+    public List<ChatRoomResponse> findOpenedRoomByBoxId(ChatRoomStatus status, int page, int pageSize, Long boxId){
+        Pageable pageable = PageRequest.of(page-1, pageSize);
+        Page<ChatRoomEntity> chatRoomEntityPage = chatRoomRepository.findAllByStatusAndBoxIdOrderByCreatedAtDesc(status, boxId, pageable);
+
+        List<ChatRoomEntity> chatRooms = chatRoomEntityPage.getContent();
+        return chatRooms.stream().map(chatRoomConverter::toResponse)
+                .collect(Collectors.toList());
+    }
+
 
 
 

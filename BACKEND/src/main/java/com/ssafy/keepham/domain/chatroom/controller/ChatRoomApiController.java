@@ -38,15 +38,22 @@ public class ChatRoomApiController {
     private Api<List<ChatRoomResponse>> findAllOpenedRoom(
             @RequestParam ChatRoomStatus status,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "6") int pageSize,
-            @RequestHeader("Authorization") String token
+            @RequestParam(defaultValue = "6") int pageSize
     ){
-        System.out.println("방 목록 토큰 : " + token);
-        tokenProvider.validateTokenAndGetSubject(token);
         return Api.OK(chatRoomService.openedRoom(status, page, pageSize));
-//        return Api.OK(chatRoomService.openedRoom(ChatRoomStatus.OPEN, page, pageSize));
-
     }
+
+    @GetMapping("/rooms/{boxId}")
+    private Api<List<ChatRoomResponse>> findOpenedRoomByBoxId(
+            @RequestParam Long boxId,
+            @RequestParam ChatRoomStatus status,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "6") int pageSize
+    ){
+        return Api.OK(chatRoomService.findOpenedRoomByBoxId(status, page, pageSize, boxId));
+    }
+
+
 
     @GetMapping("/rooms/{roomId}/isFull")
     private Api<Boolean> isFull(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
