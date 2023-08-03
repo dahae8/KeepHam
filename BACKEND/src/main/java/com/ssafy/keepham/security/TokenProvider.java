@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.keepham.common.error.TokenErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
+import com.ssafy.keepham.domain.user.entity.User;
 import com.ssafy.keepham.domain.user.entity.UserRefreshToken;
 import com.ssafy.keepham.domain.user.repository.UserRefreshTokenRepository;
+import com.ssafy.keepham.domain.user.repository.UserRepository;
 import io.jsonwebtoken.*;
 
 import java.nio.charset.StandardCharsets;
@@ -49,6 +51,8 @@ public class TokenProvider {
         private final String issuer;
         private final long reissueLimit;
         private final ObjectMapper objectMapper = new ObjectMapper();
+        private final UserRepository userRepository;
+
 
 
         public TokenProvider(
@@ -56,7 +60,8 @@ public class TokenProvider {
                 @Value("${secret-key}") String secretKey,
                 @Value("${expiration-minutes}") long expirationMinutes,
                 @Value("${refresh-expiration-hours}") long refreshExpirationHours,
-                @Value("${issuer}") String issuer
+                @Value("${issuer}") String issuer,
+                UserRepository userRepository
                 ){
                 this.userRefreshTokenRepository = userRefreshTokenRepository;
                 this.secretKey = secretKey;
@@ -64,6 +69,7 @@ public class TokenProvider {
                 this.refreshExpirationHours = refreshExpirationHours;
                 this.issuer = issuer;
                 this.reissueLimit = refreshExpirationHours * 60 / expirationMinutes;
+                this.userRepository = userRepository;
         }
 
         //accessToken
@@ -75,6 +81,11 @@ public class TokenProvider {
                     .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
                     .setExpiration(Date.from(Instant.now().plus(expirationMinutes, ChronoUnit.HOURS)))
                     .compact();
+        }
+
+        public User getUserFromSubject(String subject){
+                String userId = subject.split(":")[0];
+                return userRepository.findByUserId(userId).get();
         }
 
         public String validateTokenAndGetSubject(String token){

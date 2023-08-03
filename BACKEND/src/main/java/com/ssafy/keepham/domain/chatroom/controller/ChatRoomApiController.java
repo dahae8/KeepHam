@@ -31,8 +31,9 @@ public class ChatRoomApiController {
             @RequestBody ChatRoomRequest chatRoomRequest,
             @RequestHeader("Authorization") String token
     ){
-        var user = tokenProvider.validateTokenAndGetSubject(token);
-        chatRoomRequest.setSuperUserId(user);
+        var subject = tokenProvider.validateTokenAndGetSubject(token);
+        var userId =  tokenProvider.getUserFromSubject(subject).getUserId();
+        chatRoomRequest.setSuperUserId(userId);
         var res = chatRoomService.createRoom(chatRoomRequest);
         return Api.OK(res);
     }
@@ -57,21 +58,23 @@ public class ChatRoomApiController {
     }
 
 
-    @GetMapping("/{roomId}/enter")
+    @GetMapping("/{roomId}")
     public Api<Object> enterRoom(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
-        String user = tokenProvider.validateTokenAndGetSubject(token);
-        chatRoomManager.userJoin(roomId, user);
-        return Api.OK(user);
+        String subject = tokenProvider.validateTokenAndGetSubject(token);
+        var nickName = tokenProvider.getUserFromSubject(subject).getNickName();
+        chatRoomManager.userJoin(roomId, nickName);
+        return Api.OK(nickName);
     }
 
-    @PostMapping("/{roomId}/enter")
+    @PostMapping("/{roomId}")
     public Api<Object> enterSecretRoom(@PathVariable Long roomId, @RequestBody RoomPassword password, @RequestHeader("Authorization") String token){
-        String user = tokenProvider.validateTokenAndGetSubject(token);
+        String subject = tokenProvider.validateTokenAndGetSubject(token);
+        var nickName = tokenProvider.getUserFromSubject(subject).getNickName();
         if (chatRoomManager.isPasswordCorrect(roomId, password.getPassword())){
-            chatRoomManager.userJoin(roomId, user);
-            return Api.OK(user);
+            chatRoomManager.userJoin(roomId, nickName);
+            return Api.OK(nickName);
         } else {
-            return Api.ERROR(ErrorCode.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+            return Api.ERROR(ErrorCode.BAD_REQUEST, "방 비밀번호가 일치하지 않습니다.");
         }
     }
 
@@ -82,7 +85,7 @@ public class ChatRoomApiController {
         return Api.OK("전체 삭제 성공");
     }
 
-    @GetMapping("/{roomId}/getAllUser")
+    @GetMapping("/{roomId}/allUser")
     private Api<Set<String>> getAllUser(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
         tokenProvider.validateTokenAndGetSubject(token);
         return Api.OK(chatRoomManager.getAllUser(roomId));
