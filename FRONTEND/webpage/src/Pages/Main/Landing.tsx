@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "./Landing.css";
-import MapContainer from "@/Components/Landing/MapContainer";
 import BoxLists from "@/Components/Landing/GetBoxList";
 
 function BoxSearch() {

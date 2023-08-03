@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import StoreInfo from "@/Components/Chatt/StoreInfo";
 import BoxInfo from "@/Components/Chatt/BoxInfo";
 import RoomInfo from "@/Components/Chatt/RoomInfo";

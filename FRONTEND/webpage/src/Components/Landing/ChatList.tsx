@@ -10,6 +10,7 @@ interface Room {
   id: number;
   locked: boolean;
   max_people_number: number;
+  current_people_number: number;
   status: string;
   store_id: number;
   super_user_id: string;
