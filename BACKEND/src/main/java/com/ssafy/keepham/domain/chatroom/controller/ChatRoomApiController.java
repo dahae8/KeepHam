@@ -58,6 +58,7 @@ public class ChatRoomApiController {
     @GetMapping("/{roomId}/enter")
     public Api<Object> enterRoom(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
         String user = tokenProvider.validateTokenAndGetSubject(token);
+        chatRoomManager.userJoin(roomId, user);
         return Api.OK(user);
     }
 
