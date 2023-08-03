@@ -3,7 +3,6 @@ import { Typography } from "@mui/material";
 import AwsDataFetcher from "@/Components/Chatt/getDatatest";
 
 export default function ChattingBox() {
-  const [chatthistory, getChatt] = useState([]);
   const [chattForsend, getChattForsend] = useState("");
 
   const sendChatt = () => {
