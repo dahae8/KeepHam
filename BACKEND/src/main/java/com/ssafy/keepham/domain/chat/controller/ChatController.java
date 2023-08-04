@@ -37,7 +37,6 @@ public class ChatController {
     }
 
     @MessageMapping("/sendMessage/{roomId}")
-    @SendTo("/topic/group")
     public void sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
         log.info("message : {}", message);
         chatRoomManager.sendMessageToRoom(message);
