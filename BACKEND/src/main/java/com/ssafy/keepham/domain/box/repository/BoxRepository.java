@@ -21,4 +21,6 @@ public interface BoxRepository extends JpaRepository<Box,Long> {
             ")",nativeQuery = true)
     List<Box> getAllzipcode(String zipcode);
 
+    Box findFirstById(Long id);
+
 }

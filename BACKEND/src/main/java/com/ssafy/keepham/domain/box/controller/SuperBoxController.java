@@ -57,14 +57,14 @@ public class SuperBoxController {
 
     //박스 수정
     @PutMapping("/{boxId}")
-    public  Api<Object> updateBox(@PathVariable Long boxId, @RequestBody BoxRequest boxRequest){
-        if(boxId<=0){
+    public  Api<Object> updateBox(@PathVariable Long boxId, @RequestBody BoxRequest boxRequest) {
+        if (boxId <= 0) {
             return Api.ERROR(BoxError.BOX_BAD_REQUEST, String.format("[%d]은/는 요휴하지 않는 id형식 입니다. 1이상의 숫자로 요청해 주세요.", boxId));
         }
-        var res  = boxService.updateBox(boxId, boxRequest);
+        var res = boxService.updateBox(boxId, boxRequest);
         return Api.OK(res);
 
-
+    }
     //박스 삭제 상태로 전환
     @PutMapping("/delete/{boxId}")
     public Api<Object> deleteBox(@PathVariable Long boxId){
