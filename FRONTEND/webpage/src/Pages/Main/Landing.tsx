@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./Landing.css";
-// import BoxLists from "@/Components/Landing/GetBoxList";
+import BoxLists from "@/Components/Landing/BoxLists";
 
 function BoxSearch() {
   const [boxLocation, searchlocation] = useState("");
@@ -14,7 +14,7 @@ function BoxSearch() {
     content = (
       <div className="mapcontainer">
         {/* <MapContainer /> */}
-        {/* <BoxLists /> */}
+        <BoxLists />
       </div>
     );
   }
