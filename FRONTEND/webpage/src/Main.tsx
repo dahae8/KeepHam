@@ -9,13 +9,14 @@ import { store } from "@/Store/store.ts";
 import App from "./App/App.tsx";
 import SignUp, { action as signUpAction } from "@/Components/User/SignUp.tsx";
 import LogIn, { action as logInAction } from "@/Components/User/LogIn.tsx";
-import Main from "@/Pages/Main/Main.tsx";
+import Main from "@/Pages/Main/Landing.tsx";
 import ChatList from "@/Components/Main/ChatList.tsx";
 import User from "./Pages/User/User.tsx";
 import RoomList, {
   loader as roomListLoader,
 } from "./Pages/RoomList/RoomList.tsx";
 import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
+import ChatRoom from "./Pages/Chatroom/ChatRoom.tsx";
 
 // Styles
 import "./Styles/global.ts";
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
         path: "/RoomList/:boxId",
         element: <RoomList />,
         loader: roomListLoader,
+      },
+      {
+        path: "/chatRoom/:boxId",
+        element: <ChatRoom />,
       },
       {
         path: "/CreateRoom",
