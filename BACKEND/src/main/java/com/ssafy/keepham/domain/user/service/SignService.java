@@ -1,5 +1,8 @@
 package com.ssafy.keepham.domain.user.service;
 
+import com.ssafy.keepham.common.error.ErrorCode;
+import com.ssafy.keepham.common.error.UserErrorCode;
+import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.user.entity.User;
 import com.ssafy.keepham.domain.user.entity.UserRefreshToken;
 import com.ssafy.keepham.domain.user.repository.UserRefreshTokenRepository;
@@ -41,7 +44,7 @@ public class SignService {
     public SignInResponse signIn(SignInRequest request){
         User user = userRepository.findByUserId(request.getUserId())
                 .filter(u -> encoder.matches(request.getPassword(), u.getPassword()))
-                .orElseThrow(() ->new IllegalArgumentException("아이디 또는 비밀번호가 틀렸습니다."));
+                .orElseThrow(() ->new ApiException(UserErrorCode.INVALID_USER));
         String accessToken = tokenProvider.createAccessToken(String.format("%s:%s",user.getUserId(),user.getUserRole()));
         String refreshToken = tokenProvider.createRefreshToken();
         userRefreshTokenRepository.findById(user.getId())
@@ -50,5 +53,9 @@ public class SignService {
                     );
         log.info("로그인성공");
         return new SignInResponse(user.getName(), user.getUserRole(), accessToken, refreshToken);
+    }
+
+    public boolean checkId(String userId){
+        return userRepository.findByUserId(userId).isPresent();
     }
 }

@@ -29,4 +29,10 @@ public class SignController {
     public Api<SignInResponse> signIn(@RequestBody SignInRequest request){
         return Api.OK(signService.signIn(request));
     }
+
+    @Operation(summary = "ID 중복확인 : 중복이면 false ")
+    @GetMapping("/validation")
+    public Api<Boolean> getUserId(@RequestParam String userId){
+        return Api.OK(!signService.checkId(userId));
+    }
 }

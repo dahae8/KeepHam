@@ -88,6 +88,7 @@ public class BoxService {
         List<BoxResponse> resList = new ArrayList<>();
         List<Box> boxs = boxRepository.getAllzipcode(zipCode);
 
+
         for (Box box: boxs){
             BoxResponse res = boxConvert.toResponse(box);
             resList.add(res);

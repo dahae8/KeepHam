@@ -1,5 +1,6 @@
 package com.ssafy.keepham.domain.chatroom.dto;
 
+import com.ssafy.keepham.domain.box.entity.Box;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import lombok.*;
 

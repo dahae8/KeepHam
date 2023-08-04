@@ -63,7 +63,7 @@ public class SuperBoxController {
         }
         var res  = boxService.updateBox(boxId, boxRequest);
         return Api.OK(res);
-    }
+
 
     //박스 삭제 상태로 전환
     @PutMapping("/delete/{boxId}")

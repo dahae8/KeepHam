@@ -1,5 +1,6 @@
 package com.ssafy.keepham.domain.chatroom.dto;
 
+import com.ssafy.keepham.domain.box.entity.Box;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.common.BaseEntity;
 import lombok.*;
@@ -16,9 +17,10 @@ public class ChatRoomResponse extends BaseEntity{
     private String title;
     private ChatRoomStatus status;
     private Long storeId;
-    private Long boxId;
+    private Box box;
     private int extensionNumber;
     private int maxPeopleNumber;
+    private Long currentPeopleNumber;
     private String superUserId;
     private boolean locked;
 
