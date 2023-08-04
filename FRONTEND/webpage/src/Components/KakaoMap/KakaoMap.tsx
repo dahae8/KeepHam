@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useEffect, useRef } from "react";
 
 declare global {

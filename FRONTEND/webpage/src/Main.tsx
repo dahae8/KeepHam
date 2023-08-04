@@ -30,7 +30,7 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/chatList/:boxId",
+        path: "/App/chatList/:boxId",
         element: <ChatList />,
       },
       {
@@ -39,7 +39,7 @@ const router = createBrowserRouter([
         loader: roomListLoader,
       },
       {
-        path: "/CreateRoom",
+        path: "/App/CreateRoom",
         element: <CreateRoom />,
       },
     ],
