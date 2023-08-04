@@ -1,7 +1,9 @@
 package com.ssafy.keepham.domain.chatroom.controller;
 
 import com.ssafy.keepham.common.api.Api;
+import com.ssafy.keepham.common.error.ChatRoomError;
 import com.ssafy.keepham.common.error.ErrorCode;
+import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
 import com.ssafy.keepham.domain.chatroom.dto.RoomPassword;
@@ -65,11 +67,14 @@ public class ChatRoomApiController {
     public Api<Object> enterRoom(@PathVariable Long roomId, @RequestHeader("Authorization") String token){
         String subject = tokenProvider.validateTokenAndGetSubject(token);
         var nickName = tokenProvider.getUserFromSubject(subject).getNickName();
+        if (chatRoomManager.isSecretRoom(roomId)){
+           throw new ApiException(ChatRoomError.SECRET_ROOM);
+        }
         chatRoomManager.userJoin(roomId, nickName);
         return Api.OK(nickName);
     }
 
-    @Operation(summary = "암호가 걸린 방 입장")
+    @Operation(summary = "방 입장")
     @PostMapping("/{roomId}")
     public Api<Object> enterSecretRoom(@PathVariable Long roomId, @RequestBody RoomPassword password, @RequestHeader("Authorization") String token){
         String subject = tokenProvider.validateTokenAndGetSubject(token);

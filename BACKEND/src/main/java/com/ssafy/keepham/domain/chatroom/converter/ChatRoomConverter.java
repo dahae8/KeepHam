@@ -2,15 +2,20 @@ package com.ssafy.keepham.domain.chatroom.converter;
 
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
+import com.ssafy.keepham.domain.box.repository.BoxRepository;
 import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class ChatRoomConverter {
+
+    private final BoxRepository boxRepository;
 
     public ChatRoomEntity toEntity(
             ChatRoomRequest chatRoomRequest
@@ -20,7 +25,6 @@ public class ChatRoomConverter {
                     return ChatRoomEntity.builder()
                             .title(chatRoomRequest.getTitle())
                             .storeId(chatRoomRequest.getStoreId())
-                            .boxId(chatRoomRequest.getBoxId())
                             .extensionNumber(chatRoomRequest.getExtensionNumber())
                             .maxPeopleNumber(chatRoomRequest.getMaxPeopleNumber())
                             .superUserId(chatRoomRequest.getSuperUserId())
@@ -40,7 +44,7 @@ public class ChatRoomConverter {
                             .title(chatRoomEntity.getTitle())
                             .status(chatRoomEntity.getStatus())
                             .storeId(chatRoomEntity.getStoreId())
-                            .boxId(chatRoomEntity.getBoxId())
+                            .box(chatRoomEntity.getBox())
                             .extensionNumber(chatRoomEntity.getExtensionNumber())
                             .maxPeopleNumber(chatRoomEntity.getMaxPeopleNumber())
                             .superUserId(chatRoomEntity.getSuperUserId())
