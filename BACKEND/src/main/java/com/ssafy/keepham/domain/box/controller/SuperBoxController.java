@@ -6,6 +6,7 @@ import com.ssafy.keepham.domain.box.dto.BoxRequest;
 import com.ssafy.keepham.domain.box.dto.BoxResponse;
 import com.ssafy.keepham.domain.box.dto.BoxSaveRequest;
 import com.ssafy.keepham.domain.box.service.BoxService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class SuperBoxController {
     }
 
     // 함생성
+    @Operation(summary = "함생성")
     @PostMapping
     public Api<BoxResponse> createBox(@RequestBody BoxSaveRequest boxSaveRequest){
         System.out.println("111"+boxSaveRequest.getDetailedAddress());
@@ -31,6 +33,7 @@ public class SuperBoxController {
     }
 
     //특정 id의 함 조회
+    @Operation(summary = "특정 id의 함 조회")
     @GetMapping("/{boxId}")
     public Api<Object> getBox(@PathVariable Long boxId){
 
@@ -49,13 +52,15 @@ public class SuperBoxController {
 
     }
 
-    //삭제로 변환 안된 box들 조회
+    //삭제로 변환 안된 함들 조회
+    @Operation(summary = "삭제 안된 함들 전체 조회")
     @GetMapping
     public Api<List<BoxResponse>> getAllBox(){
         return  Api.OK(boxService.getAllBox());
     }
 
-    //박스 수정
+    //함 수정
+    @Operation(summary = "함 수정")
     @PutMapping("/{boxId}")
     public  Api<Object> updateBox(@PathVariable Long boxId, @RequestBody BoxRequest boxRequest) {
         if (boxId <= 0) {
@@ -65,7 +70,8 @@ public class SuperBoxController {
         return Api.OK(res);
 
     }
-    //박스 삭제 상태로 전환
+    //함 삭제 상태로 전환
+    @Operation(summary = "함 삭제")
     @PutMapping("/delete/{boxId}")
     public Api<Object> deleteBox(@PathVariable Long boxId){
 
