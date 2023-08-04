@@ -54,4 +54,8 @@ public class SignService {
         log.info("로그인성공");
         return new SignInResponse(user.getName(), user.getUserRole(), accessToken, refreshToken);
     }
+
+    public boolean checkId(String userId){
+        return userRepository.findByUserId(userId).isPresent();
+    }
 }
