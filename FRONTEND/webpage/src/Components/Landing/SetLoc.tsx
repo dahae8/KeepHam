@@ -26,10 +26,41 @@ const modalStyle = {
   borderRadius: 4,
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// function placeSearchCB(data: any, status: any) {
+//   if (status === window.kakao.maps.services.Status.OK) {
+//     for (let i = 0; i < data.length; i++) {
+//       console.log(data[i]);
+//     }
+//   }
+// }
+
+// async function getLocations() {
+//   const mapApiPromise = new Promise((resolve) => {
+//     const script = document.createElement("script");
+//     script.src =
+//       "//dapi.kakao.com/v2/maps/sdk.js?appkey=ae6ec333dd28b629021d3a3d4e122d34&libraries=services&autoload=false";
+//     document.head.appendChild(script);
+//     script.onload = () => {
+//       resolve("카카오맵 로드 완료!");
+//     };
+//   });
+
+//   const result = await mapApiPromise;
+
+//   // console.log(result);
+
+//   const ps = new window.kakao.maps.services.Places();
+
+//   ps.keywordSearch("이태원 맛집", placeSearchCB);
+// }
+
+// getLocations();
+
 function SetLoc() {
   const [idx, setIdx] = React.useState("");
   const [open, setOpen] = React.useState(false);
-  const [hasLoc, setHasLoc] = React.useState(false);
+  const [currentLoc, setCurrentLoc] = React.useState("설정안됨");
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -54,7 +85,7 @@ function SetLoc() {
 
   return (
     <>
-      <Typography variant="h6">배달함 설정</Typography>
+      <Typography variant="h6">배달을 받으실 지역을 설정해주세요</Typography>
       <Box
         sx={{
           display: "flex",
@@ -87,8 +118,8 @@ function SetLoc() {
         }}
       >
         <Typography variant="body2">현위치 :</Typography>
-        {hasLoc ? (
-          <Typography variant="h6">장덕동</Typography>
+        {currentLoc !== "설정안됨" ? (
+          <Typography variant="h6">{currentLoc}</Typography>
         ) : (
           <>
             <Box
@@ -107,6 +138,7 @@ function SetLoc() {
           </>
         )}
       </Box>
+
       <Box
         onClick={() => {
           handleOpen();
