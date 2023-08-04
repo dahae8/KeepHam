@@ -1,4 +1,3 @@
-// components/ChatRoom.js
 import React, { useState, useEffect } from "react";
 import Stomp from "stompjs";
 import SockJS from "sockjs-client";
@@ -18,11 +17,7 @@ const ChatRoom = ({ roomId, nickname }) => {
         content: inputMessage,
         type: "TALK",
       };
-      stompClient.send(
-        `/app/sendMessage/${roomId}`,
-        {},
-        JSON.stringify(message)
-      );
+      stompClient.send(`/app/sendMessage/${roomId}`, {}, JSON.stringify(message));
       setInputMessage("");
     } catch (error) {
       alert("Error sending message.");
@@ -45,7 +40,13 @@ const ChatRoom = ({ roomId, nickname }) => {
       };
       stomp.send(`/app/joinUser/${roomId}`, {}, JSON.stringify(enterMessage));
 
-      stomp.subscribe(`/topic/group/${roomId}`, (message) => {
+      stomp.subscribe(`/topic/group`, (message) => {
+        const newMessage = JSON.parse(message.body);
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      });
+
+      // Subscribe to the message topic for real-time chat messages
+      stomp.subscribe(`/subscribe/message/${roomId}`, (message) => {
         const newMessage = JSON.parse(message.body);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       });

@@ -37,14 +37,14 @@ public class ChatController {
     }
 
     @MessageMapping("/sendMessage/{roomId}")
-    @SendTo("/topic/group/{roomId}")
-    public Message sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
+    @SendTo("/topic/group")
+    public void sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
         log.info("message : {}", message);
-        return chatRoomManager.sendMessageToRoom(message, roomId);
+        chatRoomManager.sendMessageToRoom(message);
     }
 
     @MessageMapping("/joinUser/{roomId}")
-    @SendTo("/topic/group/{roomId}")
+    @SendTo("/subscribe/message/{roomId}")
     public Message joinUser(@Payload Message message, @DestinationVariable Long roomId) {
         log.info("joinUser/{roomId}로 발송된 메세지 : {}", message);
         if (message.getType() == Type.ENTER) {
