@@ -2,11 +2,9 @@ package com.ssafy.keepham.domain.box.controller;
 
 import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.common.error.BoxError;
-import com.ssafy.keepham.domain.box.dto.BoxDTO;
 import com.ssafy.keepham.domain.box.dto.BoxRequest;
 import com.ssafy.keepham.domain.box.dto.BoxResponse;
 import com.ssafy.keepham.domain.box.dto.BoxSaveRequest;
-import com.ssafy.keepham.domain.box.entity.Box;
 import com.ssafy.keepham.domain.box.service.BoxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +25,7 @@ public class SuperBoxController {
     // 함생성
     @PostMapping
     public Api<BoxResponse> createBox(@RequestBody BoxSaveRequest boxSaveRequest){
-
+        System.out.println("111"+boxSaveRequest.getDetailedAddress());
         var res =  boxService.saveBox(boxSaveRequest);
         return Api.OK(res);
     }
@@ -69,11 +67,17 @@ public class SuperBoxController {
 
     //박스 삭제 상태로 전환
     @PutMapping("/delete/{boxId}")
-    public Box deleteBox(@PathVariable Long boxId){
-        return boxService.deleteBox(boxId);
+    public Api<Object> deleteBox(@PathVariable Long boxId){
+
+        if(boxId<=0){
+            return Api.ERROR(BoxError.BOX_BAD_REQUEST, String.format("[%d]은/는 요휴하지 않는 id형식 입니다. 1이상의 숫자로 요청해 주세요.", boxId));
+        }
+
+        var res = boxService.deleteBox(boxId);
+
+        return Api.OK(res);
+
     }
-
-
 
 
 

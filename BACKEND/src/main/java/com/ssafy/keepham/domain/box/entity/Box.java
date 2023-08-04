@@ -13,7 +13,7 @@ public class Box {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long boxId;
+    private long id;
     //키값
 
     @Column(length = 255, nullable = false)
@@ -37,11 +37,19 @@ public class Box {
     private String detailedAddress;
     // 상세 주소
 
-    @Column(nullable = false)
-    private long jibunId;
-    //지번id
+    @Column(length = 5)
+    private String zipCode;
+    //우편번호
 
     @Column
     private long chatRoomId;
     //점유된 체팅방 id
+
+    @Column(nullable = false)
+    private double latitude;
+    //위도
+
+    @Column(nullable = false)
+    private double hardness;
+    //경도
 }

@@ -26,9 +26,15 @@ public class BoxResponse {
     private String detailedAddress;
     // 상세 주소
 
-    private long jibunId;
-    //지번id
+    private String zipCode;
+    //우편번호
 
     private long chatRoomId;
     //점유된 체팅방 id
+
+    private double latitude;
+    //위도
+
+    private double hardness;
+    //경도
 }

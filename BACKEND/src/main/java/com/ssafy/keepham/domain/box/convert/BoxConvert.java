@@ -13,7 +13,7 @@ import java.util.Optional;
 @Component
 public class BoxConvert {
 
-    public Box toSaveEntity(BoxSaveRequest boxSaveRequest, Long jibunId){
+    public Box toSaveEntity(BoxSaveRequest boxSaveRequest){
         return Optional.ofNullable(boxSaveRequest)
                 .map(it -> {
                     return Box.builder()
@@ -22,7 +22,9 @@ public class BoxConvert {
                             .isValid(true)
                             .address(boxSaveRequest.getAddress())
                             .detailedAddress((boxSaveRequest.getDetailedAddress()))
-                            .jibunId(jibunId)
+                            .zipCode(boxSaveRequest.getZipCode())
+                            .latitude(boxSaveRequest.getLatitude())
+                            .hardness(boxSaveRequest.getHardness())
                             .build();
                 }).orElseThrow(()->new ApiException(ErrorCode.NULL_POINT));
     }
@@ -36,8 +38,10 @@ public class BoxConvert {
                             .isValid(boxRequest.isValid())
                             .address(boxRequest.getAddress())
                             .detailedAddress((boxRequest.getDetailedAddress()))
-                            .jibunId(boxRequest.getJibunId())
+                            .zipCode(boxRequest.getZipCode())
                             .chatRoomId(boxRequest.getChatRoomId())
+                            .latitude(boxRequest.getLatitude())
+                            .hardness(boxRequest.getHardness())
                             .build();
                 }).orElseThrow(()->new ApiException(ErrorCode.NULL_POINT));
     }
@@ -46,14 +50,16 @@ public class BoxConvert {
         return Optional.ofNullable(box)
                 .map(it -> {
                     return BoxResponse.builder()
-                            .boxId(box.getBoxId())
+                            .boxId(box.getId())
                             .status(box.getStatus())
                             .type(box.getType())
                             .isValid(box.isValid())
                             .address(box.getAddress())
                             .detailedAddress((box.getDetailedAddress()))
-                            .jibunId(box.getJibunId())
+                            .zipCode(box.getZipCode())
                             .chatRoomId(box.getChatRoomId())
+                            .latitude(box.getLatitude())
+                            .hardness(box.getHardness())
                             .build();
                 }).orElseThrow(()->new ApiException(ErrorCode.NULL_POINT));
     }
