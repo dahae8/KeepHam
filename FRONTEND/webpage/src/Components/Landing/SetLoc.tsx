@@ -60,13 +60,12 @@ const modalStyle = {
 function SetLoc() {
   const [idx, setIdx] = React.useState("");
   const [open, setOpen] = React.useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const [currentLoc, setCurrentLoc] = React.useState("설정안됨");
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [locations, setLocations] = React.useState(["위치를 설정해 주세요"]);
 
   const menuItems = locations.map((location, locationIdx) => {
@@ -83,6 +82,9 @@ function SetLoc() {
     navigator.geolocation.getCurrentPosition((position) => {
       console.log(position.coords.latitude);
     });
+
+    setCurrentLoc("temp")
+    setLocations(["temp"])
   };
 
   return (
