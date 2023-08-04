@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./Landing.css";
-import BoxLists from "@/Components/Landing/BoxLists";
+import BoxLists from "@/Components/Landing/BoxLists.tsx";
 
 function BoxSearch() {
   const [boxLocation, searchlocation] = useState("");
