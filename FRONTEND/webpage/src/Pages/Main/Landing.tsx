@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./Landing.css";
 // import BoxLists from "@/Components/Landing/GetBoxList";
 
 function BoxSearch() {
