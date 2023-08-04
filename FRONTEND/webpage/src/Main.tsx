@@ -16,6 +16,7 @@ import RoomList, {
   loader as roomListLoader,
 } from "./Pages/RoomList/RoomList.tsx";
 import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
+import ChatRoom from "./Pages/Chatroom/ChatRoom.tsx";
 
 // Styles
 import "./Styles/global.ts";
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
         path: "/RoomList/:boxId",
         element: <RoomList />,
         loader: roomListLoader,
+      },
+      {
+        path: "/chatRoom/:boxId",
+        element: <ChatRoom />,
       },
       {
         path: "/CreateRoom",
