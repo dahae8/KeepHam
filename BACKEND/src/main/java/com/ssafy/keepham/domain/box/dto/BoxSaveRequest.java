@@ -8,19 +8,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BoxRequest {
-
-    @JsonSetter("status")
-    private String status;
-    //상태 => 정상, 고장, 수리중
+public class BoxSaveRequest {
 
     @JsonSetter("type")
     private String type;
     //유형 => 공용, 개인
-
-    @JsonSetter("                                                 ")
-    private boolean isValid;
-    //삭제된것인가 => true(삭제된 상태), false(삭제 되지 않은 상태)
 
     @JsonSetter("address")
     private String address;
@@ -33,10 +25,6 @@ public class BoxRequest {
     @JsonSetter("zipCode")
     private String zipCode;
     //우편번호
-
-    @JsonSetter("chatRoomId")
-    private long chatRoomId;
-    //점유된 체팅방 id
 
     @JsonSetter("latitude")
     private double latitude;
