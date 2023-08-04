@@ -28,7 +28,6 @@ function BoxLists() {
 
   async function fetchData() {
     const token = localStorage.getItem("AccessToken");
-    console.log("chatlist 토큰 : ", token);
     try {
       const response = await axios.get(
         "http://i9c104.p.ssafy.io:48080/api/rooms?status=OPEN",
@@ -41,7 +40,7 @@ function BoxLists() {
       setData(response.data.body);
       setLoading(false);
     } catch (error) {
-      setError("AWS 서버에서 데이터를 가져오는데 에러가 발생했습니다.");
+      setError("AWS 서버에서 데이터를 가져오는데 에러가 d발생했습니다.");
       setLoading(false);
     }
   }
