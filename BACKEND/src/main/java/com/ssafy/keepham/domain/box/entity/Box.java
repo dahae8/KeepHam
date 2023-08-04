@@ -13,7 +13,7 @@ public class Box {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long boxId;
+    private long id;
     //키값
 
     @Column(length = 255, nullable = false)

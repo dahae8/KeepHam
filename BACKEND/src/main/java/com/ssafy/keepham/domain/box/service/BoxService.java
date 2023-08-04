@@ -66,7 +66,7 @@ public class BoxService {
 
     private BoxDTO convertToDTO(Box box){
         BoxDTO dto = new BoxDTO();
-        dto.setBoxId(box.getBoxId());
+        dto.setBoxId(box.getId());
         dto.setAddress(box.getAddress());
         dto.setStatus(box.getStatus());
         dto.setType(box.getType());

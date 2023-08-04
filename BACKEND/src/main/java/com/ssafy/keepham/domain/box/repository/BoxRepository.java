@@ -9,4 +9,6 @@ public interface BoxRepository extends JpaRepository<Box,Long> {
     //삭제로 변환 안된 box들 조회
     List<Box> findByisValid(boolean isValid);
 
+    Box findFirstById(Long boxId);
+
 }

@@ -28,7 +28,7 @@ public class BoxConvert {
         return Optional.ofNullable(box)
                 .map(it -> {
                     return BoxResponse.builder()
-                            .boxId(box.getBoxId())
+                            .boxId(box.getId())
                             .address(box.getAddress())
                             .status(box.getStatus())
                             .type(box.getType())

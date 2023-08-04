@@ -60,7 +60,7 @@ public class SuperBoxController {
     //박스 수정
     @PutMapping("/{boxId}")
     public Box updateBox(@PathVariable Long boxId, @RequestBody Box box){
-        box.setBoxId(boxId);
+        box.setId(boxId);
         return boxService.updateBox(box);
     }
 
