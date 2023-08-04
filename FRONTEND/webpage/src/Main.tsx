@@ -9,7 +9,7 @@ import { store } from "@/Store/store.ts";
 import App from "./App/App.tsx";
 import SignUp, { action as signUpAction } from "@/Components/User/SignUp.tsx";
 import LogIn, { action as logInAction } from "@/Components/User/LogIn.tsx";
-import Main from "@/Pages/Main/Landing.tsx";
+import BoxSearch from "@/Pages/Main/Main2.tsx";
 import ChatList from "@/Components/Landing/ChatList.tsx";
 import User from "./Pages/User/User.tsx";
 import RoomList, {
@@ -30,7 +30,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Main />,
+        element: <BoxSearch />,
       },
       {
         path: "/chatList/:boxId",

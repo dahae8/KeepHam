@@ -1,6 +1,7 @@
 import { useState } from "react";
-import "./Landing.css";
+import "./Main2.css";
 import BoxLists from "@/Components/Landing/BoxLists";
+import { Typography } from "@mui/material";
 
 function BoxSearch() {
   const [boxLocation, searchlocation] = useState("");
@@ -14,6 +15,10 @@ function BoxSearch() {
     content = (
       <div className="mapcontainer">
         {/* <MapContainer /> */}
+        <Typography variant="h5" gutterBottom>
+          지금은 함 목록
+        </Typography>
+        <div></div>
         <BoxLists />
       </div>
     );
