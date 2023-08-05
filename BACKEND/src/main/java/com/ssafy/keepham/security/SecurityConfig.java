@@ -22,7 +22,7 @@ public class SecurityConfig {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
     private AuthenticationEntryPoint entryPoint;
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        String ALLOW_URL[] = {"/,/**,/sign-up", "/sign-in","/swagger-ui/**", "api/swagger-ui/**", "api/**"};
+        String ALLOW_URL[] = {"/,/**,/sign-up", "/sign-in","/swagger-ui/**", "/api/swagger-ui/**", "/api/**"};
         return http
 //                .formLogin().disable()
 //                .httpBasic().disable()
