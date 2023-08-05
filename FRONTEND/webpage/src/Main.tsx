@@ -10,10 +10,13 @@ import App from "./App/App.tsx";
 import Landing from "@/Pages/Landing/Landing.tsx";
 import ChatList from "@/Components/Landing/ChatList.tsx";
 import Auth from "./Pages/Auth/Auth.tsx";
+// import Main from "@/Pages/Main/Landing.tsx";
+// import User from "./Pages/User/User.tsx";
 import RoomList, {
   loader as roomListLoader,
 } from "./Pages/RoomList/RoomList.tsx";
 import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
+import ChatRoom from "./Pages/Chatroom/ChatRoom.tsx";
 
 // Styles
 import "./Styles/global.ts";
@@ -37,6 +40,10 @@ const router = createBrowserRouter([
         path: "/App/RoomList/:boxId",
         element: <RoomList />,
         loader: roomListLoader,
+      },
+      {
+        path: "/chatRoom/:boxId",
+        element: <ChatRoom />,
       },
       {
         path: "/App/CreateRoom",

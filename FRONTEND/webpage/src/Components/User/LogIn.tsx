@@ -1,8 +1,14 @@
 // eslint-disable-next-line import/named
-import { ActionFunctionArgs, Form, redirect } from "react-router-dom";
+import {
+  ActionFunctionArgs,
+  Form,
+  redirect,
+  useActionData,
+} from "react-router-dom";
 import { TextField, Button, Grid } from "@mui/material";
 import { store } from "@/Store/store.ts";
 import { signIn } from "@/Store/userSlice.ts";
+import axios from "axios";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export async function action({ request }: ActionFunctionArgs) {
@@ -12,12 +18,27 @@ export async function action({ request }: ActionFunctionArgs) {
 
   // 로그인 버튼 눌렀을 경우
 
-  const userId = formDatas.id.toString()
-  const userPw = formDatas.pw.toString()
+  const userId = formDatas.id.toString();
+  const userPw = formDatas.pw.toString();
 
-  console.log(userPw);
+  const url = "http://i9c104.p.ssafy.io:48080/api/sign-in";
+  const data = {
+    user_id: userId,
+    password: userPw,
+  };
 
-  // 검증코드 작성 필요!
+  try {
+    // 서버로 POST 요청 보내기
+    const response = await axios.post(url, data);
+
+    // 응답 데이터를 콘솔에 출력
+    localStorage.setItem("AccessToken", response.data.body.access_token);
+  } catch (error) {
+    // console.error("Error sending request:", error.response.data.result);
+    return "로그인실패";
+  }
+
+  //TODO: 검증코드 작성 필요!
 
   store.dispatch(signIn({ id: userId }));
 
@@ -25,10 +46,15 @@ export async function action({ request }: ActionFunctionArgs) {
   sessionStorage.setItem("loginState", "isLoggedIn");
   sessionStorage.setItem("loginId", userId);
 
-  return redirect('/');
+  return redirect("/");
 }
 
 function LogIn() {
+  const error = useActionData();
+  console.log(error);
+
+  if (error === "로그인실패") {
+  }
   return (
     <>
       <div className="flex items-center justify-center">
