@@ -94,14 +94,6 @@ pnpm preview
 
 ## 디자인 / CSS
 
-### className으로 style 적용하기
-
-- UI 디자인 용
-- 일반 HTML 태그에서만 사용
-- `className` 속성에 적용
-
-[Tailwind CSS](https://tailwindcss.com/docs/flex)
-
 ### MUI
 
 [MUI](https://mui.com/material-ui/react-button/)
