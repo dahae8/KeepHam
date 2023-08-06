@@ -153,14 +153,7 @@ public class TokenProvider {
                         .build();
 
                 try {
-                        String token ="";
-                        String[] parts = auth.split("\\s+");
-                        if(parts.length == 2){
-                                token = parts[1];
-                        } else {
-                                token = parts[0];
-                        }
-                        var result = parser.parseClaimsJws(token);
+                        var result = parser.parseClaimsJws(auth);
                         return result;
                 } catch (Exception e){
                         if(e instanceof SignatureException) {

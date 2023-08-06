@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Api<Object>> exception(
             Exception exception
     ){
-        log.error("", exception);
+        log.error("발생 에러 : {}", exception.getMessage());
 
         return ResponseEntity
                 .status(500)
