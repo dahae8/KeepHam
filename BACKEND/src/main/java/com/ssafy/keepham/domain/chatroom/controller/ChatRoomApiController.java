@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class ChatRoomApiController {
     @Operation(summary = "방생성")
     @PostMapping("/rooms")
     private Api<ChatRoomResponse> createRoom(
-            @RequestBody ChatRoomRequest chatRoomRequest
+            @Validated @RequestBody ChatRoomRequest chatRoomRequest
     ){
         chatRoomRequest.setSuperUserId(tempNickName);
         var res = chatRoomService.createRoom(chatRoomRequest);
