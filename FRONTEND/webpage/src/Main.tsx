@@ -29,24 +29,24 @@ const router = createBrowserRouter([
     element: <Landing />,
   },
   {
-    path: "/App",
+    path: "/Home",
     element: <App />,
     children: [
       {
-        path: "/App/chatList/:boxId",
+        path: "/Home/chatList/:boxId",
         element: <ChatList />,
       },
       {
-        path: "/App/RoomList/:boxId",
+        path: "/Home/RoomList/:boxId",
         element: <RoomList />,
         loader: roomListLoader,
       },
       {
-        path: "/chatRoom/:boxId",
+        path: "/Home/chatRoom/:boxId",
         element: <ChatRoom />,
       },
       {
-        path: "/App/CreateRoom",
+        path: "/Home/CreateRoom",
         element: <CreateRoom />,
       },
     ],

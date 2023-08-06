@@ -10,7 +10,18 @@ function Landing() {
 
   return (
     <>
-      <div className="h-screen w-screen bg-[url('/bg.jpg')] bg-cover flex items-center justify-center relative">
+      <Box
+        component="div"
+        sx={{
+          height: "100vh",
+          width: "100vw",
+          backgroundImage: "url('/bg.jpg')",
+          backgroundSize: "cover",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: { xs: "start", sm: "center" },
+        }}
+      >
         <Box
           sx={{
             width: { xs: "100%", sm: 500 },
@@ -20,10 +31,9 @@ function Landing() {
             borderRadius: { xs: 0, sm: 12 },
             display: "flex",
             flexDirection: "column",
-            justifyContent: "start",
+            justifyContent: "center",
             alignItems: "center",
             boxShadow: 3,
-            mr: { xs: 0, sm: 8 },
           }}
         >
           <Typography variant="h4">배달음식 보관함 플랫폼</Typography>
@@ -43,7 +53,7 @@ function Landing() {
           </Box>
           <SetLoc />
         </Box>
-      </div>
+      </Box>
     </>
   );
 }

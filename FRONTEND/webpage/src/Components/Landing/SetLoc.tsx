@@ -9,9 +9,12 @@ import {
   Typography,
   IconButton,
   Modal,
+  Grid,
 } from "@mui/material";
-import { MyLocation, TravelExplore } from "@mui/icons-material";
-import React from "react";
+import { MyLocation } from "@mui/icons-material";
+import React, { useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const modalStyle = {
   position: "absolute",
@@ -26,37 +29,6 @@ const modalStyle = {
   borderRadius: 4,
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-// function placeSearchCB(data: any, status: any) {
-//   if (status === window.kakao.maps.services.Status.OK) {
-//     for (let i = 0; i < data.length; i++) {
-//       console.log(data[i]);
-//     }
-//   }
-// }
-
-// async function getLocations() {
-//   const mapApiPromise = new Promise((resolve) => {
-//     const script = document.createElement("script");
-//     script.src =
-//       "//dapi.kakao.com/v2/maps/sdk.js?appkey=ae6ec333dd28b629021d3a3d4e122d34&libraries=services&autoload=false";
-//     document.head.appendChild(script);
-//     script.onload = () => {
-//       resolve("카카오맵 로드 완료!");
-//     };
-//   });
-
-//   const result = await mapApiPromise;
-
-//   // console.log(result);
-
-//   const ps = new window.kakao.maps.services.Places();
-
-//   ps.keywordSearch("이태원 맛집", placeSearchCB);
-// }
-
-// getLocations();
-
 function SetLoc() {
   const [idx, setIdx] = React.useState("");
   const [open, setOpen] = React.useState(false);
@@ -68,97 +40,191 @@ function SetLoc() {
 
   const [locations, setLocations] = React.useState(["위치를 설정해 주세요"]);
 
-  const menuItems = locations.map((location, locationIdx) => {
-    return <MenuItem key={locationIdx}>{location}</MenuItem>;
-  });
+  const [latLong, setLatLong] = React.useState({ lat: 0, long: 0 });
 
-  // 함 선택
-  const handleChange = (event: SelectChangeEvent) => {
-    setIdx(event.target.value as string);
-  };
+  const navigate = useNavigate();
+
+  // 행정 주소 받아오기
+  useEffect(() => {
+    async function get() {
+      const headers = {
+        Authorization: "KakaoAK 51817020286485699aadcd83f8b19cce",
+      };
+
+      const params = {
+        x: latLong.long,
+        y: latLong.lat,
+      };
+
+      const result = await axios({
+        method: "get",
+        headers: headers,
+        params: params,
+        url: "https://dapi.kakao.com/v2/local/geo/coord2regioncode",
+        data: {},
+      });
+
+      console.log(result.data);
+
+      setCurrentLoc(
+        result.data.documents[0].region_1depth_name +
+          " " +
+          result.data.documents[0].region_2depth_name
+      );
+
+      const dataLength = result.data.documents.length;
+
+      const tempLocation: string[] = [];
+
+      for (let i = 0; i < dataLength; i++) {
+        tempLocation.push(result.data.documents[i].region_3depth_name);
+      }
+
+      setLocations(tempLocation);
+    }
+
+    if (latLong.lat !== 0) {
+      get();
+    }
+  }, [latLong]);
 
   // 위치정보 수집
   const setGeolocation = () => {
     navigator.geolocation.getCurrentPosition((position) => {
-      console.log(position.coords.latitude);
+      setLatLong({
+        lat: position.coords.latitude,
+        long: position.coords.longitude,
+      });
     });
 
-    setCurrentLoc("temp")
-    setLocations(["temp"])
+    setCurrentLoc("temp");
+    setLocations(["temp"]);
   };
+
+  // 선택항목 업데이트
+  const menuItems = locations.map((location, locationIdx) => {
+    return (
+      <MenuItem key={locationIdx} value={locationIdx}>
+        {location}
+      </MenuItem>
+    );
+  });
+
+  // 행정구역 선택
+  const handleChange = (event: SelectChangeEvent) => {
+    setIdx(event.target.value as string);
+  };
+
+  //행정구역 확정
+  const confirmChange = () => {
+
+    if (idx !== "" && locations[0] !== "위치를 설정해 주세요")
+    {
+      const selectedIdx = Number(idx);
+      const entireLocation = currentLoc + locations[selectedIdx];
+
+      console.log(entireLocation);
+
+      const sessionStorage = window.sessionStorage;
+      sessionStorage.setItem("userLocation", entireLocation);
+      
+      navigate("/Home")
+    }
+    
+  }
 
   return (
     <>
       <Typography variant="h6">배달을 받으실 지역을 설정해주세요</Typography>
+
+      {/* 리스트 */}
       <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 4,
-        }}
-      >
-        <FormControl
           sx={{
-            width: 200,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 4,
           }}
         >
-          <InputLabel>🌐</InputLabel>
-          <Select value={idx} label="위치" onChange={handleChange}>
-            {menuItems}
-          </Select>
-        </FormControl>
-        <Button variant="contained">확인</Button>
-      </Box>
+          <FormControl
+            sx={{
+              width: 200,
+            }}
+          >
+            <InputLabel>🌐</InputLabel>
+            <Select value={idx} label="위치" onChange={handleChange}>
+              {menuItems}
+            </Select>
+          </FormControl>
+          <Button variant="contained" onClick={confirmChange}>확인</Button>
+        </Box>
+
+      {/* 위치 권한 / 설정 */}
+      <Grid
+        container
+        sx={{
+          marginTop: 2,
+          width: 300,
+        }}
+      >
+        <Grid item xs={3}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "start",
+              alignItems: "center",
+              height: 40,
+            }}
+          >
+            <Typography variant="body2">현위치 :</Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={5}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "start",
+              alignItems: "center",
+              height: 40,
+            }}
+          >
+            <Typography variant="body1">{currentLoc}</Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={2}>
+          <IconButton onClick={setGeolocation}>
+            <MyLocation />
+          </IconButton>
+        </Grid>
+        <Grid item xs={2}>
+          <Box
+            onClick={() => {
+              handleOpen();
+            }}
+            sx={{
+              display: "flex",
+              justifyContent: "start",
+              alignItems: "center",
+              height: 40,
+            }}
+          >
+            <Typography variant="body2">검색</Typography>
+          </Box>
+        </Grid>
+      </Grid>
       <Box
         sx={{
           display: "flex",
           flexDirection: "row",
           justifyContent: "start",
           alignItems: "center",
-          width: 240,
+          width: 300,
           gap: 2,
           marginTop: 2,
         }}
-      >
-        <Typography variant="body2">현위치 :</Typography>
-        {currentLoc !== "설정안됨" ? (
-          <Typography variant="h6">{currentLoc}</Typography>
-        ) : (
-          <>
-            <Box
-              onClick={setGeolocation}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <IconButton>
-                <MyLocation />
-              </IconButton>
-              <Typography variant="body2">위치권한 허용</Typography>
-            </Box>
-          </>
-        )}
-      </Box>
+      ></Box>
 
-      <Box
-        onClick={() => {
-          handleOpen();
-        }}
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <IconButton>
-          <TravelExplore />
-        </IconButton>
-        <Typography variant="body2">위치 검색</Typography>
-      </Box>
-
+      {/* 모달 */}
       <Modal
         open={open}
         onClose={handleClose}

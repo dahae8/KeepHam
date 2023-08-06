@@ -3,32 +3,51 @@ import { Box, Tab, Tabs } from "@mui/material";
 import React, { useState } from "react";
 import { useAppSelector, useAppDispatch } from "@/Store/hooks.ts";
 import { switchTab } from "@/Store/tabSlice.ts";
-import LogIn from "@/Components/User/LogIn.tsx";
-import SignUp from "@/Components/User/SignUp.tsx";
+import LogIn from "@/Components/Auth/LogIn.tsx";
+import SignUp from "@/Components/Auth/SignUp.tsx";
 
 function Auth() {
-  const [currentIdx, setCurrentIdx ] = useState(0);
+  const [currentIdx, setCurrentIdx] = useState(0);
   const receivedIdx: number = useAppSelector((state) => state.tab.idx);
 
-  if(currentIdx !== receivedIdx)
-  {
-    setCurrentIdx(receivedIdx)
+  if (currentIdx !== receivedIdx) {
+    setCurrentIdx(receivedIdx);
   }
 
   const dispatch = useAppDispatch();
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     dispatch(switchTab({ setIdx: newValue }));
-    setCurrentIdx(newValue)
+    setCurrentIdx(newValue);
   };
 
   return (
     <>
-      <div className="h-screen w-screen bg-[url('/user_bg.jpg')] bg-cover flex items-center justify-end relative">
-        <Link to={"/"}>
-          <div className="absolute top-20 left-40 w-[300px]">
-            <img src="/logoImageWithText_white.svg" />
-          </div>
+      <Box
+        component="div"
+        sx={{
+          height: "100vh",
+          width: "100vw",
+          backgroundImage: "url('/user_bg.jpg')",
+          backgroundSize: "cover",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: { xs: "start", sm: "center" },
+          alignItems: { xs: "center", sm: "end" },
+        }}
+      >
+        <Link to={"/Home"}>
+          <Box
+            sx={{
+              backgroundImage: "url('/logoImageWithText_white.svg')",
+              backgroundSize: "cover",
+              width: 300,
+              height: 147,
+              position: { xs: "static", sm: "absolute" },
+              top: { xs: 0, sm: 80 },
+              left: { xs: 0, sm: 160 },
+            }}
+          ></Box>
         </Link>
         <Box
           sx={{
@@ -45,15 +64,19 @@ function Auth() {
             mr: { xs: 0, sm: 8 },
           }}
         >
-          <Tabs value={currentIdx} onChange={handleChange} sx={{
-            mb: 4,
-          }}>
+          <Tabs
+            value={currentIdx}
+            onChange={handleChange}
+            sx={{
+              mb: 4,
+            }}
+          >
             <Tab label="로그인" />
             <Tab label="회원가입" />
           </Tabs>
-          {currentIdx === 0 ? (<LogIn />) : (<SignUp />)}
+          {currentIdx === 0 ? <LogIn /> : <SignUp />}
         </Box>
-      </div>
+      </Box>
     </>
   );
 }
