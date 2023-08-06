@@ -21,17 +21,17 @@ import AlbumList from "@/Components/RoomList/AlbumList.tsx";
 const drawerWidth = 300;
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const boxId = params.boxId;
+  const areaId = params.areaId;
   // 서버정보 필요
   const boxName = "다농 오피스텔";
   const boxAddress = "광주 장덕동";
   const boxStatus = "정상";
 
-  return { boxId, boxName, boxAddress, boxStatus };
+  return { areaId, boxName, boxAddress, boxStatus };
 }
 
 type boxInfoType = {
-  boxId: number;
+  areaId: number;
   boxName: string;
   boxAddress: string;
   boxStatus: string;
@@ -87,7 +87,7 @@ export default function RoomList() {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h5">{boxInfo.boxName}</Typography>
+        <Typography variant="h5">채팅방 목록</Typography>
       </div>
       <Divider />
       <div className="relative w-full min-h-[600px]" id="drawer-container">
@@ -151,9 +151,9 @@ export default function RoomList() {
             }}
           >
             {albumMode ? (
-              <AlbumList boxId={boxInfo.boxId} />
+              <AlbumList areaId={boxInfo.areaId} />
             ) : (
-              <TableList boxId={boxInfo.boxId} />
+              <TableList areaId={boxInfo.areaId} />
             )}
           </Box>
         </div>

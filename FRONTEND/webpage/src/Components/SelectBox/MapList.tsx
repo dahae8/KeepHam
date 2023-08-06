@@ -1,14 +1,14 @@
 
 
 type propsType = {
-  location: string;
+  zipCode: number;
 };
 
 function MapList(props: propsType) {
 
-  const userLocation = props.location;
+  const userZipCode = props.zipCode;
 
-  console.log(userLocation);
+  console.log(userZipCode);
   
   return (
     <>

@@ -8,7 +8,7 @@ import { TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem, Sel
 import { useState } from "react";
 
 
-function SignUp() {
+function UserInfo() {
   const [idHelper, setIdHelper] = useState(" ");
   const [pwHelper, setPwHelper] = useState(" ");
   const [pw2Helper, setPw2Helper] = useState(" ");
@@ -205,4 +205,4 @@ function SignUp() {
   );
 }
 
-export default SignUp;
+export default UserInfo;

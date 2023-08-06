@@ -6,10 +6,11 @@ import { Provider } from "react-redux";
 import { store } from "@/Store/store.ts";
 
 // Pages
-import App from "./App/App.tsx";
+import App from "@/App/App.tsx";
 import Landing from "@/Pages/Landing/Landing.tsx";
 import ChatList from "@/Components/Landing/ChatList.tsx";
-import Auth from "./Pages/Auth/Auth.tsx";
+import Auth from "@/Pages/Auth/Auth.tsx";
+import UserInfo from "@/Pages/UserInfo/UserInfo.tsx";
 // import Main from "@/Pages/Main/Landing.tsx";
 // import User from "./Pages/User/User.tsx";
 import RoomList, {
@@ -17,7 +18,7 @@ import RoomList, {
 } from "./Pages/RoomList/RoomList.tsx";
 import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
 import ChatRoom from "./Pages/Chatroom/ChatRoom.tsx";
-import SelectRoom from "./Pages/SelectRoom/SelectRoom.tsx";
+import ServiceArea from "./Pages/ServiceArea/ServiceArea.tsx";
 
 // Styles
 import "./Styles/global.ts";
@@ -34,15 +35,15 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/Home/SelectRoom",
-        element: <SelectRoom />,
+        path: "/Home/ServiceArea",
+        element: <ServiceArea />,
       },
       {
-        path: "/Home/chatList/:boxId",
+        path: "/Home/ChatList/:boxId",
         element: <ChatList />,
       },
       {
-        path: "/Home/RoomList/:boxId",
+        path: "/Home/RoomList/:areaId",
         element: <RoomList />,
         loader: roomListLoader,
       },
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
         path: "/Home/CreateRoom",
         element: <CreateRoom />,
       },
+      {
+        path: "/Home/UserInfo",
+        element: <UserInfo />
+      }
     ],
   },
   {
