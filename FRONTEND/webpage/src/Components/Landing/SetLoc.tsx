@@ -46,9 +46,12 @@ function SetLoc() {
 
   // 행정 주소 받아오기
   useEffect(() => {
+
+    const api: string = "KakaoAK " + import.meta.env.VITE_KAKAO_REST_API;
+
     async function get() {
       const headers = {
-        Authorization: "KakaoAK 51817020286485699aadcd83f8b19cce",
+        Authorization: api,
       };
 
       const params = {
@@ -96,9 +99,6 @@ function SetLoc() {
         long: position.coords.longitude,
       });
     });
-
-    setCurrentLoc("temp");
-    setLocations(["temp"]);
   };
 
   // 선택항목 업데이트
