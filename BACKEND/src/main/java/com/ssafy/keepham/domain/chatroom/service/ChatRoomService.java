@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,13 @@ public class ChatRoomService {
                     return it;
                 })
                 .collect(Collectors.toList());
+    }
+
+    // 채팅방 상태 close로 변경
+    @Transactional
+    public void closeRoom(Long roomId){
+        var room = chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN);
+        room.setStatus(ChatRoomStatus.CLOSE);
     }
 
 
