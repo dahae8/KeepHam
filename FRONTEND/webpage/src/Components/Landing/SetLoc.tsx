@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
   Button,
@@ -8,7 +9,6 @@ import {
   SelectChangeEvent,
   Typography,
   IconButton,
-  Modal,
   Grid,
 } from "@mui/material";
 import { MyLocation } from "@mui/icons-material";
@@ -16,29 +16,18 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "1px solid #000",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: 4,
-};
+declare global {
+  interface Window {
+    daum: any;
+  }
+}
 
 function SetLoc() {
   const [idx, setIdx] = React.useState("");
-  const [open, setOpen] = React.useState(false);
 
   const [currentLoc, setCurrentLoc] = React.useState("설정안됨");
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const [locations, setLocations] = React.useState(["위치를 설정해 주세요"]);
+  const [locations, setLocations] = React.useState([{addressName: "위치를 설정해 주세요", zipCode: 0}]);
 
   const [latLong, setLatLong] = React.useState({ lat: 0, long: 0 });
 
@@ -54,36 +43,98 @@ function SetLoc() {
         Authorization: api,
       };
 
-      const params = {
+      // const params = {
+      //   x: latLong.long,
+      //   y: latLong.lat,
+      // };
+
+      // const result = await axios({
+      //   method: "get",
+      //   headers: headers,
+      //   params: params,
+      //   url: "https://dapi.kakao.com/v2/local/geo/coord2regioncode",
+      //   data: {},
+      // });
+
+      // console.log(result.data);
+
+      // setCurrentLoc(
+      //   result.data.documents[0].region_1depth_name +
+      //     " " +
+      //     result.data.documents[0].region_2depth_name
+      // );
+
+      const csParams = {
+        query: "편의점",
+        category_group_code: "CS2",
         x: latLong.long,
         y: latLong.lat,
-      };
-
-      const result = await axios({
+      }
+      
+      const csResult = await axios({
         method: "get",
         headers: headers,
-        params: params,
-        url: "https://dapi.kakao.com/v2/local/geo/coord2regioncode",
+        params: csParams,
+        url: "https://dapi.kakao.com/v2/local/search/keyword",
         data: {},
       });
 
-      console.log(result.data);
+      const dongArr: string[] = []
 
-      setCurrentLoc(
-        result.data.documents[0].region_1depth_name +
-          " " +
-          result.data.documents[0].region_2depth_name
-      );
+      let dataSize = 0;
 
-      const dataLength = result.data.documents.length;
+      const filteredResult = csResult.data.documents.filter((location: any) => {
+        const adr: string = location.address_name;
 
-      const tempLocation: string[] = [];
+        const startIdx: number = adr.indexOf("구 ") + 2;
+        const endIdx: number = adr.indexOf("동 ") + 1;
 
-      for (let i = 0; i < dataLength; i++) {
-        tempLocation.push(result.data.documents[i].region_3depth_name);
-      }
+        const dong: string = adr.substring(startIdx, endIdx);
+        
+        if (dongArr.includes(dong)) {
+          return false
+        } else {
+          dongArr.push(dong);
+          dataSize += 1;
+          return true;
+        }
+      })
 
-      setLocations(tempLocation);
+      const tempLocation: {
+        addressName: string,
+        zipCode: number
+      }[] = [];
+
+      filteredResult.forEach(async (location: any) => {
+        const adr: string = location.address_name;
+
+        const idx: number = adr.indexOf("동 ");
+
+        const shortName: string = adr.substring(0, idx + 1)
+
+        const adParams = {
+          query: adr,
+        }
+        
+        const adResult = await axios({
+          method: "get",
+          headers: headers,
+          params: adParams,
+          url: "https://dapi.kakao.com/v2/local/search/address",
+          data: {},
+        });
+        
+        const zipCode = adResult.data.documents[0].road_address.zone_no;
+
+        tempLocation.push({addressName: shortName, zipCode: zipCode})
+
+        if(tempLocation.length === dataSize)
+        {
+          setCurrentLoc(tempLocation[0].addressName)
+          setLocations(tempLocation);
+        }
+      });
+
     }
 
     if (latLong.lat !== 0) {
@@ -105,7 +156,7 @@ function SetLoc() {
   const menuItems = locations.map((location, locationIdx) => {
     return (
       <MenuItem key={locationIdx} value={locationIdx}>
-        {location}
+        {location.addressName}
       </MenuItem>
     );
   });
@@ -118,19 +169,58 @@ function SetLoc() {
   //행정구역 확정
   const confirmChange = () => {
 
-    if (idx !== "" && locations[0] !== "위치를 설정해 주세요")
+    if (idx !== "" && locations[0].addressName !== "위치를 설정해 주세요")
     {
       const selectedIdx = Number(idx);
-      const entireLocation = currentLoc + locations[selectedIdx];
-
-      console.log(entireLocation);
+      const userLocation = locations[selectedIdx].addressName;
 
       const sessionStorage = window.sessionStorage;
-      sessionStorage.setItem("userLocation", entireLocation);
+      sessionStorage.setItem("userLocation", userLocation);
+      sessionStorage.setItem("userZipCode", locations[selectedIdx].zipCode.toString());
       
       navigate("/Home")
     }
     
+  }
+
+  async function addressSearch() {
+    const zoneApiPromise = new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+      document.head.appendChild(script);
+      script.onload = () => {
+        resolve("우편번호 서비스 로드 완료!");
+      };
+    });
+
+    const result = await zoneApiPromise;
+
+    alert(result);
+
+    new window.daum.Postcode({
+      oncomplete: function(data: any) {
+        console.log(data);
+
+
+        const tempLocation: {
+          addressName: string,
+          zipCode: number
+        }[] = [];
+
+        const adr: string = data.jibunAddress;
+
+        const idx: number = adr.indexOf("동 ");
+
+        const shortName: string = adr.substring(0, idx + 1)
+
+        const zipCode: number = data.zonecode;
+
+        tempLocation.push({addressName: shortName, zipCode: zipCode});
+
+        setCurrentLoc(tempLocation[0].addressName)
+        setLocations(tempLocation);
+      }
+  }).open();
   }
 
   return (
@@ -199,7 +289,7 @@ function SetLoc() {
         <Grid item xs={2}>
           <Box
             onClick={() => {
-              handleOpen();
+              addressSearch();
             }}
             sx={{
               display: "flex",
@@ -223,23 +313,6 @@ function SetLoc() {
           marginTop: 2,
         }}
       ></Box>
-
-      {/* 모달 */}
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={modalStyle}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
-        </Box>
-      </Modal>
     </>
   );
 }

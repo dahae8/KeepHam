@@ -17,6 +17,7 @@ import RoomList, {
 } from "./Pages/RoomList/RoomList.tsx";
 import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
 import ChatRoom from "./Pages/Chatroom/ChatRoom.tsx";
+import SelectRoom from "./Pages/SelectRoom/SelectRoom.tsx";
 
 // Styles
 import "./Styles/global.ts";
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
     path: "/Home",
     element: <App />,
     children: [
+      {
+        path: "/Home/SelectRoom",
+        element: <SelectRoom />,
+      },
       {
         path: "/Home/chatList/:boxId",
         element: <ChatList />,
