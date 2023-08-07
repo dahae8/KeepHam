@@ -23,8 +23,8 @@ export default function MiniGame() {
 
   const users = ['사용자1', '사용자2', '사용자3']
 
-  const getRandomIndex = function(length){
-    return parseInt(Math.random() * length)
+  const getRandomIndex = function(length:number){
+    return parseInt((Math.random() * length).toString())
   }
 
   return (

@@ -1,4 +1,3 @@
-import React from 'react';
 import Grid from '@mui/material/Grid'
 import Wrapper from './styles.tsx';
 
@@ -9,7 +8,7 @@ function AboutMe (){
           <h2>ABOUT ME</h2>
           <Grid className="picture"></Grid>
           <h3>Jeniffer LEE</h3>
-          <Grid container justify="center" className="info">
+          <Grid>
             <Grid item className="phone">
               +82 10 0000 0000
             </Grid>

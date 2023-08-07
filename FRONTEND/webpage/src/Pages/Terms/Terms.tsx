@@ -1,4 +1,3 @@
-import React from 'react';
 import Grid from '@mui/material/Grid'
 import Wrapper from './styles.tsx';
 
@@ -76,6 +75,6 @@ function Terms (){
         </Grid>
     </Wrapper>    
   );
-};
+}
 
 export default Terms;
