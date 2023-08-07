@@ -40,6 +40,9 @@ public class ChatRoomService {
     public ChatRoomResponse createRoom(ChatRoomRequest chatRoomRequest){
         var entity = chatRoomConverter.toEntity(chatRoomRequest);
         var box = boxRepository.findFirstById(chatRoomRequest.getBoxId());
+        if (box.isUsed()) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "이미 사용중인 box입니다.");
+        }
         box.setUsed(true);
         entity.setBox(box);
         return Optional.ofNullable(entity)
