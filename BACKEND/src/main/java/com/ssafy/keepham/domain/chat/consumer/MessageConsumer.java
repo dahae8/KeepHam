@@ -15,7 +15,7 @@ public class MessageConsumer {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    @KafkaListener(topics = "kafka-chat", groupId = "chatting")
+    @KafkaListener(topics = "kafka-chat", groupId = "chatting-" + "${random.uuid}")
     public void getMessage(Message message){
         log.info("리스너를 통해 전달중");
         messagingTemplate.convertAndSend("/subscribe/message/" + message.getRoomId(), message);

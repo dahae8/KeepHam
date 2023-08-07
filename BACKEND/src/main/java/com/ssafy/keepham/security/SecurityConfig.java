@@ -19,10 +19,10 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-    private AuthenticationEntryPoint entryPoint;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AuthenticationEntryPoint entryPoint;
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        String ALLOW_URL[] = {"/,/**,/sign-up", "/sign-in","/swagger-ui/**", "/api/swagger-ui/**", "/api/**"};
+        String ALLOW_URL[] = {"/,/**,/sign-up", "/sign-in","/swagger-ui/**", "/api/swagger-ui/**", "/api/**", "/v3/api-docs/**"};
         return http
 //                .formLogin().disable()
 //                .httpBasic().disable()
@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated())
             .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
                 SessionCreationPolicy.STATELESS))
-//            .addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
 //                .exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint))
                 .build();
     }
