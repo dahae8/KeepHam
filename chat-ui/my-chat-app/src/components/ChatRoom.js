@@ -26,7 +26,7 @@ const ChatRoom = ({ roomId, nickname }) => {
 
   // 웹소켓 연결
   useEffect(() => {
-    const socket = new SockJS("http://localhost:8080/api/my-chat");
+    const socket = new SockJS("http://i9c104.p.ssafy.io:48080/api/my-chat");
     const stomp = Stomp.over(socket);
     stomp.connect({}, () => {
       setStompClient(stomp);

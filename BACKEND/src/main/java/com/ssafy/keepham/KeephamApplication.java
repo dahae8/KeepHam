@@ -1,5 +1,7 @@
 package com.ssafy.keepham;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.servers.Server;
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +13,7 @@ import java.util.TimeZone;
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableKafka
+@OpenAPIDefinition(servers = {@Server(url = "https://i9c104.p.ssafy.io", description = "server")})
 public class KeephamApplication {
 
     @PostConstruct

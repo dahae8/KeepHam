@@ -16,9 +16,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -37,7 +39,7 @@ public class ChatRoomApiController {
     @Operation(summary = "방생성")
     @PostMapping("/rooms")
     private Api<ChatRoomResponse> createRoom(
-            @RequestBody ChatRoomRequest chatRoomRequest
+            @Validated @RequestBody ChatRoomRequest chatRoomRequest
     ){
         chatRoomRequest.setSuperUserId(tempNickName);
         var res = chatRoomService.createRoom(chatRoomRequest);
@@ -66,20 +68,15 @@ public class ChatRoomApiController {
         return Api.OK(chatRoomService.findOpenedRoomByBoxId(status, page, pageSize, boxId));
     }
 
-    @Operation(summary = "채팅방 입장")
-    @GetMapping("/{roomId}")
-    public Api<Object> enterRoom(@PathVariable Long roomId){
-        if (chatRoomManager.isSecretRoom(roomId)){
-           throw new ApiException(ChatRoomError.SECRET_ROOM);
+
+    @Operation(summary = "채팅방 입장. 비밀방일시 password 전달 필요")
+    @PostMapping("/rooms/{roomId}")
+    public Api<Object> enterSecretRoom(@PathVariable Long roomId, @RequestBody(required = false) RoomPassword password){
+        if (!chatRoomManager.isSecretRoom(roomId)){
+            chatRoomManager.userJoin(roomId, tempNickName);
+            return Api.OK(tempNickName);
         }
 
-        chatRoomManager.userJoin(roomId, tempNickName);
-        return Api.OK(tempNickName);
-    }
-
-    @Operation(summary = "비밀 방 입장")
-    @PostMapping("/{roomId}")
-    public Api<Object> enterSecretRoom(@PathVariable Long roomId, @RequestBody RoomPassword password){
         if (chatRoomManager.isPasswordCorrect(roomId, password.getPassword())){
             chatRoomManager.userJoin(roomId, tempNickName);
             return Api.OK(tempNickName);
@@ -88,18 +85,35 @@ public class ChatRoomApiController {
         }
     }
 
+    @Operation(summary = "방 삭제 = 상태를 close로 변경")
+    @PutMapping("/rooms/{roomId}")
+    public Api<Boolean> closeRoom(@PathVariable Long roomId){
+        chatRoomService.closeRoom(roomId);
+        return Api.OK(true);
+    }
+
     @Operation(summary = "해당 채팅방에 현재 유저 전부 삭제")
-    @GetMapping("/{roomId}/clear")
+    @GetMapping("rooms/{roomId}/clear")
     public Api<String> clearRoom(@PathVariable Long roomId){
         chatRoomManager.allUserClear(roomId);
         return Api.OK("전체 삭제 성공");
     }
 
     @Operation(summary = "해당 채팅방의 모든 유저 닉네임 조회")
-    @GetMapping("/{roomId}/allUser")
-    private Api<Set<String>> getAllUser(@PathVariable Long roomId){
+    @GetMapping("rooms/{roomId}/users")
+    public Api<Set<String>> getAllUser(@PathVariable Long roomId){
         return Api.OK(chatRoomManager.getAllUser(roomId));
     }
+
+    @Operation(summary = "해팅방 인원 중 랜덤으로 사람 뽑기")
+    @GetMapping("/rooms/{roomId}/random")
+    public Api<Set<String>> getRandomUser(@PathVariable Long roomId, @RequestParam int count){
+        Set<String> users = chatRoomManager.getAllUser(roomId);
+        Set<String> randomPick = chatRoomManager.pickRandomUsers(users, count);
+
+        return Api.OK(randomPick);
+    }
+
 
 
 
