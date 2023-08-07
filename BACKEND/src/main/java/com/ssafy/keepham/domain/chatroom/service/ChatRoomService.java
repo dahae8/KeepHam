@@ -36,9 +36,14 @@ public class ChatRoomService {
     private final TokenProvider tokenProvider;
     //TODO TokenProvider 유호성 검사 후 내부 정보에 맞춰 수정하기
 
+    @Transactional
     public ChatRoomResponse createRoom(ChatRoomRequest chatRoomRequest){
         var entity = chatRoomConverter.toEntity(chatRoomRequest);
         var box = boxRepository.findFirstById(chatRoomRequest.getBoxId());
+        if (box.isUsed()) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "이미 사용중인 box입니다.");
+        }
+        box.setUsed(true);
         entity.setBox(box);
         return Optional.ofNullable(entity)
                 .map(it -> {
@@ -82,6 +87,7 @@ public class ChatRoomService {
     @Transactional
     public void closeRoom(Long roomId){
         var room = chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN);
+        room.getBox().setUsed(false);
         room.setStatus(ChatRoomStatus.CLOSE);
     }
 
