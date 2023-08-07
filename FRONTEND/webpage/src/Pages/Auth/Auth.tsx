@@ -27,7 +27,7 @@ function Auth() {
         component="div"
         sx={{
           height: "100vh",
-          width: "100vw",
+          minWidth: 480,
           backgroundImage: "url('/user_bg.jpg')",
           backgroundSize: "cover",
           display: "flex",
@@ -51,7 +51,7 @@ function Auth() {
         </Link>
         <Box
           sx={{
-            width: { xs: "100%", sm: 500 },
+            width: { xs: "100%", sm: 480 },
             backgroundColor: "white",
             padding: 4,
             marginY: { xs: 0, sm: 8 },
