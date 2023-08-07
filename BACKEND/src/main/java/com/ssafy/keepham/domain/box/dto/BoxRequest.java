@@ -18,7 +18,7 @@ public class BoxRequest {
     private String type;
     //유형 => 공용, 개인
 
-    @JsonSetter("                                                 ")
+    @JsonSetter("isValid")
     private boolean isValid;
     //삭제된것인가 => true(삭제된 상태), false(삭제 되지 않은 상태)
 
@@ -34,9 +34,9 @@ public class BoxRequest {
     private String zipCode;
     //우편번호
 
-    @JsonSetter("chatRoomId")
-    private long chatRoomId;
-    //점유된 체팅방 id
+    @JsonSetter("isUsed")
+    private boolean isUsed;
+    //사용중인가 => true(사용), false(사용하지 않음)
 
     @JsonSetter("latitude")
     private double latitude;
