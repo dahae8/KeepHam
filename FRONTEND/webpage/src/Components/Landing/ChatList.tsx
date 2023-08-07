@@ -56,7 +56,7 @@ export default function ChatList() {
   return (
     <div>
       <Typography variant="h5" gutterBottom>
-        채팅방 목록
+        여기는 채팅방 목록
       </Typography>
       <div>
         <ul>
