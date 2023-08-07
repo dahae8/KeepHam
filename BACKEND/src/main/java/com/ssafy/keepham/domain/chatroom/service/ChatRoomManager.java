@@ -32,7 +32,7 @@ public class ChatRoomManager {
     private final KafkaTemplate<String, Message> kafkaTemplate;
     private final MessageRepository messageRepository;
     private final RedisTemplate<String, String> redisTemplate;
-    //TODO: Map에 저장하는 것이 아니라 redis에 저장한느 방식으로 변경
+
 
     public boolean isPasswordCorrect(Long roomId, String password){
         var room = chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN);
