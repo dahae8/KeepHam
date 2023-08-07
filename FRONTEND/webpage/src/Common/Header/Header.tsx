@@ -110,9 +110,10 @@ function Header() {
                         }
 
                         if (idx === 4) {
-                          sessionStorage.setItem("loginState", "isLoggedOut");
-                          localStorage.removeItem("AccessToken");
+                          sessionStorage.setItem("userState", "isLoggedOut");
                           dispatch(signOut());
+                          localStorage.removeItem("AccessToken");
+                          navigate("/Home/RoomList/0");
                         }
                       }}
                     >
