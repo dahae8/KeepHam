@@ -43,27 +43,6 @@ function SetLoc() {
         Authorization: api,
       };
 
-      // const params = {
-      //   x: latLong.long,
-      //   y: latLong.lat,
-      // };
-
-      // const result = await axios({
-      //   method: "get",
-      //   headers: headers,
-      //   params: params,
-      //   url: "https://dapi.kakao.com/v2/local/geo/coord2regioncode",
-      //   data: {},
-      // });
-
-      // console.log(result.data);
-
-      // setCurrentLoc(
-      //   result.data.documents[0].region_1depth_name +
-      //     " " +
-      //     result.data.documents[0].region_2depth_name
-      // );
-
       const csParams = {
         query: "편의점",
         category_group_code: "CS2",
@@ -178,7 +157,7 @@ function SetLoc() {
       sessionStorage.setItem("userLocation", userLocation);
       sessionStorage.setItem("userZipCode", locations[selectedIdx].zipCode.toString());
       
-      navigate("/Home")
+      navigate("/Home/ServiceArea");
     }
     
   }
@@ -195,12 +174,10 @@ function SetLoc() {
 
     const result = await zoneApiPromise;
 
-    alert(result);
+    console.log(result);
 
     new window.daum.Postcode({
       oncomplete: function(data: any) {
-        console.log(data);
-
 
         const tempLocation: {
           addressName: string,

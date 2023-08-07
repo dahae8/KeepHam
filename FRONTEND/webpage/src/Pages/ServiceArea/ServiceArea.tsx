@@ -4,6 +4,7 @@ import MapIcon from "@mui/icons-material/Map";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
   Box,
+  Button,
   Divider,
   Drawer,
   IconButton,
@@ -14,20 +15,56 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import TableList from "@/Components/SelectRoom/TableList.tsx";
-import MapList from "@/Components/SelectRoom/MapList.tsx";
+import MapList from "@/Components/SelectBox/MapList.tsx";
+import TableList from "@/Components/SelectBox/TableList.tsx";
+import { MyLocation } from "@mui/icons-material";
 
 const drawerWidth = 300;
 
-export default function SelectRoom() {
+export default function ServiceArea() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [mapMode, setMapMode] = React.useState(false);
 
-  const address = sessionStorage.getItem("userLocation")!;
+
+  const [address, setAddress] = React.useState(sessionStorage.getItem("userLocation")!);
+  const [zipCode, setZipCode] = React.useState(Number(sessionStorage.getItem("userZipCode")!));
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  async function addressSearch() {
+    const zoneApiPromise = new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+      document.head.appendChild(script);
+      script.onload = () => {
+        resolve("우편번호 서비스 로드 완료!");
+      };
+    });
+
+    const result = await zoneApiPromise;
+
+    console.log(result);
+    
+
+    new window.daum.Postcode({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      oncomplete: function(data: any) {
+
+        const adr: string = data.jibunAddress;
+
+        const idx: number = adr.indexOf("동 ");
+
+        const shortName: string = adr.substring(0, idx + 1)
+
+        const zipCode: number = data.zonecode;
+
+        setAddress(shortName);
+        setZipCode(zipCode);
+      }
+  }).open();
+  }
 
   const drawer = (
     <div>
@@ -56,6 +93,42 @@ export default function SelectRoom() {
     </div>
   );
 
+  const location = (
+    <Box sx={{
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "end",
+      alignItems: "center",
+    }}>
+      <Box sx={{
+        width: 280,
+        height: 80,
+        marginBottom: 4,
+        display: "flex",
+        justifyContent: "start",
+        alignItems: "center",
+        gap: 2,
+      }}>
+        <Box sx={{
+          backgroundColor: "#E0F2FE",
+          width: 48,
+          height: 48,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: 3,
+          boxShadow: 3,
+        }}>
+          <MyLocation />
+        </Box>
+        <Typography variant="body1">{address}</Typography>
+        <Button variant="outlined" onClick={addressSearch}>변경</Button>
+      </Box>
+    </Box>
+  )
+
   return (
     <>
       {/* 상단바 */}
@@ -69,7 +142,7 @@ export default function SelectRoom() {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h5">{address}</Typography>
+        <Typography variant="h5">배달함 서비스 이용가능 지역</Typography>
       </div>
       <Divider />
       <div className="relative w-full min-h-[600px]" id="drawer-container">
@@ -100,6 +173,7 @@ export default function SelectRoom() {
               }}
             >
               {drawer}
+              {location}
             </Drawer>
             <Drawer
               variant="permanent"
@@ -120,6 +194,7 @@ export default function SelectRoom() {
               open
             >
               {drawer}
+              {location}
             </Drawer>
           </Box>
           {/* 콘텐츠 */}
@@ -133,9 +208,9 @@ export default function SelectRoom() {
             }}
           >
             {mapMode ? (
-              <MapList location={address} />
+              <MapList zipCode={zipCode} />
             ) : (
-              <TableList location={address} />
+              <TableList zipCode={zipCode} />
             )}
           </Box>
         </div>

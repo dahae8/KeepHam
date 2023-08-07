@@ -105,6 +105,10 @@ function Header() {
                       onClick={() => {
                         handleCloseUserMenu();
 
+                        if (idx === 2) {
+                          navigate("/Home/UserInfo")
+                        }
+
                         if (idx === 4) {
                           sessionStorage.setItem("userState", "isLoggedOut");
                           dispatch(signOut());
