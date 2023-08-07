@@ -36,7 +36,7 @@ function Auth() {
           alignItems: { xs: "center", sm: "end" },
         }}
       >
-        <Link to={"/Home"}>
+        <Link to={"/Home/ServiceArea"}>
           <Box
             sx={{
               backgroundImage: "url('/logoImageWithText_white.svg')",
