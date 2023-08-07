@@ -34,17 +34,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String accessToken = parseBearerToken(request, HttpHeaders.AUTHORIZATION);
             User user = parseUserSpecification(accessToken);
             AbstractAuthenticationToken authenticated = UsernamePasswordAuthenticationToken.authenticated(user,accessToken,user.getAuthorities());
-            log.info("authenticated : {}", authenticated);
             authenticated.setDetails(new WebAuthenticationDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticated);
-            log.info("SecurityContextHolder: {}", SecurityContextHolder.getContext().getAuthentication());
-            log.info("SecurityContextHolder: {}", SecurityContextHolder.getContext());
         }catch (ExpiredJwtException e){
             request.setAttribute("exception", e);
         }
         filterChain.doFilter(request,response);
     }
-
     private User parseUserSpecification(String token) {
         String split[] = Optional.ofNullable(token)
             .filter(subject -> 10 <= subject.length())
@@ -66,19 +62,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             AbstractAuthenticationToken authenticated = UsernamePasswordAuthenticationToken.authenticated(user,newAccessToken,user.getAuthorities());
             authenticated.setDetails(new WebAuthenticationDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticated);
-
             response.setHeader("New-Access-Token", newAccessToken);
         }catch (ExpiredJwtException e){
-            reissueAccessToken(request,response,e);
+            reissueAccessToken(request, response, e);
         }
         catch (Exception e) {
             request.setAttribute("exception", e);
         }
-
     }
-
-
-    //토큰을 파싱 후 payload 부분만 남(접두사 제거)
     private String parseBearerToken(HttpServletRequest request, String headerName) {
         return Optional.ofNullable(request.getHeader(headerName))
                 .filter(token -> token.substring(0, 7).equalsIgnoreCase("Bearer "))
