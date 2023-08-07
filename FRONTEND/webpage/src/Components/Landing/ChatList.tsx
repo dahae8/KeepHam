@@ -25,6 +25,7 @@ export default function ChatList() {
 
   useEffect(() => {
     const token = localStorage.getItem("AccessToken");
+    console.log("chatlist 토큰 : ", token);
     const fetchData = async () => {
       try {
         const response = await axios.get(
