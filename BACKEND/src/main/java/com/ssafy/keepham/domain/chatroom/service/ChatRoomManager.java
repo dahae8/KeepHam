@@ -16,12 +16,10 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -106,11 +104,25 @@ public class ChatRoomManager {
     }
 
 
-    public Message sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
+    public void sendMessageToRoom(@Payload Message message){
         message.setTimestamp(LocalDateTime.now());
-        log.info("sendMessageToRoom 을 통해 전송중");
         messageRepository.save(message);
         kafkaTemplate.send("kafka-chat", message);
-        return message;
+    }
+
+    public Set<String> pickRandomUsers(Set<String> users, int count){
+        if (count >= users.size()){
+            return new HashSet<>(users);
+        }
+
+        List<String> userList = new ArrayList<>(users);
+        Set<String> result = new HashSet<>();
+
+        Random random = new Random();
+        while (result.size() < count){
+            int randomIndex = random.nextInt(userList.size());
+            result.add(userList.get(randomIndex));
+        }
+        return result;
     }
 }
