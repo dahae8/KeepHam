@@ -51,7 +51,7 @@ public class SignService {
                 () -> userRefreshTokenRepository.save(new UserRefreshToken(user, refreshToken))
                     );
         log.info("로그인성공");
-        return new SignInResponse(user.getName(), user.getUserRole(), accessToken, refreshToken);
+        return new SignInResponse(user.getName(),user.getNickName(), user.getUserRole(), accessToken, refreshToken);
     }
 
     public boolean checkId(String userId){

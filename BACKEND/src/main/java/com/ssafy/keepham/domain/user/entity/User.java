@@ -37,6 +37,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String nickName;
 
+    @Column(nullable = false)
+    private String tel;
+
     private String email;
 
     private String address;
@@ -60,13 +63,13 @@ public class User {
                 .name(request.getName())
                 .nickName(request.getNickName())
                 .email(request.getEmail())
-                .age(request.getAge())
+                .tel(request.getTel())
                 .userRole(UserRole.USER)
                 .build();
     }
     public void update(UserUpdateRequest newUser, PasswordEncoder encoder){
         this.password = newUser.getNewPassword() == null || newUser.getNewPassword().isBlank() ? this.password : encoder.encode(newUser.getNewPassword());
         this.email = newUser.getEmail();
-        this.nickName = newUser.getNickName();
+        this.tel = newUser.getTel();
     }
 }
