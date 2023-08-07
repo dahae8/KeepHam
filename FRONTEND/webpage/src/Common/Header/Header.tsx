@@ -106,14 +106,12 @@ function Header() {
                         handleCloseUserMenu();
 
                         if (idx === 2) {
-                          navigate("/Home/UserInfo");
+                          navigate("/Home/UserInfo")
                         }
 
                         if (idx === 4) {
                           sessionStorage.setItem("userState", "isLoggedOut");
                           dispatch(signOut());
-                          localStorage.removeItem("AccessToken");
-                          navigate("/Home/RoomList/0");
                         }
                       }}
                     >

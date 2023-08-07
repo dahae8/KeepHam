@@ -57,8 +57,8 @@ const router = createBrowserRouter([
       },
       {
         path: "/Home/UserInfo",
-        element: <UserInfo />,
-      },
+        element: <UserInfo />
+      }
     ],
   },
   {
