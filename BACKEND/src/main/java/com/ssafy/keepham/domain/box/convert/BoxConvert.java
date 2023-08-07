@@ -23,6 +23,7 @@ public class BoxConvert {
                             .address(boxSaveRequest.getAddress())
                             .detailedAddress((boxSaveRequest.getDetailedAddress()))
                             .zipCode(boxSaveRequest.getZipCode())
+                            .isUsed(false)
                             .latitude(boxSaveRequest.getLatitude())
                             .hardness(boxSaveRequest.getHardness())
                             .build();
@@ -39,7 +40,7 @@ public class BoxConvert {
                             .address(boxRequest.getAddress())
                             .detailedAddress((boxRequest.getDetailedAddress()))
                             .zipCode(boxRequest.getZipCode())
-                            .chatRoomId(boxRequest.getChatRoomId())
+                            .isUsed(boxRequest.isUsed())
                             .latitude(boxRequest.getLatitude())
                             .hardness(boxRequest.getHardness())
                             .build();
@@ -57,7 +58,7 @@ public class BoxConvert {
                             .address(box.getAddress())
                             .detailedAddress((box.getDetailedAddress()))
                             .zipCode(box.getZipCode())
-                            .chatRoomId(box.getChatRoomId())
+                            .isUsed(box.isUsed())
                             .latitude(box.getLatitude())
                             .hardness(box.getHardness())
                             .build();
