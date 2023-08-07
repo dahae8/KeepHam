@@ -4,7 +4,9 @@ import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -55,4 +57,18 @@ public class ApiExceptionHandler {
                         Api.ERROR(ErrorCode.SERVER_ERROR)
                 );
     }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Api<Object>> sqlException (DataIntegrityViolationException exception){
+
+        String errorMessage = "DB에 제약조건에 걸립니다. 저장하는 과정에서 에러가 발생했습니다." + exception.getLocalizedMessage();
+
+        return ResponseEntity
+                .status(400)
+                .body(
+                        Api.ERROR(ErrorCode.INVALID_INPUT, errorMessage)
+                );
+
+    }
+
 }
