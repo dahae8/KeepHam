@@ -71,6 +71,7 @@ const router = createBrowserRouter([
         path: "/Home/ContactUs",
         element: <ContactUs />,
       },
+      {
         path: "/Home/UserInfo",
         element: <UserInfo />
       }
