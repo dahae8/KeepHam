@@ -6,15 +6,13 @@ import { Provider } from "react-redux";
 import { store } from "@/Store/store.ts";
 
 // Pages
-import App from "./App/App.tsx";
-import SignUp, { action as signUpAction } from "@/Components/User/SignUp.tsx";
-import LogIn, { action as logInAction } from "@/Components/User/LogIn.tsx";
-import Main from "@/Pages/Main/Landing.tsx";
-import ChatList from "@/Components/Main/ChatList.tsx";
-import User from "./Pages/User/User.tsx";
+import App from "@/App/App.tsx";
 import Landing from "@/Pages/Landing/Landing.tsx";
+import ChatList from "@/Components/Landing/ChatList.tsx";
 import Auth from "@/Pages/Auth/Auth.tsx";
 import UserInfo from "@/Pages/UserInfo/UserInfo.tsx";
+// import Main from "@/Pages/Main/Landing.tsx";
+// import User from "./Pages/User/User.tsx";
 import RoomList, {
   loader as roomListLoader,
 } from "./Pages/RoomList/RoomList.tsx";
@@ -37,8 +35,8 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/",
-        element: <Main />,
+        path: "/Home/ServiceArea",
+        element: <ServiceArea />,
       },
       {
         path: "/Home/ChatList/:boxId",
