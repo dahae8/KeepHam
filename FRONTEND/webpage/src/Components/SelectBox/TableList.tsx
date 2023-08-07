@@ -53,7 +53,7 @@ function TableList(props: propsType) {
         console.log(response.data.body);
         setData(response.data.body);
         setLoading(false);
-        const setboxes: forpageBox[] = data.map((item) => {
+        const setboxes: forpageBox[] = await data.map((item) => {
           let vaild = 1;
           if (item.valid) vaild = 1;
           else vaild = 0;
@@ -66,6 +66,7 @@ function TableList(props: propsType) {
             enterable: 2,
           };
         });
+        console.log("durltjs:", setboxes);
         setrows(setboxes);
       } catch (error) {
         setError("AWS 서버에서 데이터를 가져오는데 에러가 발생했습니다.");
@@ -73,7 +74,7 @@ function TableList(props: propsType) {
       }
     };
     fetchData();
-  });
+  }, []);
 
   if (loading) {
     return <div>데이터를 불러오는 중...</div>;
