@@ -43,10 +43,10 @@ function Header() {
   const dispatch = useAppDispatch();
 
   function checkSession() {
-    const loginState = sessionStorage.getItem("loginState");
+    const loginState = sessionStorage.getItem("userState");
 
     if (loginState === "isLoggedIn") {
-      const loginId: string = sessionStorage.getItem("loginId")!;
+      const loginId: string = sessionStorage.getItem("userId")!;
 
       dispatch(signIn({ id: loginId }));
     }
@@ -63,7 +63,7 @@ function Header() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* 로고 */}
-          <Link to="/" className="flex flex-row">
+          <Link to="/Home" className="flex flex-row">
             <img src="/logoImage.svg" className="h-24" />
             <img src="/logoText.svg" className="h-24" />
           </Link>
@@ -105,6 +105,10 @@ function Header() {
                       onClick={() => {
                         handleCloseUserMenu();
 
+                        if (idx === 2) {
+                          navigate("/Home/UserInfo");
+                        }
+
                         if (idx === 4) {
                           sessionStorage.setItem("loginState", "isLoggedOut");
                           localStorage.removeItem("AccessToken");
@@ -123,7 +127,7 @@ function Header() {
                   className="mx-10"
                   onClick={() => {
                     dispatch(switchTab({ setIdx: 0 }));
-                    navigate("User/LogIn");
+                    navigate("/Auth");
                   }}
                 >
                   <Typography>로그인</Typography>
@@ -132,7 +136,7 @@ function Header() {
                   className="mx-10"
                   onClick={() => {
                     dispatch(switchTab({ setIdx: 1 }));
-                    navigate("User/SignUp");
+                    navigate("/Auth");
                   }}
                 >
                   <Typography>회원가입</Typography>

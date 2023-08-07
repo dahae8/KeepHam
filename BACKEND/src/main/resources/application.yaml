@@ -38,7 +38,7 @@ springdoc:
   default-consumes-media-type: application/json;charset=UTF-8
   default-produces-media-type: application/json;charset=UTF-8
   swagger-ui:
-    path: keepham-ui.html
+    path: /keepham-ui.html
     tags-sorter: alpha
     operations-sorter: alpha
     api-docs:
@@ -47,6 +47,4 @@ springdoc:
         enabled: true
     cache:
       disabled: true
-
-
 

@@ -1,4 +1,3 @@
-// components/ChatRoom.js
 import React, { useState, useEffect } from "react";
 import Stomp from "stompjs";
 import SockJS from "sockjs-client";
@@ -8,7 +7,7 @@ const ChatRoom = ({ roomId, nickname }) => {
   const [inputMessage, setInputMessage] = useState("");
   const [stompClient, setStompClient] = useState(null);
 
-  // Function to handle sending a new message
+  // 메세지 전송 로직
   const handleSendMessage = () => {
     if (!inputMessage.trim()) return;
     try {
@@ -18,25 +17,21 @@ const ChatRoom = ({ roomId, nickname }) => {
         content: inputMessage,
         type: "TALK",
       };
-      stompClient.send(
-        `/app/sendMessage/${roomId}`,
-        {},
-        JSON.stringify(message)
-      );
+      stompClient.send(`/app/sendMessage/${roomId}`, {}, JSON.stringify(message));
       setInputMessage("");
     } catch (error) {
       alert("Error sending message.");
     }
   };
 
-  // Subscribe to the chat room WebSocket topic for real-time updates
+  // 웹소켓 연결
   useEffect(() => {
-    const socket = new SockJS("http://localhost:8080/my-chat");
+    const socket = new SockJS("http://i9c104.p.ssafy.io:48080/api/my-chat");
     const stomp = Stomp.over(socket);
     stomp.connect({}, () => {
       setStompClient(stomp);
 
-      // Send entrance message when the WebSocket connection is established
+      
       const enterMessage = {
         room_id: roomId,
         author: nickname,
@@ -45,7 +40,8 @@ const ChatRoom = ({ roomId, nickname }) => {
       };
       stomp.send(`/app/joinUser/${roomId}`, {}, JSON.stringify(enterMessage));
 
-      stomp.subscribe(`/topic/group/${roomId}`, (message) => {
+      
+      stomp.subscribe(`/subscribe/message/${roomId}`, (message) => {
         const newMessage = JSON.parse(message.body);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       });

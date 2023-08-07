@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Typography } from "@mui/material";
-import AwsDataFetcher from "@/Components/Chatt/getDatatest";
+import AwsDataFetcher from "@/Components/Chatt/getDatatest.tsx";
 
 export default function ChattingBox() {
   const [chattForsend, getChattForsend] = useState("");

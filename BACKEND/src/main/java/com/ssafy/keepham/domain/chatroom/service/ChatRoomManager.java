@@ -1,5 +1,6 @@
 package com.ssafy.keepham.domain.chatroom.service;
 
+import com.ssafy.keepham.common.error.ChatRoomError;
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.chat.db.Message;
@@ -15,12 +16,10 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -38,21 +37,31 @@ public class ChatRoomManager {
     public boolean isPasswordCorrect(Long roomId, String password){
         var room = chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN);
         log.info("room password : {}", room.getPassword());
-        log.info("입력받은 비밀번호 : ", password);
+        log.info("입력받은 비밀번호 : {}", password);
         return room.getPassword().equals(password);
+    }
+
+    public boolean isSecretRoom(Long roomId){
+        return chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN).isLocked();
     }
 
     // 채팅방에 user 접속하면 해당 방 인원 1 증가
     public Set<String> userJoin(Long roomId, String userNickname){
-
-        redisTemplate.opsForSet().add(String.valueOf(roomId),userNickname);
-        redisTemplate.expire(String.valueOf(roomId), 3600*3, TimeUnit.SECONDS);
+        
         Long currentUserCount = getUserCountInChatRoom(roomId);
         int maxUserCount = getMaxUsersInChatRoom(roomId);
+        
+        if(currentUserCount >= maxUserCount){
+            throw new ApiException(ChatRoomError.BAD_REQUEST);
+        }
+        
+        redisTemplate.opsForSet().add(String.valueOf(roomId),userNickname);
+        redisTemplate.expire(String.valueOf(roomId), 3600*3, TimeUnit.SECONDS);
         //        chatRoomUsers.computeIfAbsent(roomId, k -> new HashSet<>()).add(userNickname);
 
-        log.info("입장 현재 {}", currentUserCount);
-        log.info("입장 최대 {}", maxUserCount);
+        currentUserCount = getUserCountInChatRoom(roomId);
+        log.info("입장 후 현재 인원 {}", currentUserCount);
+        log.info("치팅방 최대 {}", maxUserCount);
         log.info("입장 {}", redisTemplate.opsForSet().members(String.valueOf(roomId)));
 
         return redisTemplate.opsForSet().members(String.valueOf(roomId));
@@ -67,9 +76,9 @@ public class ChatRoomManager {
         Long currentUserCount = getUserCountInChatRoom(roomId);
         int maxUserCount = getMaxUsersInChatRoom(roomId);
 
-        log.info("퇴장 현재 {}", currentUserCount);
-        log.info("퇴장 최대 {}", maxUserCount);
-        log.info("퇴장 {}", redisTemplate.opsForSet().members(String.valueOf(roomId)));
+        log.info("퇴장후 현재 인원 {}", currentUserCount);
+        log.info("채팅방 최대 {}", maxUserCount);
+        log.info("퇴장유저 {}", redisTemplate.opsForSet().members(String.valueOf(roomId)));
     }
 
     public boolean allUserClear(Long roomId){
@@ -95,11 +104,25 @@ public class ChatRoomManager {
     }
 
 
-    public Message sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
+    public void sendMessageToRoom(@Payload Message message){
         message.setTimestamp(LocalDateTime.now());
-        log.info("sendMessageToRoom 을 통해 전송중");
         messageRepository.save(message);
         kafkaTemplate.send("kafka-chat", message);
-        return message;
+    }
+
+    public Set<String> pickRandomUsers(Set<String> users, int count){
+        if (count >= users.size()){
+            return new HashSet<>(users);
+        }
+
+        List<String> userList = new ArrayList<>(users);
+        Set<String> result = new HashSet<>();
+
+        Random random = new Random();
+        while (result.size() < count){
+            int randomIndex = random.nextInt(userList.size());
+            result.add(userList.get(randomIndex));
+        }
+        return result;
     }
 }

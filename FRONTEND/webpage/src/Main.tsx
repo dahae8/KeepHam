@@ -9,14 +9,18 @@ import { store } from "@/Store/store.ts";
 import App from "./App/App.tsx";
 import SignUp, { action as signUpAction } from "@/Components/User/SignUp.tsx";
 import LogIn, { action as logInAction } from "@/Components/User/LogIn.tsx";
-import BoxSearch from "@/Pages/Main/Main2.tsx";
-import ChatList from "@/Components/Landing/ChatList.tsx";
+import Main from "@/Pages/Main/Landing.tsx";
+import ChatList from "@/Components/Main/ChatList.tsx";
 import User from "./Pages/User/User.tsx";
+import Landing from "@/Pages/Landing/Landing.tsx";
+import Auth from "@/Pages/Auth/Auth.tsx";
+import UserInfo from "@/Pages/UserInfo/UserInfo.tsx";
 import RoomList, {
   loader as roomListLoader,
 } from "./Pages/RoomList/RoomList.tsx";
 import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
 import ChatRoom from "./Pages/Chatroom/ChatRoom.tsx";
+import ServiceArea from "./Pages/ServiceArea/ServiceArea.tsx";
 
 // Styles
 import "./Styles/global.ts";
@@ -26,46 +30,42 @@ import { createTheme, ThemeProvider } from "@mui/material";
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <Landing />,
+  },
+  {
+    path: "/Home",
     element: <App />,
     children: [
       {
         path: "/",
-        element: <BoxSearch />,
+        element: <Main />,
       },
       {
-        path: "/chatList/:boxId",
+        path: "/Home/ChatList/:boxId",
         element: <ChatList />,
       },
       {
-        path: "/RoomList/:boxId",
+        path: "/Home/RoomList/:areaId",
         element: <RoomList />,
         loader: roomListLoader,
       },
       {
-        path: "/chatRoom/:boxId",
+        path: "/Home/chatRoom/:boxId",
         element: <ChatRoom />,
       },
       {
-        path: "/CreateRoom",
+        path: "/Home/CreateRoom",
         element: <CreateRoom />,
+      },
+      {
+        path: "/Home/UserInfo",
+        element: <UserInfo />,
       },
     ],
   },
   {
-    path: "User",
-    element: <User />,
-    children: [
-      {
-        path: "LogIn",
-        element: <LogIn />,
-        action: logInAction,
-      },
-      {
-        path: "SignUp",
-        element: <SignUp />,
-        action: signUpAction,
-      },
-    ],
+    path: "Auth",
+    element: <Auth />,
   },
 ]);
 
