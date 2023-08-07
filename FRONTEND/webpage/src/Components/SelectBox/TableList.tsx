@@ -2,13 +2,13 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 
 const columns: GridColDef[] = [
-  { field: "id", Name: "ID", width: 40 },
-  { field: "location", Name: "위치", width: 160 },
-  { field: "address", Name: "주소", width: 160 },
-  { field: "available", Name: "이용가능", width: 80 },
+  { field: "id", headerName: "ID", width: 40 },
+  { field: "location", headerName: "위치", width: 160 },
+  { field: "address", headerName: "주소", width: 160 },
+  { field: "available", headerName: "이용가능", width: 80 },
   {
     field: "enterable",
-    Name: "입장가능",
+    headerName: "입장가능",
     type: "number",
     width: 80,
   },
