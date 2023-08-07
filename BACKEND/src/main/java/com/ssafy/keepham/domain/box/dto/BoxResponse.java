@@ -29,8 +29,8 @@ public class BoxResponse {
     private String zipCode;
     //우편번호
 
-    private long chatRoomId;
-    //점유된 체팅방 id
+    private boolean isUsed;
+    //사용중인가 => true(사용), false(사용하지 않음)
 
     private double latitude;
     //위도

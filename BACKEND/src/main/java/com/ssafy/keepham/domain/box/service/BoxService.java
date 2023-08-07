@@ -97,4 +97,18 @@ public class BoxService {
         return resList;
     }
 
+    //사용하지 않은 함들 조회
+    public List<BoxResponse> getUnusedAllBox(){
+        List<BoxResponse> resList = new ArrayList<>();
+        List<Box> boxs = boxRepository.findByisUsed(false);
+
+        for (Box box: boxs){
+            BoxResponse res = boxConvert.toResponse(box);
+            resList.add(res);
+        }
+
+        return resList;
+
+    }
+
 }

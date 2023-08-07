@@ -41,9 +41,9 @@ public class Box {
     private String zipCode;
     //우편번호
 
-    @Column
-    private long chatRoomId;
-    //점유된 체팅방 id
+    @Column (nullable = false)
+    private boolean isUsed;
+    //사용중인가 => true(사용), false(사용하지 않음)
 
     @Column(nullable = false)
     private double latitude;
