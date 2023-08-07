@@ -93,17 +93,7 @@ public class TokenProvider {
                         .getBody()
                         .getSubject();
         }
-        //왜 람다식 안되냐...
-//        @Transactional
-//        public String recreateAccessToken(String oldAccessToken) throws JsonProcessingException{
-//                String subject = decodeJwtPayloadSubject(oldAccessToken);
-//                userRefreshTokenRepository.findByUserIdAndReissueCountLessThan(UUID.fromString(subject.split(":")[0]),reissueLimit)
-//                        .ifPresentOrElse(UserRefreshToken::increaseReissueCount,
-//                                () -> {throw new ExpiredJwtException(null,null,"Refresh Token expire");
-//                                }
-//                        );
-//                return createAccessToken(subject);
-//        }
+
         @Transactional
         public String recreateAccessToken(String oldAccessToken) throws JsonProcessingException {
                 String subject = decodeJwtPayloadSubject(oldAccessToken);

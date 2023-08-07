@@ -35,7 +35,7 @@ public class UserService {
                     user.update(request, encoder);
                     return UserUpdateResponse.of(true, user);
                 })
-                .orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호가 틀립니다")));
+                .orElseThrow(() -> new NoSuchElementException("아이디 또는 비밀번호가 틀립니다")));
     }
 
     //회원 탈퇴
