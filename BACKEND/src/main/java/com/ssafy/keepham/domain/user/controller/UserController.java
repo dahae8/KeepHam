@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "로그인 후 사용할 수 있는 API")
+@Tag(name = "로그인 후 사용 가능")
 @RestController
 //@UserAuthority
 @RequiredArgsConstructor
