@@ -1,9 +1,15 @@
+import { Box } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-interface Box {
+// 타입
+type propsType = {
+  areaId: number;
+};
+
+interface Room {
   box_id: number;
   status: string;
   type: string;
@@ -15,8 +21,7 @@ interface Box {
   valid: boolean;
   used: boolean;
 }
-
-interface forpageBox {
+interface forRoompage {
   id: number;
   location: string;
   address: string;
@@ -25,35 +30,60 @@ interface forpageBox {
 }
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 40 },
-  { field: "location", headerName: "위치", width: 160 },
-  { field: "address", headerName: "주소", width: 160 },
-  { field: "available", headerName: "이용가능", width: 80 },
-  { field: "enterable", headerName: "입장가능", type: "number", width: 80 },
+  { field: "title", headerName: "제목", width: 200 },
+  {
+    field: "category",
+    headerName: "카테고리",
+    width: 100,
+  },
+  {
+    field: "store",
+    headerName: "주문 가게",
+    width: 100,
+  },
+  {
+    field: "estimatedDeliveryTime",
+    headerName: "예상 배달시간",
+    type: "number",
+    width: 100,
+  },
 ];
 
-type propsType = {
-  zipCode: number;
-};
+const rows = [
+  {
+    id: 1,
+    title: "점심 같이 시켜드실분~",
+    category: "한식",
+    store: "미정",
+    estimatedDeliveryTime: null,
+  },
+];
 
+// 테이블 아이템
 function TableList(props: propsType) {
-  const [data, setData] = useState<Box[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [rows, setrows] = useState<forpageBox[]>([]);
-  const userZipCode = props.zipCode;
-
+  const areaId = props.areaId;
+  console.log("방번호:", areaId);
   const navigate = useNavigate();
 
+  const [data, setData] = useState<Room[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [rowss, setrows] = useState<forRoompage[]>([]);
+
   useEffect(() => {
-    const url = "https://i9c104.p.ssafy.io/api/boxs/" + userZipCode;
+    const key = window.localStorage.getItem("AccessToken");
+    const url = "https://i9c104.p.ssafy.io/api/boxs/" + areaId;
     const fetchData = async () => {
       try {
-        const response = await axios.get(url);
-        console.log(response.data.body);
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: "Bearer" + { key },
+          },
+        });
+        console.log("응답 : ", response);
         setData(response.data.body);
         setLoading(false);
-        const setboxes: forpageBox[] = data.map((item) => {
+        const setboxes: forRoompage[] = data.map((item) => {
           let vaild = 1;
           if (item.valid) vaild = 1;
           else vaild = 0;
@@ -73,7 +103,7 @@ function TableList(props: propsType) {
       }
     };
     fetchData();
-  });
+  }, []);
 
   if (loading) {
     return <div>데이터를 불러오는 중...</div>;
@@ -82,25 +112,26 @@ function TableList(props: propsType) {
   if (error) {
     return <div>{error}</div>;
   }
-
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <Box sx={{ height: 400, width: "100%" }}>
       <DataGrid
         rows={rows}
         columns={columns}
         initialState={{
           pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
+            paginationModel: {
+              pageSize: 5,
+            },
           },
         }}
-        pageSizeOptions={[5, 10]}
+        pageSizeOptions={[5]}
         onRowSelectionModelChange={(selectedRow) => {
-          const selectedIdx: number = Number(selectedRow[0]);
+          const selectedIdx: number = Number(selectedRow[0]) - 1;
           console.log(selectedIdx);
-          navigate(`/Home/chatRoom/${selectedIdx}`);
+          navigate(`/Home/Chatroom/${selectedIdx}`);
         }}
       />
-    </div>
+    </Box>
   );
 }
 
