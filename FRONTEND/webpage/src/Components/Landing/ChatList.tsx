@@ -63,7 +63,7 @@ export default function ChatList() {
           {data.map((item) => (
             <li key={item.id}>
               <Link to={"/chatRoom/" + item.id}>
-                RoomNum : {item.id}
+                RoomNum : {item.extension_number}
                 <br />
                 방이름 : {item.title}
                 <br />

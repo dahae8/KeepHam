@@ -3,8 +3,7 @@ import { useState } from "react";
 import StoreInfo from "@/Components/Chatt/StoreInfo";
 import BoxInfo from "@/Components/Chatt/BoxInfo";
 import RoomInfo from "@/Components/Chatt/RoomInfo";
-// import ChattingBox from "@/Components/Chatt/Chatt";
-import Chattbox from "@/Components/Chatt/ChattTEST.js";
+import ChattingBox from "@/Components/Chatt/Chatt";
 
 export default function ChatRoom() {
   const [mode, setMode] = useState("함정보");
@@ -48,7 +47,7 @@ export default function ChatRoom() {
           <div>{content}</div>
         </div>
         <div>
-          <Chattbox />
+          <ChattingBox />
         </div>
       </div>
     </div>
