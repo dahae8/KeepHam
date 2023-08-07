@@ -18,6 +18,10 @@ import RoomList, {
 } from "./Pages/RoomList/RoomList.tsx";
 import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
 import ChatRoom from "./Pages/Chatroom/ChatRoom.tsx";
+import SelectRoom from "./Pages/SelectRoom/SelectRoom.tsx";
+import Terms from "./Pages/Terms/Terms.tsx";
+import AboutMe from "./Pages/AboutMe/AboutMe.tsx";
+import ContactUs from "./Pages/ContactUs/ContactUs.tsx";
 import ServiceArea from "./Pages/ServiceArea/ServiceArea.tsx";
 
 // Styles
@@ -54,6 +58,18 @@ const router = createBrowserRouter([
       {
         path: "/Home/CreateRoom",
         element: <CreateRoom />,
+      },
+      {
+        path: "/Home/Terms",
+        element: <Terms />,
+      },
+      {
+        path: "/Home/AboutMe",
+        element: <AboutMe />,
+      },
+      {
+        path: "/Home/ContactUs",
+        element: <ContactUs />,
       },
       {
         path: "/Home/UserInfo",
