@@ -1,0 +1,16 @@
+#map {
+  width: 500px;
+  height: 400px;
+}
+
+.map_boxlistcontainer {
+  width: 500px;
+  height: 400px;
+  border: 1px solid black;
+}
+
+.mapcontainer {
+  border: 1px solid skyblue;
+  display: flex;
+  flex-direction: row;
+}
