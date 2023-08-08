@@ -27,8 +27,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    "typeRoots": ["node_modules/@types", "src/types"],
-    "types": ["@stomp/stompjs", "react", "react-dom"]
+    // "typeRoots": ["node_modules/@types", "src/types"],
+    // "types": ["stomp/stompjs", "react", "react-dom"]
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
