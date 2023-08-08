@@ -21,14 +21,14 @@ const AwsDataFetcher: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const key = window.localStorage.getItem("AccessToken");
     const fetchData = async () => {
       try {
         const response = await axios.get(
           "http://i9c104.p.ssafy.io:48080/api/rooms?status=OPEN",
           {
             headers: {
-              Authorization: "Bearer" + { key },
+              Authorization:
+                "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyOlVTRVIiLCJpc3MiOiJzc2FmeSIsImlhdCI6MTY5MTAyMzg1OSwiZXhwIjoxNjkxMTMxODU5fQ.6beI-ZNT1hOPgK5_A3vNobQlFOnOXgeb3L3eD8mODn3auUST3l_7W5h0-dNc8ntkhrq1huyN_JHDOxopqO04rw",
             },
           }
         );

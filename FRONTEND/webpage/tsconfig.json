@@ -25,10 +25,7 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-
-    "typeRoots": ["node_modules/@types", "src/types"],
-    "types": ["@stomp/stompjs", "react", "react-dom"]
+    "noFallthroughCasesInSwitch": true
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

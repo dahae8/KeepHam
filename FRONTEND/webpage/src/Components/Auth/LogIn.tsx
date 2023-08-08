@@ -1,5 +1,7 @@
 // eslint-disable-next-line import/named
-import { useNavigate } from "react-router-dom";
+import {
+  useNavigate
+} from "react-router-dom";
 import { TextField, Button, Grid, Box } from "@mui/material";
 import { store } from "@/Store/store.ts";
 import { signIn } from "@/Store/userSlice.ts";
@@ -37,6 +39,7 @@ function LogIn() {
     const form = e.currentTarget;
     const formData = new FormData(form);
 
+
     // 공백 검사
     let retErr = false;
 
@@ -44,20 +47,23 @@ function LogIn() {
       setIdHelper("ID의 길이는 5자리 이상이어야 합니다");
       retErr = true;
     } else {
-      setIdHelper(" ");
+      setIdHelper(' ');
     }
 
     if (!formData.get("pw")) {
       setPwHelper("패스워드의 길이는 8자리 이상이어야 합니다");
       retErr = true;
     } else {
-      setPwHelper(" ");
+      setPwHelper(' ');
     }
 
-    if (retErr) {
+
+    if(retErr) {
       return;
     }
 
+
+    
     const userId = formData.get("id")!.toString();
     const userPw = formData.get("pw")!.toString();
 
@@ -65,6 +71,8 @@ function LogIn() {
     console.log(userPw);
 
     validate(userId, userPw);
+
+
 
     // 로그인 성공시
 
@@ -74,7 +82,7 @@ function LogIn() {
     sessionStorage.setItem("userState", "isLoggedIn");
     sessionStorage.setItem("userId", userId);
 
-    navigate("/Home/ServiceArea");
+    navigate("/Home")
   };
 
   return (
@@ -91,13 +99,7 @@ function LogIn() {
                   width: "100%",
                 }}
               >
-                <TextField
-                  label="ID"
-                  variant="standard"
-                  name="id"
-                  error={idHelper !== " "}
-                  helperText={idHelper}
-                />
+                <TextField label="ID" variant="standard" name="id" error={idHelper !== ' '} helperText={idHelper}/>
               </Box>
             </Grid>
             <Grid item xs={12}>
@@ -109,13 +111,7 @@ function LogIn() {
                   width: "100%",
                 }}
               >
-                <TextField
-                  label="password"
-                  variant="standard"
-                  name="pw"
-                  error={pwHelper !== " "}
-                  helperText={pwHelper}
-                />
+                <TextField label="password" variant="standard" name="pw" error={pwHelper !== ' '} helperText={pwHelper} />
               </Box>
             </Grid>
             <Grid item xs={12}>

@@ -6,6 +6,7 @@ export default function StoreInfo() {
   const [data, setData] = useState([]);
   useEffect(() => {
     fetchData();
+    console.log(data);
   }, []);
 
   async function fetchData() {
