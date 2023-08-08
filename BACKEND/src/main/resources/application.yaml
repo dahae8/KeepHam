@@ -17,15 +17,6 @@ spring:
     mongodb:
       uri: mongodb://ssafy:keephamssafy@i9c104.p.ssafy.io:47017/ssafy
 
-  kafka:
-    consumer:
-      bootstrap-servers: i9c104.p.ssafy.io:19092,i9c104.p.ssafy.io:19093,i9c104.p.ssafy.io:19094
-      group-id: chatting
-    producer:
-      bootstrap-servers: i9c104.p.ssafy.io:19092,i9c104.p.ssafy.io:19093,i9c104.p.ssafy.io:19094
-    template:
-      default-topic: kafka-chat
-
   security:
     user:
       name: ssafy

@@ -1,8 +1,8 @@
 package com.ssafy.keepham.domain.chat.controller;
 
 import com.ssafy.keepham.common.api.Api;
+import com.ssafy.keepham.domain.boxcontrol.producer.OpenProducer;
 import com.ssafy.keepham.domain.chat.db.Message;
-import com.ssafy.keepham.domain.chat.db.MessageRepository;
 import com.ssafy.keepham.domain.chat.db.enums.Type;
 import com.ssafy.keepham.domain.chat.service.MessageService;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
@@ -26,9 +26,8 @@ public class ChatController {
 
     private final MessageService messageService;
     private final ChatRoomManager chatRoomManager;
+    private final OpenProducer openProducer;
 
-
-    String topic = "kafka-chat";
 
     @Operation(summary = "roomId로 해당 채팅방의 채팅내역 조회")
     @GetMapping(value = "/chat-rooms/{roomId}/messages", produces = "application/json")
@@ -39,6 +38,10 @@ public class ChatController {
     @MessageMapping("/sendMessage/{roomId}")
     public void sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
         log.info("message : {}", message);
+        if (message.getType() == Type.OPEN){
+            log.info("OPEN 메세지");
+            openProducer.sendOpenMessageToBox(message);
+        }
         chatRoomManager.sendMessageToRoom(message);
     }
 

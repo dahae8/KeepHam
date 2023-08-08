@@ -12,7 +12,14 @@ public interface BoxRepository extends JpaRepository<Box,Long> {
     List<Box> findByisValid(boolean isValid);
 
     //사용하지 않은 함들 조회
-    List<Box> findByisUsed(boolean isUsed);
+    @Query(value = "SELECT *\n" +
+            "FROM box\n" +
+            "WHERE is_valid = true and is_used = false and zip_code IN (\n" +
+            "    SELECT zip_code\n" +
+            "    FROM jibun\n" +
+            "    WHERE umd_nm in (SELECT umd_nm FROM jibun WHERE zip_code = ?1)\n" +
+            ")",nativeQuery = true)
+    List<Box> getUnusedAllBox(String zipcode);
 
     //우편번호 근처에 해당하는 삭제안된 박스 리스트 검색
     @Query(value = "SELECT *\n" +

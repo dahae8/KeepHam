@@ -13,7 +13,7 @@ import java.util.TimeZone;
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableKafka
-@OpenAPIDefinition(servers = {@Server(url = "https://i9c104.p.ssafy.io", description = "server")})
+//@OpenAPIDefinition(servers = {@Server(url = "https://i9c104.p.ssafy.io", description = "server")})
 public class KeephamApplication {
 
     @PostConstruct

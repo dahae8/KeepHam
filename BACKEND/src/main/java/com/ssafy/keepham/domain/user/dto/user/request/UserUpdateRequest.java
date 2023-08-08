@@ -15,7 +15,7 @@ public class UserUpdateRequest {
     String newPassword;
     @Schema(description = "회원 이메일")
     String email;
-    @Schema(description = "회원 별명")
-    String nickName;
+    @Schema(description = "회원 전화번호")
+    String tel;
 
 }
