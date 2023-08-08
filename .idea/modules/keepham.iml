@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module external.linked.project.id="keepham" external.linked.project.path="$MODULE_DIR$/../../BACKEND" external.root.project.path="$MODULE_DIR$/../../BACKEND" external.system.id="GRADLE" external.system.module.group="com.example" external.system.module.version="0.0.1-SNAPSHOT" type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_17" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../BACKEND">
       <excludeFolder url="file://$MODULE_DIR$/../../BACKEND/.gradle" />
@@ -9,8 +9,5 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-  </component>
-  <component name="SonarLintModuleSettings">
-    <option name="uniqueId" value="e701e9f0-79b7-43bd-90e6-a028af3054bc" />
   </component>
 </module>
