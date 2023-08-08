@@ -16,18 +16,21 @@ public class SignUpResponse {
     private String userId;
     @Schema(description = "회원 이름")
     private String name;
+    @Schema(description = "회원 별명")
+    private String nickName;
     @Schema(description = "회원 이메일")
     private String email;
-    @Schema(description = "회원 나이")
-    private Integer age;
+    @Schema(description = "회원 휴대폰")
+    private String tel;
 
     public static SignUpResponse toEntity(User user) {
         return new SignUpResponse(
                 user.getId(),
                 user.getUserId(),
                 user.getName(),
+                user.getNickName(),
                 user.getEmail(),
-                user.getAge()
+                user.getTel()
         );
     }
 }
