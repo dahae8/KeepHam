@@ -6,6 +6,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -17,29 +18,30 @@ import java.util.Map;
 
 @EnableKafka
 @Configuration
-public class ConsumerConfiguration {
+@PropertySource("classpath:kafka.properties")
+public class ChatConsumerConfiguration {
 
-    @Value("${spring.kafka.consumer.bootstrap-servers}")
+    @Value("${kafka.bootstrap-servers}")
     private String bootstrapServer;
-    @Value("${spring.kafka.consumer.group-id}")
+    @Value("${kafka.chat.group-id}")
     private String groupId;
 
     @Bean
-    ConcurrentKafkaListenerContainerFactory<String, Message> kafkaListenerContainerFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, Message> chatKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, Message> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
+        factory.setConsumerFactory(chatConsumerFactory());
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<String, Message> consumerFactory(){
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+    public ConsumerFactory<String, Message> chatConsumerFactory(){
+        return new DefaultKafkaConsumerFactory<>(chatConsumerConfigs(),
                 new StringDeserializer(),
                 new JsonDeserializer<>(Message.class));
     }
 
     @Bean
-    public Map<String, Object> consumerConfigs(){
+    public Map<String, Object> chatConsumerConfigs(){
         Map<String, Object> configs = new HashMap<>();
         configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServer);
         configs.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);

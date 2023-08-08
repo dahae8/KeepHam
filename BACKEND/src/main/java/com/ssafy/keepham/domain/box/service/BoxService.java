@@ -98,9 +98,9 @@ public class BoxService {
     }
 
     //사용하지 않은 함들 조회
-    public List<BoxResponse> getUnusedAllBox(){
+    public List<BoxResponse> getUnusedAllBox(String zipCode){
         List<BoxResponse> resList = new ArrayList<>();
-        List<Box> boxs = boxRepository.findByisUsed(false);
+        List<Box> boxs = boxRepository.getUnusedAllBox(zipCode);
 
         for (Box box: boxs){
             BoxResponse res = boxConvert.toResponse(box);
