@@ -12,10 +12,10 @@ public class UserUpdateResponse{
 
     boolean result;
     String email;
-    String nickName;
+    String tel;
 
     public static UserUpdateResponse of(boolean result, User user) {
-        return new UserUpdateResponse(result, user.getEmail(),user.getNickName());
+        return new UserUpdateResponse(result, user.getEmail(),user.getTel());
     }
 }
 

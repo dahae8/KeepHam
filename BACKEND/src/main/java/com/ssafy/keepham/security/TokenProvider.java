@@ -11,7 +11,6 @@ import com.ssafy.keepham.domain.user.repository.UserRepository;
 import io.jsonwebtoken.*;
 
 import java.nio.charset.StandardCharsets;
-import java.sql.Array;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -31,12 +30,11 @@ import org.springframework.stereotype.Service;
 
 /*
 TODO: 회원의 리프레시 토큰을 관리할 엔티티
-       로그인하면 리프레시 토큰을 발급한다.
        리프레시 토큰을 생성하는 메소드
        로그인 API 응답에 리프레시 토큰 추가
        리프레시 토큰을 통해 액세스 토큰을 갱신
        리프레시 토큰 검증 및 새로운 액세스 토큰 발급
-       핸들러 구현
+
  */
 @Service
 @Getter
@@ -52,8 +50,6 @@ public class TokenProvider {
         private final long reissueLimit;
         private final ObjectMapper objectMapper = new ObjectMapper();
         private final UserRepository userRepository;
-
-
 
         public TokenProvider(
                 UserRefreshTokenRepository userRefreshTokenRepository,
@@ -71,8 +67,6 @@ public class TokenProvider {
                 this.reissueLimit = refreshExpirationHours * 60 / expirationMinutes;
                 this.userRepository = userRepository;
         }
-
-        //accessToken
         public String createAccessToken(String userSpecification){
                 return Jwts.builder()
                     .signWith(new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName()))
@@ -82,28 +76,15 @@ public class TokenProvider {
                     .setExpiration(Date.from(Instant.now().plus(expirationMinutes, ChronoUnit.HOURS)))
                     .compact();
         }
-
         public User getUserFromSubject(String subject){
                 String userId = subject.split(":")[0];
                 return userRepository.findByUserId(userId).get();
         }
-
         public String validateTokenAndGetSubject(String token){
                 return validateAndParserToken(token)
                         .getBody()
                         .getSubject();
         }
-        //왜 람다식 안되냐...
-//        @Transactional
-//        public String recreateAccessToken(String oldAccessToken) throws JsonProcessingException{
-//                String subject = decodeJwtPayloadSubject(oldAccessToken);
-//                userRefreshTokenRepository.findByUserIdAndReissueCountLessThan(UUID.fromString(subject.split(":")[0]),reissueLimit)
-//                        .ifPresentOrElse(UserRefreshToken::increaseReissueCount,
-//                                () -> {throw new ExpiredJwtException(null,null,"Refresh Token expire");
-//                                }
-//                        );
-//                return createAccessToken(subject);
-//        }
         @Transactional
         public String recreateAccessToken(String oldAccessToken) throws JsonProcessingException {
                 String subject = decodeJwtPayloadSubject(oldAccessToken);
@@ -115,11 +96,8 @@ public class TokenProvider {
                 } else {
                         throw new ExpiredJwtException(null, null, "Refresh Token expire");
                 }
-
                 return createAccessToken(subject);
         }
-
-        //Refresh Token 생성
         public String createRefreshToken(){
                 Date now = new Date();
                 long refreshExpirationMillis = refreshExpirationHours * 60 * 60 * 1000;
@@ -140,12 +118,6 @@ public class TokenProvider {
                 userRefreshTokenRepository.findByUserIdAndReissueCountLessThan(UUID.fromString(userId),reissueLimit)
                         .orElseThrow(() -> new ExpiredJwtException(null,null,"Refresh Token expire"));
         }
-//        private Jws<Claims> validateAndParserToken(String token){
-//                return Jwts.parserBuilder()
-//                        .setSigningKey(secretKey.getBytes())
-//                        .build()
-//                        .parseClaimsJws(token);
-//        }
         private Jws<Claims> validateAndParserToken(String auth){
                 var key = Keys.hmacShaKeyFor(secretKey.getBytes());
                 var parser = Jwts.parserBuilder()

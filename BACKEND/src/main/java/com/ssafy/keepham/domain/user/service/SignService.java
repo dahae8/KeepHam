@@ -1,6 +1,5 @@
 package com.ssafy.keepham.domain.user.service;
 
-import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.error.UserErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.user.entity.User;
@@ -30,7 +29,7 @@ public class SignService {
     private final UserRefreshTokenRepository userRefreshTokenRepository;
 
     @Transactional
-    public SignUpResponse registUser(SignUpRequest request){
+    public SignUpResponse registerUser(SignUpRequest request){
         User user = userRepository.save(User.toEntity(request,encoder));
         try {
             userRepository.flush();
@@ -52,7 +51,7 @@ public class SignService {
                 () -> userRefreshTokenRepository.save(new UserRefreshToken(user, refreshToken))
                     );
         log.info("로그인성공");
-        return new SignInResponse(user.getName(), user.getUserRole(), accessToken, refreshToken);
+        return new SignInResponse(user.getName(),user.getNickName(), user.getUserRole(), accessToken, refreshToken);
     }
 
     public boolean checkId(String userId){

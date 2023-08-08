@@ -17,7 +17,9 @@ import RoomList, {
   loader as roomListLoader,
 } from "./Pages/RoomList/RoomList.tsx";
 import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
-import ChatRoom from "./Pages/Chatroom/ChatRoom.tsx";
+import ChatRoom, {
+  loader as chatRoomLoader,
+} from "./Pages/ChatRoom/ChatRoom.tsx";
 import Terms from "./Pages/Terms/Terms.tsx";
 import AboutMe from "./Pages/AboutMe/AboutMe.tsx";
 import ContactUs from "./Pages/ContactUs/ContactUs.tsx";
@@ -51,8 +53,9 @@ const router = createBrowserRouter([
         loader: roomListLoader,
       },
       {
-        path: "/Home/chatRoom/:boxId",
+        path: "/Home/chatRoom/:roomId",
         element: <ChatRoom />,
+        loader: chatRoomLoader,
       },
       {
         path: "/Home/CreateRoom",
@@ -72,7 +75,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/Home/UserInfo",
-        element: <UserInfo />
+        element: <UserInfo />,
       },
       {
         path: "/Home/Terms",
@@ -96,15 +99,12 @@ const router = createBrowserRouter([
 
 // Mui Theme
 declare module "@mui/material/styles" {
-  interface Theme {
-    status: {
-      danger: string;
-    };
+  interface Palette {
+    gray: Palette["primary"];
   }
-  interface ThemeOptions {
-    status?: {
-      danger?: string;
-    };
+
+  interface PaletteOptions {
+    gray?: PaletteOptions["primary"];
   }
 }
 
@@ -113,7 +113,20 @@ const theme = createTheme({
     fontFamily: "Pretendard",
     htmlFontSize: 10,
   },
+  palette: {
+    gray: {
+      main: "#8F95A1",
+      light: "#B6BAC3",
+      dark: "#6C7280",
+    },
+  },
 });
+
+declare module "@mui/material/Button" {
+  interface ButtonPropsColorOverrides {
+    gray: true;
+  }
+}
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
