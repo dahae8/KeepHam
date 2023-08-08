@@ -15,21 +15,23 @@ import {
   Typography,
 } from "@mui/material";
 import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
+import TableList from "@/Components/RoomList/TableList.tsx";
+import AlbumList from "@/Components/RoomList/AlbumList.tsx";
 
 const drawerWidth = 300;
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const boxId = params.boxId;
+  const areaId = params.areaId;
   // 서버정보 필요
   const boxName = "다농 오피스텔";
   const boxAddress = "광주 장덕동";
   const boxStatus = "정상";
 
-  return { boxId, boxName, boxAddress, boxStatus };
+  return { areaId, boxName, boxAddress, boxStatus };
 }
 
 type boxInfoType = {
-  boxId: number;
+  areaId: number;
   boxName: string;
   boxAddress: string;
   boxStatus: string;
@@ -40,8 +42,6 @@ export default function RoomList() {
   const [albumMode, setAlbumMode] = React.useState(false);
 
   const boxInfo = useLoaderData() as boxInfoType;
-
-  console.log(boxInfo);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -83,11 +83,11 @@ export default function RoomList() {
           aria-label="open drawer"
           edge="start"
           onClick={handleDrawerToggle}
-          sx={{ mr: 2, display: { md: "none" } }}
+          sx={{ mr: 2, display: { lg: "none" } }}
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h5">{boxInfo.boxName}</Typography>
+        <Typography variant="h5">채팅방 목록</Typography>
       </div>
       <Divider />
       <div className="relative w-full min-h-[600px]" id="drawer-container">
@@ -95,7 +95,7 @@ export default function RoomList() {
           {/* 네비바 */}
           <Box
             component="nav"
-            sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
+            sx={{ width: { lg: drawerWidth }, flexShrink: { md: 0 } }}
             aria-label="mailbox folders"
           >
             <Drawer
@@ -110,7 +110,7 @@ export default function RoomList() {
                 keepMounted: true,
               }}
               sx={{
-                display: { xs: "block", md: "none" },
+                display: { xs: "block", lg: "none" },
                 "& .MuiDrawer-paper": {
                   boxSizing: "border-box",
                   width: drawerWidth,
@@ -129,7 +129,7 @@ export default function RoomList() {
                 keepMounted: true,
               }}
               sx={{
-                display: { xs: "none", md: "block" },
+                display: { xs: "none", lg: "block" },
                 "& .MuiDrawer-paper": {
                   boxSizing: "border-box",
                   width: drawerWidth,
@@ -147,9 +147,14 @@ export default function RoomList() {
               flexGrow: 1,
               p: 3,
               width: { md: `calc(100% - ${drawerWidth}px)` },
+              padding: 3,
             }}
           >
-            {albumMode ? "albumMode" : "tableMode"}
+            {albumMode ? (
+              <AlbumList areaId={boxInfo.areaId} />
+            ) : (
+              <TableList areaId={boxInfo.areaId} />
+            )}
           </Box>
         </div>
       </div>
