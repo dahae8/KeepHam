@@ -5,8 +5,8 @@ def get_mysql_connection():
         connection = pymysql.connect(
             host="localhost",
             user="root",
-            password="root",
-            database="pydb"
+            password="ssafy",
+            database="ssafy"
         )
         return connection
     except pymysql.Error as e:

@@ -128,5 +128,5 @@ def insert_or_update_menu_data_to_mysql(menu_list):
             connection.close()
 
 # 데이터 삽입
-insert_or_update_store_data_to_mysql(store_info_list)
-# insert_or_update_menu_data_to_mysql(menu_list)
+# insert_or_update_store_data_to_mysql(store_info_list)
+insert_or_update_menu_data_to_mysql(menu_list)
