@@ -16,6 +16,6 @@ public class StoreController {
     @Operation(summary = "가게 정보 조회")
     @GetMapping("/stores")
     public ApiResponse getAllStores(@RequestParam String address, @RequestParam float lat, @RequestParam float lng){
-        return ApiResponse.success(storeService.getStores(address, lat, lng));
+        return ApiResponse.success(storeService.getStores(address,lat, lng));
     }
 }

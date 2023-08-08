@@ -13,7 +13,7 @@ import java.util.List;
 public class StoreService {
     private final StoreRepository storeRepository;
     public List<StoreResponse> getStores(String address, float lat, float lng){
-        return storeRepository.findAllByStoreId(address,lat, lng).stream()
+        return storeRepository.findAllByAddressAndLocation(address, lat, lng).stream()
                 .map(StoreResponse::from)
                 .toList();
     }
