@@ -113,7 +113,9 @@ function TableList(props: propsType) {
         onRowSelectionModelChange={(selectedRow) => {
           const selectedIdx: number = Number(selectedRow[0]);
           console.log(selectedIdx);
-          navigate(`/Home/chatRoom/${selectedIdx}`);
+          if (window.sessionStorage.getItem("userId")) {
+            navigate(`/Home/chatRoom/${selectedIdx}`);
+          } else navigate("/Auth");
         }}
       />
     </div>
