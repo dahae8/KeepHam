@@ -10,6 +10,7 @@ import com.ssafy.keepham.domain.chatroom.dto.RoomPassword;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomService;
+import com.ssafy.keepham.domain.user.repository.UserRepository;
 import com.ssafy.keepham.security.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -33,17 +34,13 @@ public class ChatRoomApiController {
 
     private final ChatRoomService chatRoomService;
     private final ChatRoomManager chatRoomManager;
-    private Authentication auth;
     String tempNickName = UUID.randomUUID().toString();
 
     @Operation(summary = "방생성")
     @PostMapping("/rooms")
     private Api<ChatRoomResponse> createRoom(@Validated @RequestBody ChatRoomRequest chatRoomRequest){
-        chatRoomRequest.setSuperUserId(tempNickName);
-        auth = SecurityContextHolder.getContext().getAuthentication();
-        log.info("basic auth = {}",auth);
-        log.info("basic autch = {} ", auth.getAuthorities());
-        log.info("살려줘 = {} ", auth.getPrincipal());
+        var userNickName = chatRoomService.getUserNickname();
+        chatRoomRequest.setSuperUserId(userNickName);
         var res = chatRoomService.createRoom(chatRoomRequest);
         return Api.OK(res);
     }
@@ -55,6 +52,7 @@ public class ChatRoomApiController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "6") int pageSize
     ){
+
         return Api.OK(chatRoomService.openedRoom(status, page, pageSize));
     }
 
@@ -70,18 +68,30 @@ public class ChatRoomApiController {
         return Api.OK(chatRoomService.findOpenedRoomByBoxId(status, page, pageSize, boxId));
     }
 
+    @Operation(summary = "zipCode로 채팅방 조회")
+    @GetMapping("/rooms/zipcode/{zipCode}")
+    private Api<List<ChatRoomResponse>> findAllRoomByZipCode(
+            @PathVariable String zipCode,
+            @RequestParam ChatRoomStatus status,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "6") int pageSize
+    ){
+        return Api.OK(chatRoomService.findAllRoomByZipCode(status, page, pageSize, zipCode));
+    }
+
 
     @Operation(summary = "채팅방 입장. 비밀방일시 password 전달 필요")
     @PostMapping("/rooms/{roomId}")
     public Api<Object> enterSecretRoom(@PathVariable Long roomId, @RequestBody(required = false) RoomPassword password){
+        var userNickName = chatRoomService.getUserNickname();
         if (!chatRoomManager.isSecretRoom(roomId)){
-            chatRoomManager.userJoin(roomId, tempNickName);
-            return Api.OK(tempNickName);
+            chatRoomManager.userJoin(roomId, userNickName);
+            return Api.OK(userNickName);
         }
 
         if (chatRoomManager.isPasswordCorrect(roomId, password.getPassword())){
-            chatRoomManager.userJoin(roomId, tempNickName);
-            return Api.OK(tempNickName);
+            chatRoomManager.userJoin(roomId, userNickName);
+            return Api.OK(userNickName);
         } else {
             return Api.ERROR(ErrorCode.BAD_REQUEST, "방 비밀번호가 일치하지 않습니다.");
         }
