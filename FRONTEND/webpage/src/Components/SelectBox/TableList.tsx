@@ -53,21 +53,20 @@ function TableList(props: propsType) {
         console.log(response.data.body);
         setData(response.data.body);
         setLoading(false);
-        const setboxes: forpageBox[] = await data.map((item) => {
-          let vaild = 1;
-          if (item.valid) vaild = 1;
-          else vaild = 0;
+        // const setboxes: forpageBox[] = data.map((item) => {
+        //   let vaild = 1;
+        //   if (item.valid) vaild = 1;
+        //   else vaild = 0;
 
-          return {
-            id: item.box_id,
-            location: item.address,
-            address: item.detailed_address,
-            available: vaild,
-            enterable: 2,
-          };
-        });
-        console.log("durltjs:", setboxes);
-        setrows(setboxes);
+        //   return {
+        //     id: item.box_id,
+        //     location: item.address,
+        //     address: item.detailed_address,
+        //     available: vaild,
+        //     enterable: 2,
+        //   };
+        // });
+        // setrows(setboxes);
       } catch (error) {
         setError("AWS 서버에서 데이터를 가져오는데 에러가 발생했습니다.");
         setLoading(false);
@@ -82,6 +81,22 @@ function TableList(props: propsType) {
 
   if (error) {
     return <div>{error}</div>;
+  }
+  if (rows.length === 0) {
+    const setboxes: forpageBox[] = data.map((item) => {
+      let vaild = 1;
+      if (item.valid) vaild = 1;
+      else vaild = 0;
+
+      return {
+        id: item.box_id,
+        location: item.address,
+        address: item.detailed_address,
+        available: vaild,
+        enterable: 2,
+      };
+    });
+    setrows(setboxes);
   }
 
   return (

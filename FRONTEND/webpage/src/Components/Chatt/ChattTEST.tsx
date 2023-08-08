@@ -3,7 +3,6 @@ import { Client, Message } from "@stomp/stompjs";
 
 interface ChatMessage {
   room_id: number;
-  box_id: number;
   author: string;
   content: string;
   type: string;
@@ -52,10 +51,9 @@ const ChatBox: React.FC = () => {
     if (client && inputMessage.trim() !== "") {
       const chatMessage: ChatMessage = {
         room_id: roomID,
-        box_id: roomID,
         author: nname,
         content: inputMessage,
-        type: "OPEN",
+        type: "TALK",
       };
 
       client.publish({
