@@ -1,13 +1,10 @@
 package com.ssafy.keepham.security;
 
-
-import java.net.URL;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,13 +25,13 @@ public class SecurityConfig {
 //                .httpBasic().disable()
             .csrf().disable()
             .cors().disable()
-////            .headers(headers -> headers.frameOptions().sameOrigin())
+            .headers(headers -> headers.frameOptions().sameOrigin())
             .authorizeHttpRequests(request -> request.requestMatchers(ALLOW_URL).permitAll()
                 .anyRequest().authenticated())
             .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
                 SessionCreationPolicy.STATELESS))
             .addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
-//                .exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint))
+                .exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint))
                 .build();
     }
     @Bean

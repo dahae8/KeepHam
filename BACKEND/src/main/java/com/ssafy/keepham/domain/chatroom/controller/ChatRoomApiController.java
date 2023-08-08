@@ -33,15 +33,17 @@ public class ChatRoomApiController {
 
     private final ChatRoomService chatRoomService;
     private final ChatRoomManager chatRoomManager;
-    private Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    private Authentication auth;
     String tempNickName = UUID.randomUUID().toString();
 
     @Operation(summary = "방생성")
     @PostMapping("/rooms")
-    private Api<ChatRoomResponse> createRoom(
-            @Validated @RequestBody ChatRoomRequest chatRoomRequest
-    ){
+    private Api<ChatRoomResponse> createRoom(@Validated @RequestBody ChatRoomRequest chatRoomRequest){
         chatRoomRequest.setSuperUserId(tempNickName);
+        auth = SecurityContextHolder.getContext().getAuthentication();
+        log.info("basic auth = {}",auth);
+        log.info("basic autch = {} ", auth.getAuthorities());
+        log.info("살려줘 = {} ", auth.getPrincipal());
         var res = chatRoomService.createRoom(chatRoomRequest);
         return Api.OK(res);
     }

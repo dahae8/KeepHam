@@ -20,6 +20,6 @@ public class SignUpRequest {
         private String nickName;
         @Schema(description = "이메일")
         private String email;
-        @Schema(description = "나이")
-        private Integer age;
+        @Schema(description = "휴대폰 번호")
+        private String tel;
 }

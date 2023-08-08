@@ -10,12 +10,15 @@ import lombok.NoArgsConstructor;
 public class SignInResponse {
     @Schema(description = "회원 이름")
     String name;
+    @Schema(description = "회원 별명")
+    String nickName;
     @Schema(description = "회원 유형")
     UserRole userRole;
     String accessToken;
     String refreshToken;
-    public SignInResponse(String name, UserRole userRole, String accessToken, String refreshToken) {
+    public SignInResponse(String name, String nickName, UserRole userRole, String accessToken, String refreshToken) {
         this.name = name;
+        this.nickName = nickName;
         this.userRole = userRole;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
