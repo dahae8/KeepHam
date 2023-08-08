@@ -24,8 +24,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 function ChatRoom() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [navIdx, setNavIdx] = useState(1);
+  const [navIdx] = useState(1);
 
   const roomInfo = useLoaderData() as roomInfoType;
 
