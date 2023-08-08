@@ -23,6 +23,7 @@ public class Message {
     @Id
     private String id;
     private Long roomId;
+    private Long boxId;
     private String author;
     private String content;
     private LocalDateTime timestamp;

@@ -5,33 +5,32 @@ import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.chat.db.Message;
 import com.ssafy.keepham.domain.chat.db.MessageRepository;
-import com.ssafy.keepham.domain.chat.db.enums.Type;
 import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@PropertySource("classpath:kafka.properties")
 public class ChatRoomManager {
 
     private final ChatRoomRepository chatRoomRepository;
     private final KafkaTemplate<String, Message> kafkaTemplate;
     private final MessageRepository messageRepository;
     private final RedisTemplate<String, String> redisTemplate;
+
 
 
     public boolean isPasswordCorrect(Long roomId, String password){
@@ -107,7 +106,7 @@ public class ChatRoomManager {
     public void sendMessageToRoom(@Payload Message message){
         message.setTimestamp(LocalDateTime.now());
         messageRepository.save(message);
-        kafkaTemplate.send("kafka-chat", message);
+        kafkaTemplate.send("${kafka.chat.topic}", message);
     }
 
     public Set<String> pickRandomUsers(Set<String> users, int count){
