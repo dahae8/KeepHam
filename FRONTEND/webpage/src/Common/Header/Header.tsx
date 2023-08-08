@@ -63,7 +63,7 @@ function Header() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* 로고 */}
-          <Link to="/Home/ServiceArea" className="flex flex-row">
+          <Link to="/Home" className="flex flex-row">
             <img src="/logoImage.svg" className="h-24" />
             <img src="/logoText.svg" className="h-24" />
           </Link>
@@ -106,14 +106,12 @@ function Header() {
                         handleCloseUserMenu();
 
                         if (idx === 2) {
-                          navigate("/Home/UserInfo");
+                          navigate("/Home/UserInfo")
                         }
 
                         if (idx === 4) {
                           sessionStorage.setItem("userState", "isLoggedOut");
-                          sessionStorage.removeItem("userId");
                           dispatch(signOut());
-                          navigate("/");
                         }
                       }}
                     >
