@@ -14,7 +14,7 @@ import java.util.TimeZone;
 @EnableJpaAuditing
 @EnableKafka
 @OpenAPIDefinition(servers = {@Server(url = "https://i9c104.p.ssafy.io", description = "server")
-        , @Server(url = "localhost:8080", description = "local")})
+        , @Server(url = "http://localhost:8080", description = "local")})
 public class KeephamApplication {
 
     @PostConstruct
