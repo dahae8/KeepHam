@@ -15,7 +15,6 @@ import java.util.List;
 @RequestMapping("/api/boxs")
 public class ClientBoxController {
     private final BoxService boxService;
-    private final TokenProvider tokenProvider;
 
     //우편번호 근처에 해당하는 삭제안된 함 리스트 검색
     @Operation(summary = "우편번호로 근처의 함들 조회")

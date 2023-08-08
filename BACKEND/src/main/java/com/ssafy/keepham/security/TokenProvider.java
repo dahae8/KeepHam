@@ -4,14 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.keepham.common.error.TokenErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
-import com.ssafy.keepham.domain.user.entity.User;
-import com.ssafy.keepham.domain.user.entity.UserRefreshToken;
-import com.ssafy.keepham.domain.user.repository.UserRefreshTokenRepository;
-import com.ssafy.keepham.domain.user.repository.UserRepository;
+import com.ssafy.keepham.domain.box.user.entity.User;
+import com.ssafy.keepham.domain.box.user.entity.UserRefreshToken;
+import com.ssafy.keepham.domain.box.user.repository.UserRefreshTokenRepository;
+import com.ssafy.keepham.domain.box.user.repository.UserRepository;
 import io.jsonwebtoken.*;
 
 import java.nio.charset.StandardCharsets;
-import java.sql.Array;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -26,7 +25,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 /*

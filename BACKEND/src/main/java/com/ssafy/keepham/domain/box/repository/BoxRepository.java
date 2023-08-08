@@ -18,7 +18,7 @@ public interface BoxRepository extends JpaRepository<Box,Long> {
             "    SELECT zip_code\n" +
             "    FROM jibun\n" +
             "    WHERE umd_nm in (SELECT umd_nm FROM jibun WHERE zip_code = ?1)\n" +
-            ")",nativeQuery = true)
+            ")" )
     List<Box> getUnusedAllBox(String zipcode);
 
     //우편번호 근처에 해당하는 삭제안된 박스 리스트 검색
