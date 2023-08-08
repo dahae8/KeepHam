@@ -106,7 +106,7 @@ public class ChatRoomManager {
     public void sendMessageToRoom(@Payload Message message){
         message.setTimestamp(LocalDateTime.now());
         messageRepository.save(message);
-        kafkaTemplate.send("${kafka.chat.topic}", message);
+        kafkaTemplate.send("kafka-chat", message);
     }
 
     public Set<String> pickRandomUsers(Set<String> users, int count){
