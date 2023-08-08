@@ -1,4 +1,5 @@
-import { Box, Button, Typography } from "@mui/material";
+import { FoodBank } from "@mui/icons-material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import { useState } from "react";
 import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 
@@ -23,7 +24,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 function ChatRoom() {
-  const [sectionIdx, setSectionIdx] = useState(1);
+  const [navIdx, setNavIdx] = useState(1);
 
   const roomInfo = useLoaderData() as roomInfoType;
 
@@ -174,23 +175,34 @@ function ChatRoom() {
             >
               <Box
                 sx={{
-                  backgroundColor: sectionIdx === 1 ? "#8F95A1" : "#5B616E",
+                  backgroundColor: navIdx === 1 ? "#8F95A1" : "#5B616E",
                   width: 74,
                   height: 68,
-                  marginY: 1,
+                  marginY: 0.25,
                   display: "flex",
                   justifyContent: "start",
                   alignItems: "center",
+                  borderTopLeftRadius: 8,
+                  borderBottomLeftRadius: 8,
                 }}
               >
-                <Box sx={{
-                  backgroundColor: "white",
-                  width: 60,
-                  height: 60,
-                  margin: 0.5,
-                  
-                }}>
-
+                <Box
+                  sx={{
+                    backgroundColor: "white",
+                    width: 50,
+                    height: 50,
+                    margin: 1,
+                    borderRadius: 2,
+                  }}
+                >
+                  <IconButton
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <FoodBank />
+                  </IconButton>
                 </Box>
               </Box>
             </Box>
@@ -207,7 +219,7 @@ function ChatRoom() {
               sx={{
                 display: { xs: "none", md: "inline" },
                 backgroundColor: "#EEEEF0",
-                width: "calc(100% - 380px)",
+                width: "calc(100% - 480px)",
                 height: "100%",
               }}
             ></Box>
