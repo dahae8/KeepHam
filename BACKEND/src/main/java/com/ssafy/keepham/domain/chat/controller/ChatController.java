@@ -1,7 +1,7 @@
 package com.ssafy.keepham.domain.chat.controller;
 
 import com.ssafy.keepham.common.api.Api;
-import com.ssafy.keepham.domain.boxcontrol.producer.OpenProducer;
+import com.ssafy.keepham.domain.boxcontrol.producer.BoxControlProducer;
 import com.ssafy.keepham.domain.chat.db.Message;
 import com.ssafy.keepham.domain.chat.db.enums.Type;
 import com.ssafy.keepham.domain.chat.service.MessageService;
@@ -26,7 +26,7 @@ public class ChatController {
 
     private final MessageService messageService;
     private final ChatRoomManager chatRoomManager;
-    private final OpenProducer openProducer;
+    private final BoxControlProducer boxControlProducer;
 
 
     @Operation(summary = "roomId로 해당 채팅방의 채팅내역 조회")
@@ -40,9 +40,15 @@ public class ChatController {
         log.info("message : {}", message);
         if (message.getType() == Type.OPEN){
             log.info("OPEN 메세지");
-            openProducer.sendOpenMessageToBox(message);
+            boxControlProducer.sendOpenMessageToBox(message);
+        } else if(message.getType() == Type.PASSWORD){
+            log.info("KeyPad 암호");
+            boxControlProducer.sendKeyPadPasswordMessageToBox(message);
         }
-        chatRoomManager.sendMessageToRoom(message);
+        else {
+            log.info("채팅 메세지");
+            chatRoomManager.sendMessageToRoom(message);
+        }
     }
 
     @MessageMapping("/joinUser/{roomId}")
