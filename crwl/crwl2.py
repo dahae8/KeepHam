@@ -74,15 +74,10 @@ for store_id in store_id_list:
         for res in restaurant:
             if res.get('subchoices'):
                 subchoices_items.append(res.get('subchoices'))
-            menu_items_list = []
+            menu_items_list = [store_id]
             for key in menu_key_list:
                 menu_items_list.append(res.get(key))
             menu_list.append(menu_items_list)
-
-
-subchoices_subchoices_list = []
-subchoices_list = []
-subchoices_items = sum(subchoices_items,[])
 
 # 기본 가게 데이터 파싱
 def insert_or_update_store_data_to_mysql(store_info_list):

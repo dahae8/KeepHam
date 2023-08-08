@@ -31,12 +31,13 @@ def create_menu_table(connection):
             create_table_query = """
             CREATE TABLE IF NOT EXISTS menu (
                 item_id INT AUTO_INCREMENT PRIMARY KEY,
+                store_id INT,
                 original_image TEXT,
                 review_count INT,
                 subtitle VARCHAR(200),
                 description TEXT,
                 price INT,
-                slug VARCHAR(100),
+                slug TEXT,
                 image TEXT,
                 section VARCHAR(100),
                 top_displayed_item_order INT,
@@ -81,23 +82,24 @@ def insert_data_into_menu(connection, data):
         with connection.cursor() as cursor:
             insert_query = """
             INSERT INTO menu
-            (original_image, review_count, subtitle, description, price, slug, image, section, top_displayed_item_order, reorder_rate_message, menu_set_id, id, name)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+            (store_id, original_image, review_count, subtitle, description, price, slug, image, section, top_displayed_item_order, reorder_rate_message, menu_set_id, id, name)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
             """
             cursor.execute(insert_query, (
-                data[0],
-                int(data[1]),
-                data[2],
+                int(data[0]),
+                data[1],
+                int(data[2]),
                 data[3],
-                int(data[4]),
-                data[5],
+                data[4],
+                int(data[5]),
                 data[6],
                 data[7],
                 data[8],
                 data[9],
                 data[10],
                 data[11],
-                data[12]
+                data[12],
+                data[13]
             ))
         connection.commit()
     except pymysql.Error as e:
@@ -144,6 +146,7 @@ def update_menu_data(connection, menu_set_id, data):
             update_query = """
             UPDATE menu
             SET
+                store_id = %s,
                 original_image = %s,
                 review_count = %s,
                 subtitle = %s,
@@ -158,18 +161,20 @@ def update_menu_data(connection, menu_set_id, data):
             WHERE menu_set_id = %s;
             """
             cursor.execute(update_query, (
-                data[0],
-                int(data[1]),
-                data[2],
+                int(data[0]),
+                data[1],
+                int(data[2]),
                 data[3],
-                int(data[4]),
-                data[5],
+                data[4],
+                int(data[5]),
                 data[6],
                 data[7],
                 data[8],
                 data[9],
+                data[10],
                 data[11],
                 data[12],
+                data[13],
                 menu_set_id,
             ))
         connection.commit()
