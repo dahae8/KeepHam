@@ -10,6 +10,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Long> {
     Page<ChatRoomEntity> findAllByStatusOrderByCreatedAtDesc(ChatRoomStatus status, Pageable pageable);
     Page<ChatRoomEntity> findAllByStatusAndBoxOrderByCreatedAtDesc(ChatRoomStatus status, Box box, Pageable pageable);
+    Page<ChatRoomEntity> findAllByStatusAndBox_ZipCodeOrderByCreatedAtDesc(ChatRoomStatus status, String zipCode, Pageable pageable);
+
+    ChatRoomEntity findFirstByStatusAndBox(ChatRoomStatus status, Box box);
     ChatRoomEntity findFirstByIdAndStatus(Long id, ChatRoomStatus status);
     ChatRoomEntity findByBoxIdAndStatus(Long boxId, ChatRoomStatus status);
+
 }
