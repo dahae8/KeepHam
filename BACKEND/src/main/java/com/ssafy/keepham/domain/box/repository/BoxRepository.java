@@ -21,6 +21,7 @@ public interface BoxRepository extends JpaRepository<Box,Long> {
             ")",nativeQuery = true)
     List<Box> getUnusedAllBox(String zipcode);
 
+
     //우편번호 근처에 해당하는 삭제안된 박스 리스트 검색
     @Query(value = "SELECT *\n" +
             "FROM box\n" +
