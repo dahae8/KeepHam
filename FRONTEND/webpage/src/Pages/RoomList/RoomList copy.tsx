@@ -19,6 +19,8 @@ import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 import TableList from "@/Components/RoomList/TableList.tsx";
 import AlbumList from "@/Components/RoomList/AlbumList.tsx";
 import { MyLocation } from "@mui/icons-material";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const drawerWidth = 300;
 
@@ -32,6 +34,34 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return { areaId, boxName, boxAddress, boxStatus };
 }
 
+export interface Boxes {
+  address: string;
+  box_id: number;
+  detailed_address: string;
+  hardness: number;
+  latitude: number;
+  status: string;
+  type: string;
+  used: boolean;
+  valid: boolean;
+  zip_code: string;
+}
+
+export interface Rooms {
+  created_at: string;
+  updated_at: string;
+  id: number;
+  title: string;
+  status: string;
+  store_id: number;
+  box: Boxes;
+  extension_number: number;
+  max_people_number: number;
+  current_people_number: number;
+  super_user_id: string;
+  locked: boolean;
+}
+
 type boxInfoType = {
   areaId: number;
   boxName: string;
@@ -42,17 +72,13 @@ type boxInfoType = {
 export default function RoomList() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [albumMode, setAlbumMode] = React.useState(false);
-
   const boxInfo = useLoaderData() as boxInfoType;
-
   const [address, setAddress] = React.useState(
     sessionStorage.getItem("userLocation")!
   );
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-
   const drawer = (
     <div>
       <List>
@@ -79,7 +105,6 @@ export default function RoomList() {
       </List>
     </div>
   );
-
   async function addressSearch() {
     const zoneApiPromise = new Promise((resolve) => {
       const script = document.createElement("script");
@@ -112,7 +137,6 @@ export default function RoomList() {
       },
     }).open();
   }
-
   const location = (
     <Box
       sx={{
@@ -156,6 +180,37 @@ export default function RoomList() {
       </Box>
     </Box>
   );
+
+  const [Rooms, setRooms] = useState<Rooms[]>([]);
+  const [Boxes, setBoxes] = useState<Boxes[]>([]);
+  const userZipCode = window.sessionStorage.getItem("userZipCode");
+
+  useEffect(() => {
+    const fetchBoxes = async () => {
+      try {
+        const url = "http://i9c104.p.ssafy.io:48080/api/boxs/" + userZipCode;
+        const response = await axios.get(url);
+        setBoxes(response.data.body);
+        console.log(Boxes);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchBoxes();
+    const fetchRooms = async () => {
+      try {
+        const url =
+          "http://i9c104.p.ssafy.io:48080/api/rooms/zipcode/" +
+          userZipCode +
+          "?status=OPEN";
+        const response = await axios.get(url);
+        setRooms(response.data.body);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchRooms();
+  }, []);
 
   return (
     <>
@@ -245,7 +300,7 @@ export default function RoomList() {
               {albumMode ? (
                 <AlbumList areaId={boxInfo.areaId} />
               ) : (
-                <TableList areaId={boxInfo.areaId} />
+                <TableList areaId={boxInfo.areaId} data={Rooms} />
               )}
             </Box>
           </div>

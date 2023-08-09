@@ -13,9 +13,12 @@ import Auth from "@/Pages/Auth/Auth.tsx";
 import UserInfo from "@/Pages/UserInfo/UserInfo.tsx";
 // import Main from "@/Pages/Main/Landing.tsx";
 // import User from "./Pages/User/User.tsx";
+// import RoomList, {
+//   loader as roomListLoader,
+// } from "./Pages/RoomList/RoomList.tsx";
 import RoomList, {
   loader as roomListLoader,
-} from "./Pages/RoomList/RoomList.tsx";
+} from "./Pages/RoomList/RoomList copy.tsx";
 import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
 import ChatRoom, {
   loader as chatRoomLoader,
@@ -48,7 +51,7 @@ const router = createBrowserRouter([
         element: <ChatList />,
       },
       {
-        path: "/Home/RoomList/:areaId",
+        path: "/Home/RoomList",
         element: <RoomList />,
         loader: roomListLoader,
       },
