@@ -1,7 +1,25 @@
-import { FoodBank } from "@mui/icons-material";
-import { Box, Button, IconButton, Typography } from "@mui/material";
+import {
+  Chat,
+  FoodBank,
+  ShoppingCart,
+  SportsEsports,
+} from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  IconButton,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { useState } from "react";
 import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
+import BoxSettings from "@/Components/ChatRoom/BoxSettings.tsx";
+import ChatInterface, {
+  messageType,
+} from "@/Components/ChatRoom/ChatInterface.tsx";
+import SelectItems from "@/Components/ChatRoom/SelectItems.tsx";
+import UserSelect from "@/Components/ChatRoom/UserSelect.tsx";
 
 type roomInfoType = {
   roomId: number;
@@ -24,9 +42,36 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 function ChatRoom() {
-  const [navIdx] = useState(1);
+  const [navIdx, setNavIdx] = useState(0);
+
+  const theme = useTheme();
+  const sectionVisible = useMediaQuery(theme.breakpoints.up("md"));
+
+  if (sectionVisible && navIdx === 3) {
+    setNavIdx(0);
+  }
 
   const roomInfo = useLoaderData() as roomInfoType;
+
+  const messages: messageType[] = [
+    {
+      byMe: true,
+      sender: "보낸사람",
+      message: "메시지",
+    },
+  ];
+
+  function navDisplay() {
+    if (navIdx === 0) {
+      return <BoxSettings />;
+    } else if (navIdx === 1) {
+      return <SelectItems />;
+    } else if (navIdx === 2) {
+      return <UserSelect />;
+    } else {
+      return <ChatInterface messageList={messages} size={messages.length} />;
+    }
+  }
 
   return (
     <>
@@ -143,6 +188,9 @@ function ChatRoom() {
           overflow={"clip"}
           borderRadius={{ xs: 0, md: 2 }}
           height={"calc(100% - 100px)"}
+          sx={{
+            minHeight: 450,
+          }}
         >
           <Box
             sx={{
@@ -154,10 +202,8 @@ function ChatRoom() {
           {/* Body */}
           <Box
             sx={{
-              backgroundColor: "lightgrey",
               width: "100%",
-              minHeight: 450,
-              height: "100%",
+              height: "calc(100% - 40px)",
               display: "flex",
             }}
           >
@@ -173,6 +219,42 @@ function ChatRoom() {
                 alignItems: "end",
               }}
             >
+              {/* Nav Icons */}
+              <Box
+                sx={{
+                  backgroundColor: navIdx === 0 ? "#8F95A1" : "#5B616E",
+                  width: 74,
+                  height: 68,
+                  marginY: 0.25,
+                  display: "flex",
+                  justifyContent: "start",
+                  alignItems: "center",
+                  borderTopLeftRadius: 8,
+                  borderBottomLeftRadius: 8,
+                }}
+              >
+                <Box
+                  sx={{
+                    backgroundColor: "white",
+                    width: 50,
+                    height: 50,
+                    margin: 1,
+                    borderRadius: 2,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <IconButton onClick={() => setNavIdx(0)}>
+                    <FoodBank
+                      sx={{
+                        width: 40,
+                        height: 40,
+                      }}
+                    />
+                  </IconButton>
+                </Box>
+              </Box>
               <Box
                 sx={{
                   backgroundColor: navIdx === 1 ? "#8F95A1" : "#5B616E",
@@ -193,15 +275,88 @@ function ChatRoom() {
                     height: 50,
                     margin: 1,
                     borderRadius: 2,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
-                  <IconButton
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  >
-                    <FoodBank />
+                  <IconButton onClick={() => setNavIdx(1)}>
+                    <ShoppingCart
+                      sx={{
+                        width: 40,
+                        height: 40,
+                      }}
+                    />
+                  </IconButton>
+                </Box>
+              </Box>
+              <Box
+                sx={{
+                  backgroundColor: navIdx === 2 ? "#8F95A1" : "#5B616E",
+                  width: 74,
+                  height: 68,
+                  marginY: 0.25,
+                  display: "flex",
+                  justifyContent: "start",
+                  alignItems: "center",
+                  borderTopLeftRadius: 8,
+                  borderBottomLeftRadius: 8,
+                }}
+              >
+                <Box
+                  sx={{
+                    backgroundColor: "white",
+                    width: 50,
+                    height: 50,
+                    margin: 1,
+                    borderRadius: 2,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <IconButton onClick={() => setNavIdx(2)}>
+                    <SportsEsports
+                      sx={{
+                        width: 40,
+                        height: 40,
+                      }}
+                    />
+                  </IconButton>
+                </Box>
+              </Box>
+              <Box
+                sx={{
+                  backgroundColor: navIdx === 3 ? "#EEEEF0" : "#5B616E",
+                  width: 74,
+                  height: 68,
+                  marginY: 0.25,
+                  display: "flex",
+                  justifyContent: "start",
+                  alignItems: "center",
+                  borderTopLeftRadius: 8,
+                  borderBottomLeftRadius: 8,
+                }}
+              >
+                <Box
+                  sx={{
+                    backgroundColor: "white",
+                    width: 50,
+                    height: 50,
+                    margin: 1,
+                    borderRadius: 2,
+                    display: { xs: "flex", md: "none" },
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <IconButton onClick={() => setNavIdx(3)}>
+                    <Chat
+                      sx={{
+                        width: 40,
+                        height: 40,
+                      }}
+                    />
                   </IconButton>
                 </Box>
               </Box>
@@ -209,11 +364,13 @@ function ChatRoom() {
             {/* Section 1 */}
             <Box
               sx={{
-                backgroundColor: { xs: "#EEEEF0", md: "#8F95A1" },
+                backgroundColor: navIdx === 3 ? "#EEEEF0" : "#8F95A1",
                 width: { xs: "calc(100% - 80px)", md: 400 },
                 height: "100%",
               }}
-            ></Box>
+            >
+              {navDisplay()}
+            </Box>
             {/* Section 2 */}
             <Box
               sx={{
@@ -222,7 +379,9 @@ function ChatRoom() {
                 width: "calc(100% - 480px)",
                 height: "100%",
               }}
-            ></Box>
+            >
+              {<ChatInterface messageList={messages} size={messages.length} />}
+            </Box>
           </Box>
         </Box>
       </Box>
