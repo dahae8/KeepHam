@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
-import { Rooms, Boxes } from "@/Pages/RoomList/RoomList copy.tsx";
+import { Rooms } from "@/Pages/RoomList/RoomList copy.tsx";
 
 // 타입
 type propsType = {
@@ -45,6 +45,8 @@ function TableList(props: propsType) {
   console.log(areaId);
 
   const navigate = useNavigate();
+  const zipCode = window.sessionStorage.getItem("userZipCode");
+  console.log(zipCode);
 
   return (
     <Box sx={{ height: 400, width: "100%" }}>
@@ -62,7 +64,8 @@ function TableList(props: propsType) {
         onRowSelectionModelChange={(selectedRow) => {
           const selectedIdx: number = Number(selectedRow[0]);
           console.log(selectedIdx);
-          navigate(`/Home/Chatroom/${selectedIdx}`);
+          if (zipCode) navigate(`/Home/Chatroom/${selectedIdx}`);
+          else navigate("/Auth");
         }}
       />
     </Box>

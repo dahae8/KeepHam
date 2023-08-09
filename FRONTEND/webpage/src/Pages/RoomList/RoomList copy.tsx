@@ -18,7 +18,7 @@ import {
 import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 import TableList from "@/Components/RoomList/TableList.tsx";
 import AlbumList from "@/Components/RoomList/AlbumList.tsx";
-import { MyLocation, RoomService } from "@mui/icons-material";
+import { MyLocation } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -184,15 +184,14 @@ export default function RoomList() {
   const [Rooms, setRooms] = useState<Rooms[]>([]);
   const [Boxes, setBoxes] = useState<Boxes[]>([]);
   const userZipCode = window.sessionStorage.getItem("userZipCode");
-  const key = window.localStorage.getItem("AccessToken");
 
   useEffect(() => {
     const fetchBoxes = async () => {
       try {
         const url = "http://i9c104.p.ssafy.io:48080/api/boxs/" + userZipCode;
         const response = await axios.get(url);
-        console.log(response.data.body);
         setBoxes(response.data.body);
+        console.log(Boxes);
       } catch (error) {
         console.log(error);
       }
@@ -204,9 +203,7 @@ export default function RoomList() {
           "http://i9c104.p.ssafy.io:48080/api/rooms/zipcode/" +
           userZipCode +
           "?status=OPEN";
-        console.log("url : ", url);
         const response = await axios.get(url);
-        console.log("방정보", response);
         setRooms(response.data.body);
       } catch (error) {
         console.log(error);
@@ -214,14 +211,6 @@ export default function RoomList() {
     };
     fetchRooms();
   }, []);
-
-  useEffect(() => {
-    console.log("상자목록 : ", Boxes);
-  }, [Boxes]);
-
-  useEffect(() => {
-    console.log("방 : ", Rooms);
-  }, [Rooms]);
 
   return (
     <>
