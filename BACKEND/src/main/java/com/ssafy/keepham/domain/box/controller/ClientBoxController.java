@@ -3,7 +3,6 @@ package com.ssafy.keepham.domain.box.controller;
 import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.domain.box.dto.BoxResponse;
 import com.ssafy.keepham.domain.box.service.BoxService;
-import com.ssafy.keepham.security.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.keepham.common.error.TokenErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
-import com.ssafy.keepham.domain.box.user.entity.User;
-import com.ssafy.keepham.domain.box.user.entity.UserRefreshToken;
-import com.ssafy.keepham.domain.box.user.repository.UserRefreshTokenRepository;
-import com.ssafy.keepham.domain.box.user.repository.UserRepository;
+import com.ssafy.keepham.domain.user.entity.User;
+import com.ssafy.keepham.domain.user.entity.UserRefreshToken;
+import com.ssafy.keepham.domain.user.repository.UserRefreshTokenRepository;
+import com.ssafy.keepham.domain.user.repository.UserRepository;
 import io.jsonwebtoken.*;
 
 import java.nio.charset.StandardCharsets;
