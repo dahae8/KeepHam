@@ -34,7 +34,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return { areaId, boxName, boxAddress, boxStatus };
 }
 
-interface Boxes {
+export interface Boxes {
   address: string;
   box_id: number;
   detailed_address: string;
@@ -47,7 +47,7 @@ interface Boxes {
   zip_code: string;
 }
 
-interface Rooms {
+export interface Rooms {
   created_at: string;
   updated_at: string;
   id: number;
@@ -60,15 +60,6 @@ interface Rooms {
   current_people_number: number;
   super_user_id: string;
   locked: boolean;
-}
-
-export interface forRows {
-  id: number;
-  location: string;
-  address: string;
-  available: string;
-  enterable: number;
-  maxpeole: number;
 }
 
 type boxInfoType = {
@@ -190,9 +181,8 @@ export default function RoomList() {
     </Box>
   );
 
-  const [data, setData] = useState<forRows[]>([]);
-  const [Boxes, setBoxes] = useState<Boxes[]>([]);
   const [Rooms, setRooms] = useState<Rooms[]>([]);
+  const [Boxes, setBoxes] = useState<Boxes[]>([]);
   const userZipCode = window.sessionStorage.getItem("userZipCode");
   const key = window.localStorage.getItem("AccessToken");
 
@@ -203,47 +193,35 @@ export default function RoomList() {
         const response = await axios.get(url);
         console.log(response.data.body);
         setBoxes(response.data.body);
-        console.log("상자목록 : ", Boxes);
       } catch (error) {
         console.log(error);
       }
     };
+    fetchBoxes();
     const fetchRooms = async () => {
       try {
         const url =
           "http://i9c104.p.ssafy.io:48080/api/rooms/zipcode/" +
           userZipCode +
           "?status=OPEN";
+        console.log("url : ", url);
         const response = await axios.get(url);
-        console.log("방 : ", response.data.body);
-        if (Rooms.length === 0) {
-          setRooms(response.data.body);
-        }
+        console.log("방정보", response);
+        setRooms(response.data.body);
       } catch (error) {
         console.log(error);
       }
     };
-    fetchBoxes();
     fetchRooms();
-    console.log("여기의 data : ", data);
-    if (data.length === 0) {
-      const boxesList: forRows[] = Rooms.map((data: Rooms) => {
-        return {
-          id: data.id,
-          location: data.box.detailed_address,
-          address: data.box.detailed_address,
-          available: data.box.zip_code,
-          enterable: data.current_people_number,
-          maxpeole: data.max_people_number,
-        };
-      });
-      setData(boxesList);
-      console.log("내부이후의 data : ", data);
-      console.log("내부이후의 boxesList : ", boxesList);
-
-      // RoomList 에서 데이터 Join 필요
-    }
   }, []);
+
+  useEffect(() => {
+    console.log("상자목록 : ", Boxes);
+  }, [Boxes]);
+
+  useEffect(() => {
+    console.log("방 : ", Rooms);
+  }, [Rooms]);
 
   return (
     <>
@@ -333,7 +311,7 @@ export default function RoomList() {
               {albumMode ? (
                 <AlbumList areaId={boxInfo.areaId} />
               ) : (
-                <TableList areaId={boxInfo.areaId} data={data} />
+                <TableList areaId={boxInfo.areaId} data={Rooms} />
               )}
             </Box>
           </div>

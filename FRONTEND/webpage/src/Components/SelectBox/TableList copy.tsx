@@ -16,16 +16,6 @@ const columns: GridColDef[] = [
   },
 ];
 
-const rows = [
-  {
-    id: 1,
-    location: "SSAFY 광주캠퍼스",
-    address: "하남산단 6번로 133",
-    available: 35,
-    enterable: 3,
-  },
-];
-
 type propsType = {
   zipCode: number;
 };
@@ -63,7 +53,6 @@ function TableList(props: propsType) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const key = window.localStorage.getItem("AccessToken");
     const fetchData = async () => {
       try {
         const url = "http://i9c104.p.ssafy.io:48080/api/boxs/" + userZipCode;
