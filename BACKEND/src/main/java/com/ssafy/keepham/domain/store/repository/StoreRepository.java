@@ -11,6 +11,6 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     @Query(value = "SELECT s FROM Store s WHERE " +
             "s.address LIKE CONCAT(:address, '%') AND " +
             "ACOS(SIN(RADIANS(:lat)) * SIN(RADIANS(s.lat)) + " +
-            "COS(RADIANS(:lat)) * COS(RADIANS(s.lat)) * COS(RADIANS(:lng - s.lng))) * 6371000 <= 3000")
+            "COS(RADIANS(:lat)) * COS(RADIANS(s.lat)) * COS(RADIANS(:lng - s.lng))) * 6371000 <= 500")
     List<Store> findAllByAddressAndLocation(@Param("address") String address, @Param("lat") float lat, @Param("lng") float lng);
 }

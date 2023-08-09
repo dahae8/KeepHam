@@ -3,7 +3,6 @@ package com.ssafy.keepham.domain.user.controller;
 import com.ssafy.keepham.domain.user.service.UserService;
 import com.ssafy.keepham.domain.user.dto.ApiResponse;
 import com.ssafy.keepham.domain.user.dto.user.request.UserUpdateRequest;
-import com.ssafy.keepham.security.UserAuthority;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;

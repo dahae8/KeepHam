@@ -10,45 +10,31 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StoreResponse {
-    @Schema(description = "")
-    Long index;
-    @Schema(description = "")
+    Long id;
     String category;
-    @Schema(description = "")
-
     int storeId;
-    @Schema(description = "")
-
     String name;
-    @Schema(description = "")
-
     String address;
-    @Schema(description = "")
-
     String estimatedDeliveryTime;
-    @Schema(description = "")
-
+    String minOrderAmount;
     String deliveryFeeToDisplay;
-    @Schema(description = "")
-
     String logoUrl;
-    @Schema(description = "")
-
+    String thumbnailUrl;
     float lat;
-    @Schema(description = "")
-
     float lng;
 
     public static StoreResponse from(Store store){
         return new StoreResponse(
-                store.getIndex(),
+                store.getId(),
                 store.getCategory(),
                 store.getStoreId(),
                 store.getName(),
                 store.getAddress(),
                 store.getEstimatedDeliveryTime(),
+                store.getMinOrderAmount(),
                 store.getDeliveryFeeToDisplay(),
                 store.getLogoUrl(),
+                store.getThumbnailUrl(),
                 store.getLat(),
                 store.getLng()
         );

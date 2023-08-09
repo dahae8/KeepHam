@@ -5,7 +5,7 @@ def create_store_table(connection):
         with connection.cursor() as cursor:
             create_table_query = """
             CREATE TABLE IF NOT EXISTS store (
-                `index` BIGINT NOT NULL AUTO_INCREMENT,
+                `id` BIGINT NOT NULL AUTO_INCREMENT,
                 `category` VARCHAR(255) NULL,
                 `store_id` BIGINT NULL UNIQUE, -- 유니크 제약 조건 설정
                 `name` VARCHAR(255) NULL,
@@ -17,7 +17,7 @@ def create_store_table(connection):
                 `thumbnail_url` TEXT,
                 `lat` VARCHAR(255) NULL,
                 `lng` VARCHAR(255) NULL,
-                PRIMARY KEY (`index`)
+                PRIMARY KEY (`id`)
             )
             """
             cursor.execute(create_table_query)

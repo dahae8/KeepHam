@@ -1,0 +1,8 @@
+{
+  "result": {
+    "result_code": 500,
+    "result_message": "서버에러 입니다.",
+    "result_description": "에러"
+  },
+  "body": null
+}
