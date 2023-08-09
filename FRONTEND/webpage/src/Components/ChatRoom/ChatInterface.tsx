@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import { useEffect, useRef } from "react";
 
 export type messageType = {
   byMe: boolean;
@@ -12,15 +13,33 @@ type propsType = {
 };
 
 function ChatInterface(props: propsType) {
+  const chatRef = useRef<HTMLElement | null> (null);
+  
+  useEffect(() => {
+    if(chatRef.current) {
+      chatRef.current.scrollIntoView(false);
+      // console.log(chatRef.current.scrollTop);
+    }
+
+
+    return () => {
+      console.log(chatRef.current?.scrollTop);
+      
+    }
+  })
+
   return (
     <>
       <Box
-        sx={{
+          ref={chatRef}
+          sx={{
           width: "100%",
           height: 800,
           backgroundColor: "blue",
-        }}
-      ></Box>
+
+        }}>
+
+        </Box>
     </>
   );
 }

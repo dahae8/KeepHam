@@ -1,17 +1,10 @@
 import {
-  Chat,
   FoodBank,
+  Group,
   ShoppingCart,
   SportsEsports,
 } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  IconButton,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, IconButton, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useState } from "react";
 import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 import BoxSettings from "@/Components/ChatRoom/BoxSettings.tsx";
@@ -20,6 +13,7 @@ import ChatInterface, {
 } from "@/Components/ChatRoom/ChatInterface.tsx";
 import SelectItems from "@/Components/ChatRoom/SelectItems.tsx";
 import UserSelect from "@/Components/ChatRoom/UserSelect.tsx";
+import UserList from "@/Components/ChatRoom/UserList.tsx";
 
 type roomInfoType = {
   roomId: number;
@@ -42,14 +36,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 function ChatRoom() {
-  const [navIdx, setNavIdx] = useState(0);
-
-  const theme = useTheme();
-  const sectionVisible = useMediaQuery(theme.breakpoints.up("md"));
-
-  if (sectionVisible && navIdx === 3) {
-    setNavIdx(0);
-  }
+  const theme = useTheme()
+  const bigSize = useMediaQuery(theme.breakpoints.up("xl"));
+  const [navIdx, setNavIdx] = useState(1);
+  const [showUsers, setShowUsers] = useState(false);
 
   const roomInfo = useLoaderData() as roomInfoType;
 
@@ -62,14 +52,14 @@ function ChatRoom() {
   ];
 
   function navDisplay() {
-    if (navIdx === 0) {
+    if (navIdx === 1) {
       return <BoxSettings />;
-    } else if (navIdx === 1) {
-      return <SelectItems />;
     } else if (navIdx === 2) {
+      return <SelectItems />;
+    } else if (navIdx === 3) {
       return <UserSelect />;
     } else {
-      return <ChatInterface messageList={messages} size={messages.length} />;
+      return <></>;
     }
   }
 
@@ -197,14 +187,30 @@ function ChatRoom() {
               height: 40,
               width: "100%",
               backgroundColor: "#4A4E5A",
+              display: "flex",
+              justifyContent: "end",
+              alignItems: "center",
             }}
-          ></Box>
+          >
+            <IconButton
+              sx={{
+                color: "white",
+              }}
+              onClick={() => {
+                showUsers ? setShowUsers(false) : setShowUsers(true);
+              }}
+            >
+              <Group />
+            </IconButton>
+          </Box>
           {/* Body */}
           <Box
             sx={{
               width: "100%",
               height: "calc(100% - 40px)",
               display: "flex",
+              position: "relative",
+              justifyContent: "space-between"
             }}
           >
             {/* Nav */}
@@ -220,41 +226,6 @@ function ChatRoom() {
               }}
             >
               {/* Nav Icons */}
-              <Box
-                sx={{
-                  backgroundColor: navIdx === 0 ? "#8F95A1" : "#5B616E",
-                  width: 74,
-                  height: 68,
-                  marginY: 0.25,
-                  display: "flex",
-                  justifyContent: "start",
-                  alignItems: "center",
-                  borderTopLeftRadius: 8,
-                  borderBottomLeftRadius: 8,
-                }}
-              >
-                <Box
-                  sx={{
-                    backgroundColor: "white",
-                    width: 50,
-                    height: 50,
-                    margin: 1,
-                    borderRadius: 2,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <IconButton onClick={() => setNavIdx(0)}>
-                    <FoodBank
-                      sx={{
-                        width: 40,
-                        height: 40,
-                      }}
-                    />
-                  </IconButton>
-                </Box>
-              </Box>
               <Box
                 sx={{
                   backgroundColor: navIdx === 1 ? "#8F95A1" : "#5B616E",
@@ -280,8 +251,16 @@ function ChatRoom() {
                     alignItems: "center",
                   }}
                 >
-                  <IconButton onClick={() => setNavIdx(1)}>
-                    <ShoppingCart
+                  <IconButton
+                    onClick={() => {
+                      if (navIdx !== 1) {
+                        setNavIdx(1);
+                      } else {
+                        setNavIdx(0);
+                      }
+                    }}
+                  >
+                    <FoodBank
                       sx={{
                         width: 40,
                         height: 40,
@@ -315,8 +294,16 @@ function ChatRoom() {
                     alignItems: "center",
                   }}
                 >
-                  <IconButton onClick={() => setNavIdx(2)}>
-                    <SportsEsports
+                  <IconButton
+                    onClick={() => {
+                      if (navIdx !== 2) {
+                        setNavIdx(2);
+                      } else {
+                        setNavIdx(0);
+                      }
+                    }}
+                  >
+                    <ShoppingCart
                       sx={{
                         width: 40,
                         height: 40,
@@ -327,7 +314,7 @@ function ChatRoom() {
               </Box>
               <Box
                 sx={{
-                  backgroundColor: navIdx === 3 ? "#EEEEF0" : "#5B616E",
+                  backgroundColor: navIdx === 3 ? "#8F95A1" : "#5B616E",
                   width: 74,
                   height: 68,
                   marginY: 0.25,
@@ -345,13 +332,21 @@ function ChatRoom() {
                     height: 50,
                     margin: 1,
                     borderRadius: 2,
-                    display: { xs: "flex", md: "none" },
+                    display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
                   }}
                 >
-                  <IconButton onClick={() => setNavIdx(3)}>
-                    <Chat
+                  <IconButton
+                    onClick={() => {
+                      if (navIdx !== 3) {
+                        setNavIdx(3);
+                      } else {
+                        setNavIdx(0);
+                      }
+                    }}
+                  >
+                    <SportsEsports
                       sx={{
                         width: 40,
                         height: 40,
@@ -364,23 +359,66 @@ function ChatRoom() {
             {/* Section 1 */}
             <Box
               sx={{
-                backgroundColor: navIdx === 3 ? "#EEEEF0" : "#8F95A1",
-                width: { xs: "calc(100% - 80px)", md: 400 },
+                display: navIdx !== 0 ? "inline" : "none",
+                backgroundColor: "#8F95A1",
+                width: 400,
                 height: "100%",
+                position: "absolute",
+                left: 80,
+                zIndex: 1,
               }}
             >
               {navDisplay()}
             </Box>
-            {/* Section 2 */}
+            {/* message */}
             <Box
               sx={{
-                display: { xs: "none", md: "inline" },
                 backgroundColor: "#EEEEF0",
-                width: "calc(100% - 480px)",
+                width: bigSize && navIdx !== 0 ? ("calc(100% - 480px)" ) : ("calc(100% - 80px)"),
+                // width: "calc(100% - 80px)",
                 height: "100%",
               }}
             >
-              {<ChatInterface messageList={messages} size={messages.length} />}
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "calc(100% - 80px)",
+                  overflow: "auto",
+                }}
+              >
+                {<ChatInterface messageList={messages} size={messages.length} />}
+              </Box>
+              {/* Message Input */}
+              <Box
+                sx={{
+                  width: "100%",
+                  height: 80,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <TextField multiline sx={{
+                  width: "100%",
+                  height: "100%",
+                  padding: 1,
+                }}/>
+              </Box>
+            </Box>
+            {/* User List */}
+            <Box
+              sx={{
+                display: showUsers ? "inline" : "none",
+                backgroundColor: "white",
+                width: 280,
+                height: "80%",
+                position: "absolute",
+                right: 0,
+                borderTopLeftRadius: 8,
+                borderBottomLeftRadius: 8,
+              }}
+            >
+              <UserList />
             </Box>
           </Box>
         </Box>
