@@ -26,6 +26,7 @@ public class PaymentController {
         //토큰발급
         HashMap<String, Object> token = bootpayService.goGetToken();
         if(token.get("error_code") != null){
+            System.out.println(token);
             return Api.ERROR(BootpayError.BOOTPAY_TOKEN_ERROR, String.format("[%s]애러 발생",token.get("error_code")));
         }
 
