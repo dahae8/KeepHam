@@ -1,27 +1,20 @@
 package com.ssafy.keepham.domain.chatroom.controller;
 
 import com.ssafy.keepham.common.api.Api;
-import com.ssafy.keepham.common.error.ChatRoomError;
 import com.ssafy.keepham.common.error.ErrorCode;
-import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
 import com.ssafy.keepham.domain.chatroom.dto.RoomPassword;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomService;
-import com.ssafy.keepham.domain.user.repository.UserRepository;
-import com.ssafy.keepham.security.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,7 +27,7 @@ public class ChatRoomApiController {
 
     private final ChatRoomService chatRoomService;
     private final ChatRoomManager chatRoomManager;
-    String tempNickName = UUID.randomUUID().toString();
+
 
     @Operation(summary = "방생성")
     @PostMapping("/rooms")
@@ -58,14 +51,14 @@ public class ChatRoomApiController {
 
     @Operation(summary = "boxId로 채팅방 조회")
     @GetMapping("/rooms/{boxId}")
-    private Api<List<ChatRoomResponse>> findOpenedRoomByBoxId(
+    private Api<List<ChatRoomResponse>> findRoomByBoxId(
             @PathVariable Long boxId,
             @RequestParam ChatRoomStatus status,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "6") int pageSize
     ){
 
-        return Api.OK(chatRoomService.findOpenedRoomByBoxId(status, page, pageSize, boxId));
+        return Api.OK(chatRoomService.findRoomByBoxId(status, page, pageSize, boxId));
     }
 
     @Operation(summary = "zipCode로 채팅방 조회")

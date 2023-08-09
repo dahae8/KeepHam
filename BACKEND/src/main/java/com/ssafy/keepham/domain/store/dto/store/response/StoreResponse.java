@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StoreResponse {
     @Schema(description = "")
-    Long index;
+    Long id;
     @Schema(description = "")
     String category;
     @Schema(description = "")
@@ -41,7 +41,7 @@ public class StoreResponse {
 
     public static StoreResponse from(Store store){
         return new StoreResponse(
-                store.getIndex(),
+                store.getId(),
                 store.getCategory(),
                 store.getStoreId(),
                 store.getName(),

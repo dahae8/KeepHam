@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long index;
+    Long id;
     String category;
     int storeId;
     String name;
