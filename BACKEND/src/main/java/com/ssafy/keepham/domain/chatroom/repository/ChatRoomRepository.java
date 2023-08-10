@@ -29,7 +29,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Long> 
             @Param("boxIds") List<Long> boxIds,
             Pageable pageable);
 
-    ChatRoomEntity findFirstByStatusAndBox(ChatRoomStatus status, Box box);
     ChatRoomEntity findFirstByIdAndStatus(Long id, ChatRoomStatus status);
     ChatRoomEntity findByBoxIdAndStatus(Long boxId, ChatRoomStatus status);
 

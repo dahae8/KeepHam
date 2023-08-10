@@ -4,15 +4,13 @@ import com.ssafy.keepham.domain.user.common.GenderType;
 import com.ssafy.keepham.domain.user.common.UserRole;
 import com.ssafy.keepham.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class UserInfoResponse {
     @Schema(description = "회원 고유키")
     private Long id;

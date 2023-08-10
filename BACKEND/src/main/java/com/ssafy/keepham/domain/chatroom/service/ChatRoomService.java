@@ -11,6 +11,7 @@ import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
 import com.ssafy.keepham.domain.user.repository.UserRepository;
+import com.ssafy.keepham.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,8 +36,7 @@ public class ChatRoomService {
     private final ChatRoomConverter chatRoomConverter;
     private final ChatRoomManager chatRoomManager;
     private final BoxRepository boxRepository;
-    private final UserRepository userRepository;
-    private Authentication auth;
+    private final UserService userService;
 
     @Transactional
     public ChatRoomResponse createRoom(ChatRoomRequest chatRoomRequest){
@@ -104,20 +104,6 @@ public class ChatRoomService {
         room.getBox().setUsed(false);
         room.setStatus(ChatRoomStatus.CLOSE);
     }
-
-
-    public String getUserNickname(){
-        auth = SecurityContextHolder.getContext().getAuthentication();
-        var user = (User)auth.getPrincipal();
-        var userId = user.getUsername();
-        log.info("user : {}", user.getUsername());
-        var userNickName = userRepository.findByUserId(userId).map(it -> it.getNickName())
-                .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 유저입니다."));
-//        var userNickName = "1";
-        return userNickName;
-    }
-
-
 
 
 }
