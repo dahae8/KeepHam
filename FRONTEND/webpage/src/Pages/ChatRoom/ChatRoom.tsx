@@ -1,10 +1,19 @@
 import {
   FoodBank,
   Group,
+  Send,
   ShoppingCart,
   SportsEsports,
 } from "@mui/icons-material";
-import { Box, Button, IconButton, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  TextField,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { useState } from "react";
 import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 import BoxSettings from "@/Components/ChatRoom/BoxSettings.tsx";
@@ -36,20 +45,15 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 function ChatRoom() {
-  const theme = useTheme()
+  const theme = useTheme();
   const bigSize = useMediaQuery(theme.breakpoints.up("xl"));
   const [navIdx, setNavIdx] = useState(1);
   const [showUsers, setShowUsers] = useState(false);
+  const [msgText, setMsgText] = useState("");
 
   const roomInfo = useLoaderData() as roomInfoType;
 
-  const messages: messageType[] = [
-    {
-      byMe: true,
-      sender: "보낸사람",
-      message: "메시지",
-    },
-  ];
+  const [messages, setMessages] = useState<messageType[]>([]);
 
   function navDisplay() {
     if (navIdx === 1) {
@@ -62,6 +66,35 @@ function ChatRoom() {
       return <></>;
     }
   }
+
+  const sendHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const message = formData.get("message");
+
+    const now = new Date();
+
+    if (message) {
+      if (message.length > 50) {
+        alert("문자열의 길이가 너무 깁니다");
+      } else {
+        setMessages([
+          ...messages,
+          {
+            byMe: true,
+            sender: "나",
+            message: message.toString(),
+            time: now.getHours().toString() + ":" + now.getMinutes().toString(),
+          },
+        ]);
+
+        setMsgText("");
+      }
+    }
+  };
 
   return (
     <>
@@ -210,7 +243,7 @@ function ChatRoom() {
               height: "calc(100% - 40px)",
               display: "flex",
               position: "relative",
-              justifyContent: "space-between"
+              justifyContent: "space-between",
             }}
           >
             {/* Nav */}
@@ -374,7 +407,10 @@ function ChatRoom() {
             <Box
               sx={{
                 backgroundColor: "#EEEEF0",
-                width: bigSize && navIdx !== 0 ? ("calc(100% - 480px)" ) : ("calc(100% - 80px)"),
+                width:
+                  bigSize && navIdx !== 0
+                    ? "calc(100% - 480px)"
+                    : "calc(100% - 80px)",
                 // width: "calc(100% - 80px)",
                 height: "100%",
               }}
@@ -386,24 +422,61 @@ function ChatRoom() {
                   overflow: "auto",
                 }}
               >
-                {<ChatInterface messageList={messages} size={messages.length} />}
+                {
+                  <ChatInterface
+                    messageList={messages}
+                    size={messages.length}
+                  />
+                }
               </Box>
               {/* Message Input */}
-              <Box
-                sx={{
-                  width: "100%",
-                  height: 80,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <TextField multiline sx={{
-                  width: "100%",
-                  height: "100%",
-                  padding: 1,
-                }}/>
-              </Box>
+              <form onSubmit={sendHandler}>
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: 80,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "#F7F8F8",
+                    boxShadow: 8,
+                  }}
+                >
+                  <TextField
+                    value={msgText}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setMsgText(event.target.value);
+                    }}
+                    name="message"
+                    sx={{
+                      width: "calc(100% - 96px)",
+                      height: 72,
+                      padding: 1,
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      borderRadius: 4,
+                      width: 80,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "#CCFBF1",
+                      marginX: 2,
+                      boxShadow: 2,
+                    }}
+                  >
+                    <IconButton type="submit">
+                      <Send
+                        sx={{
+                          width: 40,
+                          height: 40,
+                        }}
+                      />
+                    </IconButton>
+                  </Box>
+                </Box>
+              </form>
             </Box>
             {/* User List */}
             <Box
