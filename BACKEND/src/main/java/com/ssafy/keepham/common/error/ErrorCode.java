@@ -13,7 +13,7 @@ public enum ErrorCode implements ErrorCodeIfs {
     SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), 500, "서버에러 입니다."),
     NULL_POINT(HttpStatus.INTERNAL_SERVER_ERROR.value(), 513, "Null Point"),
     INVALID_INPUT(HttpStatus.BAD_REQUEST.value(), 400, "유효하지 않은 input 입니다"),
-    DENIED_ERROR(HttpStatus.FORBIDDEN.value(),403,"권한이 없습니다."),
+    DENIED_ERROR(HttpStatus.FORBIDDEN.value(),403,"권한이 없습니다.");
 
     private final Integer httpStatusCode;
     private final Integer errorCode;
