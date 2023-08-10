@@ -27,7 +27,9 @@ function SetLoc() {
 
   const [currentLoc, setCurrentLoc] = React.useState("설정안됨");
 
-  const [locations, setLocations] = React.useState([{addressName: "위치를 설정해 주세요", zipCode: 0}]);
+  const [locations, setLocations] = React.useState([
+    { addressName: "위치를 설정해 주세요", zipCode: 0 },
+  ]);
 
   const [latLong, setLatLong] = React.useState({ lat: 0, long: 0 });
 
@@ -35,7 +37,6 @@ function SetLoc() {
 
   // 행정 주소 받아오기
   useEffect(() => {
-
     const api: string = "KakaoAK " + import.meta.env.VITE_KAKAO_REST_API;
 
     async function get() {
@@ -48,8 +49,8 @@ function SetLoc() {
         category_group_code: "CS2",
         x: latLong.long,
         y: latLong.lat,
-      }
-      
+      };
+
       const csResult = await axios({
         method: "get",
         headers: headers,
@@ -58,7 +59,7 @@ function SetLoc() {
         data: {},
       });
 
-      const dongArr: string[] = []
+      const dongArr: string[] = [];
 
       let dataSize = 0;
 
@@ -69,19 +70,19 @@ function SetLoc() {
         const endIdx: number = adr.indexOf("동 ") + 1;
 
         const dong: string = adr.substring(startIdx, endIdx);
-        
+
         if (dongArr.includes(dong)) {
-          return false
+          return false;
         } else {
           dongArr.push(dong);
           dataSize += 1;
           return true;
         }
-      })
+      });
 
       const tempLocation: {
-        addressName: string,
-        zipCode: number
+        addressName: string;
+        zipCode: number;
       }[] = [];
 
       filteredResult.forEach(async (location: any) => {
@@ -89,12 +90,12 @@ function SetLoc() {
 
         const idx: number = adr.indexOf("동 ");
 
-        const shortName: string = adr.substring(0, idx + 1)
+        const shortName: string = adr.substring(0, idx + 1);
 
         const adParams = {
           query: adr,
-        }
-        
+        };
+
         const adResult = await axios({
           method: "get",
           headers: headers,
@@ -102,18 +103,16 @@ function SetLoc() {
           url: "https://dapi.kakao.com/v2/local/search/address",
           data: {},
         });
-        
+
         const zipCode = adResult.data.documents[0].road_address.zone_no;
 
-        tempLocation.push({addressName: shortName, zipCode: zipCode})
+        tempLocation.push({ addressName: shortName, zipCode: zipCode });
 
-        if(tempLocation.length === dataSize)
-        {
-          setCurrentLoc(tempLocation[0].addressName)
+        if (tempLocation.length === dataSize) {
+          setCurrentLoc(tempLocation[0].addressName);
           setLocations(tempLocation);
         }
       });
-
     }
 
     if (latLong.lat !== 0) {
@@ -147,25 +146,26 @@ function SetLoc() {
 
   //행정구역 확정
   const confirmChange = () => {
-
-    if (idx !== "" && locations[0].addressName !== "위치를 설정해 주세요")
-    {
+    if (idx !== "" && locations[0].addressName !== "위치를 설정해 주세요") {
       const selectedIdx = Number(idx);
       const userLocation = locations[selectedIdx].addressName;
 
       const sessionStorage = window.sessionStorage;
       sessionStorage.setItem("userLocation", userLocation);
-      sessionStorage.setItem("userZipCode", locations[selectedIdx].zipCode.toString());
-      
-      navigate("/Home/ServiceArea");
+      sessionStorage.setItem(
+        "userZipCode",
+        locations[selectedIdx].zipCode.toString()
+      );
+
+      navigate("/Home/RoomList");
     }
-    
-  }
+  };
 
   async function addressSearch() {
     const zoneApiPromise = new Promise((resolve) => {
       const script = document.createElement("script");
-      script.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+      script.src =
+        "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
       document.head.appendChild(script);
       script.onload = () => {
         resolve("우편번호 서비스 로드 완료!");
@@ -177,27 +177,26 @@ function SetLoc() {
     console.log(result);
 
     new window.daum.Postcode({
-      oncomplete: function(data: any) {
-
+      oncomplete: function (data: any) {
         const tempLocation: {
-          addressName: string,
-          zipCode: number
+          addressName: string;
+          zipCode: number;
         }[] = [];
 
         const adr: string = data.jibunAddress;
 
         const idx: number = adr.indexOf("동 ");
 
-        const shortName: string = adr.substring(0, idx + 1)
+        const shortName: string = adr.substring(0, idx + 1);
 
         const zipCode: number = data.zonecode;
 
-        tempLocation.push({addressName: shortName, zipCode: zipCode});
+        tempLocation.push({ addressName: shortName, zipCode: zipCode });
 
-        setCurrentLoc(tempLocation[0].addressName)
+        setCurrentLoc(tempLocation[0].addressName);
         setLocations(tempLocation);
-      }
-  }).open();
+      },
+    }).open();
   }
 
   return (
@@ -206,25 +205,27 @@ function SetLoc() {
 
       {/* 리스트 */}
       <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 4,
+        }}
+      >
+        <FormControl
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 4,
+            width: 200,
           }}
         >
-          <FormControl
-            sx={{
-              width: 200,
-            }}
-          >
-            <InputLabel>🌐</InputLabel>
-            <Select value={idx} label="위치" onChange={handleChange}>
-              {menuItems}
-            </Select>
-          </FormControl>
-          <Button variant="contained" onClick={confirmChange}>확인</Button>
-        </Box>
+          <InputLabel>🌐</InputLabel>
+          <Select value={idx} label="위치" onChange={handleChange}>
+            {menuItems}
+          </Select>
+        </FormControl>
+        <Button variant="contained" onClick={confirmChange}>
+          확인
+        </Button>
+      </Box>
 
       {/* 위치 권한 / 설정 */}
       <Grid

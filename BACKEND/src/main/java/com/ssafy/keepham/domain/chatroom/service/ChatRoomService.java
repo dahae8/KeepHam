@@ -1,40 +1,42 @@
 package com.ssafy.keepham.domain.chatroom.service;
 
-import com.ssafy.keepham.common.error.BoxError;
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.box.entity.Box;
 import com.ssafy.keepham.domain.box.repository.BoxRepository;
 import com.ssafy.keepham.domain.chatroom.converter.ChatRoomConverter;
-import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
-import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
+import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
-import com.ssafy.keepham.security.TokenProvider;
+import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
+import com.ssafy.keepham.domain.user.repository.UserRepository;
+import com.ssafy.keepham.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomConverter chatRoomConverter;
     private final ChatRoomManager chatRoomManager;
     private final BoxRepository boxRepository;
-    private final TokenProvider tokenProvider;
-    //TODO TokenProvider 유호성 검사 후 내부 정보에 맞춰 수정하기
+    private final UserService userService;
 
     @Transactional
     public ChatRoomResponse createRoom(ChatRoomRequest chatRoomRequest){
@@ -68,7 +70,7 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
     }
 
-    public List<ChatRoomResponse> findOpenedRoomByBoxId(ChatRoomStatus status, int page, int pageSize, Long boxId){
+    public List<ChatRoomResponse> findRoomByBoxId(ChatRoomStatus status, int page, int pageSize, Long boxId){
         Pageable pageable = PageRequest.of(page-1, pageSize);
         Box box = boxRepository.findFirstById(boxId);
         Page<ChatRoomEntity> chatRoomEntityPage = chatRoomRepository.findAllByStatusAndBoxOrderByCreatedAtDesc(status, box, pageable);
@@ -83,6 +85,18 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
     }
 
+    public List<ChatRoomResponse> findAllRoomByZipCode(ChatRoomStatus status, int page, int pageSize, String zipCode){
+        Pageable pageable = PageRequest.of(page-1, pageSize);
+        List<Box> boxes = boxRepository.getAllzipcode(zipCode);
+        List<Long> box_ids = boxes.stream().map(Box::getId).toList();
+        log.info("box_ids : {}",box_ids);
+        Page<ChatRoomEntity> chatRoomEntityPage = chatRoomRepository.findAllByStatusAndBoxIdsOrderByCreatedAtDesc("OPEN", box_ids, pageable);
+        System.out.println(chatRoomEntityPage.getContent());
+        List<ChatRoomEntity> chatRooms = chatRoomEntityPage.getContent();
+        return chatRooms.stream().map(chatRoomConverter::toResponse)
+                .collect(Collectors.toList());
+    }
+
     // 채팅방 상태 close로 변경
     @Transactional
     public void closeRoom(Long roomId){
@@ -90,8 +104,6 @@ public class ChatRoomService {
         room.getBox().setUsed(false);
         room.setStatus(ChatRoomStatus.CLOSE);
     }
-
-
 
 
 }

@@ -16,7 +16,8 @@ import {
   Typography,
 } from "@mui/material";
 import MapList from "@/Components/SelectBox/MapList.tsx";
-import TableList from "@/Components/SelectBox/TableList.tsx";
+// import TableList from "@/Components/SelectBox/TableList.tsx";
+import TableList from "@/Components/SelectBox/TableList copy.tsx";
 import { MyLocation } from "@mui/icons-material";
 
 const drawerWidth = 300;
@@ -25,9 +26,12 @@ export default function ServiceArea() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [mapMode, setMapMode] = React.useState(false);
 
-
-  const [address, setAddress] = React.useState(sessionStorage.getItem("userLocation")!);
-  const [zipCode, setZipCode] = React.useState(Number(sessionStorage.getItem("userZipCode")!));
+  const [address, setAddress] = React.useState(
+    sessionStorage.getItem("userLocation")!
+  );
+  const [zipCode, setZipCode] = React.useState(
+    Number(sessionStorage.getItem("userZipCode")!)
+  );
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -36,7 +40,8 @@ export default function ServiceArea() {
   async function addressSearch() {
     const zoneApiPromise = new Promise((resolve) => {
       const script = document.createElement("script");
-      script.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+      script.src =
+        "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
       document.head.appendChild(script);
       script.onload = () => {
         resolve("우편번호 서비스 로드 완료!");
@@ -46,24 +51,22 @@ export default function ServiceArea() {
     const result = await zoneApiPromise;
 
     console.log(result);
-    
 
     new window.daum.Postcode({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      oncomplete: function(data: any) {
-
+      oncomplete: function (data: any) {
         const adr: string = data.jibunAddress;
 
         const idx: number = adr.indexOf("동 ");
 
-        const shortName: string = adr.substring(0, idx + 1)
+        const shortName: string = adr.substring(0, idx + 1);
 
         const zipCode: number = data.zonecode;
 
         setAddress(shortName);
         setZipCode(zipCode);
-      }
-  }).open();
+      },
+    }).open();
   }
 
   const drawer = (
@@ -94,40 +97,48 @@ export default function ServiceArea() {
   );
 
   const location = (
-    <Box sx={{
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "end",
-      alignItems: "center",
-    }}>
-      <Box sx={{
-        width: 280,
-        height: 80,
-        marginBottom: 4,
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
         display: "flex",
-        justifyContent: "start",
+        flexDirection: "column",
+        justifyContent: "end",
         alignItems: "center",
-        gap: 2,
-      }}>
-        <Box sx={{
-          backgroundColor: "#E0F2FE",
-          width: 48,
-          height: 48,
+      }}
+    >
+      <Box
+        sx={{
+          width: 280,
+          height: 80,
+          marginBottom: 4,
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "start",
           alignItems: "center",
-          borderRadius: 3,
-          boxShadow: 3,
-        }}>
+          gap: 2,
+        }}
+      >
+        <Box
+          sx={{
+            backgroundColor: "#E0F2FE",
+            width: 48,
+            height: 48,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 3,
+            boxShadow: 3,
+          }}
+        >
           <MyLocation />
         </Box>
         <Typography variant="body1">{address}</Typography>
-        <Button variant="outlined" onClick={addressSearch}>변경</Button>
+        <Button variant="outlined" onClick={addressSearch}>
+          변경
+        </Button>
       </Box>
     </Box>
-  )
+  );
 
   return (
     <>

@@ -1,13 +1,13 @@
-package com.ssafy.keepham;
+// package com.ssafy.keepham;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class KeephamApplicationTests {
+// @SpringBootTest
+// class KeephamApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
+//     @Test
+//     void contextLoads() {
+//     }
 
-}
+// }

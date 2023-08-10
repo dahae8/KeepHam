@@ -2,6 +2,7 @@ package com.ssafy.keepham.domain.chatroom.converter;
 
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
+import com.ssafy.keepham.domain.box.convert.BoxConvert;
 import com.ssafy.keepham.domain.box.repository.BoxRepository;
 import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
@@ -15,7 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ChatRoomConverter {
 
-    private final BoxRepository boxRepository;
+    private final BoxConvert boxConvert;
 
     public ChatRoomEntity toEntity(
             ChatRoomRequest chatRoomRequest
@@ -44,7 +45,7 @@ public class ChatRoomConverter {
                             .title(chatRoomEntity.getTitle())
                             .status(chatRoomEntity.getStatus())
                             .storeId(chatRoomEntity.getStoreId())
-                            .box(chatRoomEntity.getBox())
+                            .box(boxConvert.toResponse(chatRoomEntity.getBox()))
                             .extensionNumber(chatRoomEntity.getExtensionNumber())
                             .maxPeopleNumber(chatRoomEntity.getMaxPeopleNumber())
                             .superUserId(chatRoomEntity.getSuperUserId())

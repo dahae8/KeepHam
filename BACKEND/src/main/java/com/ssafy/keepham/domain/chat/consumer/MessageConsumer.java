@@ -26,7 +26,7 @@ public class MessageConsumer {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatRoomRepository chatRoomRepository;
 
-    @KafkaListener(topics = "${kafka.chat.topic}", groupId = "${kafka.chat.group-id}", containerFactory = "chatKafkaListenerContainerFactory")
+    @KafkaListener(topics = "${kafka.chat.topic}", groupId = "${kafka.chat.group-id}+9", containerFactory = "chatKafkaListenerContainerFactory")
     public void getMessage(Message message){
         log.info("리스너를 통해 전달중");
         messagingTemplate.convertAndSend("/subscribe/message/" + message.getRoomId(), message);
