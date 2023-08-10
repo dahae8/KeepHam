@@ -106,18 +106,4 @@ public class ChatRoomService {
     }
 
 
-    public String getUserNickname(){
-        auth = SecurityContextHolder.getContext().getAuthentication();
-        var user = (User)auth.getPrincipal();
-        var userId = user.getUsername();
-        log.info("user : {}", user.getUsername());
-        var userNickName = userRepository.findByUserId(userId).map(it -> it.getNickName())
-                .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 유저입니다."));
-//        var userNickName = "1";
-        return userNickName;
-    }
-
-
-
-
 }

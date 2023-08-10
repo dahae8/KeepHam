@@ -8,6 +8,8 @@ import com.ssafy.keepham.domain.chatroom.dto.RoomPassword;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomService;
+import com.ssafy.keepham.domain.user.dto.user.response.UserInfoResponse;
+import com.ssafy.keepham.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +29,14 @@ public class ChatRoomApiController {
 
     private final ChatRoomService chatRoomService;
     private final ChatRoomManager chatRoomManager;
+    private final UserService userService;
 
 
     @Operation(summary = "방생성")
     @PostMapping("/rooms")
     private Api<ChatRoomResponse> createRoom(@Validated @RequestBody ChatRoomRequest chatRoomRequest){
-        var userNickName = chatRoomService.getUserNickname();
+        var userInfo = userService.getLoginUserInfo();
+        var userNickName = userInfo.getNickName();
         chatRoomRequest.setSuperUserId(userNickName);
         var res = chatRoomService.createRoom(chatRoomRequest);
         return Api.OK(res);
@@ -45,7 +49,8 @@ public class ChatRoomApiController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "6") int pageSize
     ){
-
+        var userInfo = userService.getLoginUserInfo();
+        log.info("userInfo: {}", userInfo.toString());
         return Api.OK(chatRoomService.openedRoom(status, page, pageSize));
     }
 
@@ -76,7 +81,8 @@ public class ChatRoomApiController {
     @Operation(summary = "채팅방 입장. 비밀방일시 password 전달 필요")
     @PostMapping("/rooms/{roomId}")
     public Api<Object> enterSecretRoom(@PathVariable Long roomId, @RequestBody(required = false) RoomPassword password){
-        var userNickName = chatRoomService.getUserNickname();
+        var userInfo = userService.getLoginUserInfo();
+        var userNickName = userInfo.getNickName();
         if (!chatRoomManager.isSecretRoom(roomId)){
             chatRoomManager.userJoin(roomId, userNickName);
             return Api.OK(userNickName);

@@ -1,23 +1,36 @@
 package com.ssafy.keepham.domain.user.service;
 
+import com.ssafy.keepham.common.error.ErrorCode;
+import com.ssafy.keepham.common.exception.ApiException;
+import com.ssafy.keepham.domain.user.common.UserRole;
 import com.ssafy.keepham.domain.user.dto.user.request.UserUpdateRequest;
 import com.ssafy.keepham.domain.user.dto.user.response.UserDeleteResponse;
 import com.ssafy.keepham.domain.user.dto.user.response.UserInfoResponse;
 import com.ssafy.keepham.domain.user.dto.user.response.UserUpdateResponse;
+import com.ssafy.keepham.domain.user.entity.User;
 import com.ssafy.keepham.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.common.protocol.types.Field;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
+    private final String USER_HASH_KEY = "user";
+    private final long USER_TTL_SECONDS = 3600;
+    private final RedisTemplate<String, String> redisTemplate;
 
     //회원 정보 조회
     @Transactional
@@ -44,5 +57,42 @@ public class UserService {
         if(!(userRepository.findByUserId(userId).isPresent())) return new UserDeleteResponse(false);
         userRepository.deleteById(userRepository.findByUserId(userId).get().getId());
         return new UserDeleteResponse(true);
+    }
+
+    public UserInfoResponse getLoginUserInfo(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User)auth.getPrincipal();
+        HashOperations<String, String, String> userHash = redisTemplate.opsForHash();
+        String userId = user.getUsername();
+        String key = USER_HASH_KEY + ":" + userId;
+        if (userHash.hasKey(key, "id")){
+            String id = userHash.get(key,"id");
+            String username = userHash.get(key, "username");
+            String userNickName = userHash.get(key, "userNickName");
+            String email = userHash.get(key, "email");
+            String role = userHash.get(key, "role");
+            UserInfoResponse userInfoResponse = new UserInfoResponse();
+            userInfoResponse.setUserId(id);
+            userInfoResponse.setEmail(email);
+            userInfoResponse.setName(userNickName);
+            userInfoResponse.setNickName(userNickName);
+            if (role.equals(UserRole.USER)){
+                userInfoResponse.setUserRole(UserRole.USER);
+            } else {
+                userInfoResponse.setUserRole(UserRole.ADMIN);
+            }
+            return userInfoResponse;
+
+        }
+        User userInfo = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 유저입니다."));
+        userHash.put(key, "id", userInfo.getUserId());
+        userHash.put(key, "username", userInfo.getName());
+        userHash.put(key, "userNickName", userInfo.getNickName());
+        userHash.put(key,"email", userInfo.getEmail());
+        userHash.put(key,"role", userInfo.getUserRole().name());
+        redisTemplate.expire(key, USER_TTL_SECONDS, TimeUnit.SECONDS);
+
+        return UserInfoResponse.toDto(userInfo);
     }
 }
