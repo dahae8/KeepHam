@@ -11,9 +11,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class PaymentRequest {
-    @JsonSetter("userId")
-    private long userId;
-    //user의 키값
+    @JsonSetter("userNickName")
+    private String userNickName;
+    //user의 닉네임
+
+    @JsonSetter("info")
+    private String info;
+    //상세내역(충전, 환불, 가게명 등등)
 
     @JsonSetter("price")
     private long price;
@@ -22,10 +26,6 @@ public class PaymentRequest {
     @JsonSetter("type")
     private boolean type;
     //포인트 충전(true), 포인트 사용(false)
-
-    @JsonSetter("info")
-    private String info;
-    //상세내역(충전, 환불, 가게명 등등)
 
     @JsonSetter("updateTime")
     private LocalDateTime updateTime;
