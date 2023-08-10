@@ -4,6 +4,7 @@ import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.common.error.BootpayError;
 import com.ssafy.keepham.domain.payment.dto.PaymentChargePointRequest;
 import com.ssafy.keepham.domain.payment.dto.PaymentResponse;
+import com.ssafy.keepham.domain.payment.entity.Payment;
 import com.ssafy.keepham.domain.payment.service.BootpayService;
 import com.ssafy.keepham.domain.payment.service.PaymentService;
 import com.ssafy.keepham.domain.user.service.UserService;
@@ -95,6 +96,16 @@ public class PaymentController {
         res.put("totalPoint",paymentService.getUserTotalPoint(userNickName));
 
         return Api.OK(res);
+    }
+
+    //!!!테스트용!!! 로그인된 유저의 가게에서 구입한 포인트 더미데이터 추가
+    @Operation(summary = "!!!테스트용!!! 로그인된 유저의 가게에서 구입한 포인트 더미데이터 추가")
+    @PostMapping("/{price}")
+    public Api<Object> testInsertPrice(@PathVariable int price){
+        var userInfo = userService.getLoginUserInfo();
+        String userNickName = userInfo.getNickName();
+
+        return Api.OK(paymentService.testInsertPrice(userNickName,price));
     }
 
 
