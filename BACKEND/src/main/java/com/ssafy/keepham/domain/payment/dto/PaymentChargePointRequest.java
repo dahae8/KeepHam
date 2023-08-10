@@ -9,12 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class PaymentChargePointRequest {
-    @JsonSetter("userId")
-    private long userId;
-    //user의 키값
-
     @JsonSetter("price")
-    private long price;
+    private int price;
     //금액
 
     @JsonSetter("receiptId")

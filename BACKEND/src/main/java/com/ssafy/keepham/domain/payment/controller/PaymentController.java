@@ -3,13 +3,17 @@ package com.ssafy.keepham.domain.payment.controller;
 import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.common.error.BootpayError;
 import com.ssafy.keepham.domain.payment.dto.PaymentChargePointRequest;
+import com.ssafy.keepham.domain.payment.dto.PaymentResponse;
 import com.ssafy.keepham.domain.payment.service.BootpayService;
 import com.ssafy.keepham.domain.payment.service.PaymentService;
+import com.ssafy.keepham.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.connector.Response;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,6 +21,7 @@ import java.util.HashMap;
 public class PaymentController {
     private final PaymentService paymentService;
     private final BootpayService bootpayService;
+    private final UserService userService;
 
     //포인트 충전
     @Operation(summary = "포인트 충전")
@@ -52,8 +57,46 @@ public class PaymentController {
             return Api.ERROR(BootpayError.BOOTPAY_NOT_COMPLETE_PAYMENT, String.format("부트페이에서 조회된 상태[%d]가 결제왼료 상태가 아닙니다.",status));
         }
 
+        var userInfo = userService.getLoginUserInfo();
+        var userNickName = userInfo.getNickName();
 
-        return Api.OK(paymentService.chargePoint(pcpr));
+        //db저장
+        return Api.OK(paymentService.chargePoint(price,userNickName));
     }
+
+    // 로그인된 유저의 포인트내역 조회
+    @Operation(summary = "로그인된 유저의 포인트내역 조회")
+    @GetMapping()
+    public Api<List<PaymentResponse>> getUserPaymentDetail(){
+        var userInfo = userService.getLoginUserInfo();
+        var userNickName = userInfo.getNickName();
+
+        return Api.OK(paymentService.getUserPaymentDetail(userNickName));
+    }
+
+    //로그인된 유저의 포인트 전액 인출
+    @Operation(summary = "포인트 전액 인출")
+    @PostMapping("/refund")
+    public Api<PaymentResponse> refundUserPoint(){
+        var userInfo = userService.getLoginUserInfo();
+        var userNickName = userInfo.getNickName();
+
+        return Api.OK(paymentService.refundUserPoint(userNickName));
+    }
+
+    //로그인된 유저의 총 포인트 조회
+    @Operation(summary = "로그인된 유저의 총 포인트 조회")
+    @PostMapping("/totalPoint")
+    public Api<Object> getUserTotalPoint(){
+        var userInfo = userService.getLoginUserInfo();
+        String userNickName = userInfo.getNickName();
+        HashMap<String, Object> res = new HashMap<>();
+
+        res.put("totalPoint",paymentService.getUserTotalPoint(userNickName));
+
+        return Api.OK(res);
+    }
+
+
 
 }
