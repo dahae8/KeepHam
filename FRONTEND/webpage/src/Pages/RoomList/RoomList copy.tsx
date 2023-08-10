@@ -190,7 +190,7 @@ export default function RoomList() {
     const fetchBoxes = async () => {
       try {
         const url =
-          import.meta.env.VITE_URL_ADRESS + "/api/boxs/" + userZipCode;
+          import.meta.env.VITE_URL_ADDRESS + "/api/boxs/" + userZipCode;
         const response = await axios.get(url);
         setBoxes(response.data.body);
         console.log("박시즈 : ", Boxes);
