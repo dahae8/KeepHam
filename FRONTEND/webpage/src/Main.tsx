@@ -29,6 +29,7 @@ import ContactUs from "./Pages/ContactUs/ContactUs.tsx";
 import ServiceArea from "./Pages/ServiceArea/ServiceArea.tsx";
 import Admin from "./Pages/Admin/Admin.tsx";
 import AddBox from "./Pages/Admin/AddBox.tsx";
+import Payment from "./Pages/Payment/Payment.jsx"
 
 // Styles
 import "./Styles/global.ts";
@@ -101,6 +102,10 @@ const router = createBrowserRouter([
       {
         path: "/Home/Admin/AddBox",
         element: <AddBox />,
+      },
+      {
+        path: "/Home/Payment",
+        element: <Payment />,
       },
     ],
   },

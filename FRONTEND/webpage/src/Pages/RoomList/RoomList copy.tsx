@@ -189,7 +189,7 @@ export default function RoomList() {
     const fetchBoxes = async () => {
       try {
         const url =
-          import.meta.env.VITE_URL_ADRESS + "/api/boxs/" + userZipCode;
+          import.meta.env.VITE_URL_ADDRESS + "/api/boxs/" + userZipCode;
         const response = await axios.get(url);
         setBoxes(response.data.body);
         console.log(Boxes);
@@ -201,7 +201,7 @@ export default function RoomList() {
     const fetchRooms = async () => {
       try {
         const url =
-          import.meta.env.VITE_URL_ADRESS +
+          import.meta.env.VITE_URL_ADDRESS +
           "/api/rooms/zipcode/" +
           userZipCode +
           "?status=OPEN";
