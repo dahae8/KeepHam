@@ -1,5 +1,6 @@
 package com.ssafy.keepham.domain.box.controller;
 
+import com.ssafy.keepham.common.annotation.AdminAuthority;
 import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.common.error.BoxError;
 import com.ssafy.keepham.domain.box.dto.BoxRequest;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@AdminAuthority
 @CrossOrigin(originPatterns = "*")
 @RequestMapping("/api/admin/boxs")
 public class SuperBoxController {
@@ -23,6 +25,7 @@ public class SuperBoxController {
 
     // 함생성
     @Operation(summary = "함생성")
+
     @PostMapping
     public Api<Object> createBox(@RequestBody BoxSaveRequest boxSaveRequest){
         String boxType  = boxSaveRequest.getType();

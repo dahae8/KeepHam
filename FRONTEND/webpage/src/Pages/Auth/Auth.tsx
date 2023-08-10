@@ -28,7 +28,7 @@ function Auth() {
         sx={{
           height: "100vh",
           minWidth: 480,
-          backgroundImage: "url('/user_bg.jpg')",
+          backgroundImage: "url('/auth_bg.jpg')",
           backgroundSize: "cover",
           display: "flex",
           flexDirection: "column",

@@ -16,6 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
+// import TableList from "@/Components/RoomList/TableList.tsx";
 import TableList from "@/Components/RoomList/TableList.tsx";
 import AlbumList from "@/Components/RoomList/AlbumList.tsx";
 import { MyLocation } from "@mui/icons-material";
@@ -192,7 +193,7 @@ export default function RoomList() {
           import.meta.env.VITE_URL_ADDRESS + "/api/boxs/" + userZipCode;
         const response = await axios.get(url);
         setBoxes(response.data.body);
-        console.log(Boxes);
+        console.log("박시즈 : ", Boxes);
       } catch (error) {
         console.log(error);
       }
