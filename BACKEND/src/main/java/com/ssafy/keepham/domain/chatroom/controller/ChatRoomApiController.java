@@ -18,7 +18,6 @@ import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(originPatterns = "*")
 @RequestMapping("/api")
 @Slf4j
 public class ChatRoomApiController {

@@ -22,7 +22,6 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api")
 @RequiredArgsConstructor
-@CrossOrigin(originPatterns = "*")
 public class ChatController {
 
     private final MessageService messageService;

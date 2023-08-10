@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(originPatterns = "*")
 @RequestMapping("/api/boxs")
 public class ClientBoxController {
     private final BoxService boxService;

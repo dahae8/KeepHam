@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 @RestController
 @Slf4j
-@CrossOrigin("*")
 public class TokenController {
 
     private final TokenProvider tokenProvider;

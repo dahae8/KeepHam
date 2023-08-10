@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 @RestController
 @Slf4j
-@CrossOrigin("*")
 public class SignController {
     private final SignService signService;
 
