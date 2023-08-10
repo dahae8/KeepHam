@@ -15,7 +15,7 @@ function LogIn() {
   const navigate = useNavigate();
 
   async function validate(id: string, pw: string) {
-    const url = "https://i9c104.p.ssafy.io/api/sign-in";
+    const url = "http://i9c104.p.ssafy.io:48080/api/sign-in";
     const data = {
       user_id: id,
       password: pw,
@@ -27,6 +27,7 @@ function LogIn() {
       console.log("로그인 결과 : ", response.data.body);
       // 응답 데이터를 콘솔에 출력
       localStorage.setItem("AccessToken", response.data.body.access_token);
+      sessionStorage.setItem("userRole", response.data.body.user_role);
       return "성공";
     } catch (error) {
       console.error("에러메시지 :", error);
