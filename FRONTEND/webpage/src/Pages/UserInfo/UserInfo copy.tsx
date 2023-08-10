@@ -88,13 +88,14 @@ function UserInfo() {
     navigate("/Home");
   };
   useEffect(() => {
+    const userId = sessionStorage.getItem('userId');
     const fetchUserInfo = async () => {
       try {
         const url =
-          import.meta.env.VITE_URL_ADDRESS + "/api/boxs/" + userZipCode;
+          import.meta.env.VITE_URL_ADDRESS + "/api/user/" + userId;
         const response = await axios.get(url);
-        setBoxes(response.data.body);
-        console.log("박시즈 : ", Boxes);
+        console.log(response.data.body);
+        // console.log("박시즈 : ", Boxes);
       } catch (error) {
         console.log(error);
       }
