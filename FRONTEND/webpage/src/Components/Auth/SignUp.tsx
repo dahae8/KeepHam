@@ -75,7 +75,7 @@ function SignUp() {
 
     if (pwConfirm && idConfirm) {
       const fetchBoxes = async () => {
-        const url = import.meta.env.VITE_URL_ADRESS + "/api/sign-up";
+        const url = import.meta.env.VITE_URL_ADDRESS + "/api/sign-up";
         const data = {
           user_id: idValue,
           password: pwValue,
