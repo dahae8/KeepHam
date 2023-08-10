@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(originPatterns = "*")
 @RequestMapping("/api/admin/boxs")
 public class SuperBoxController {
     private final BoxService boxService;

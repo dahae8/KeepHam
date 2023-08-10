@@ -23,8 +23,10 @@ public class Store {
     String name;
     String address;
     String estimatedDeliveryTime;
+    String minOrderAmount;
     String deliveryFeeToDisplay;
     String logoUrl;
+    String thumbnailUrl;
     float lat;
     float lng;
 }

@@ -17,5 +17,4 @@ public class StoreService {
                 .map(StoreResponse::from)
                 .toList();
     }
-
 }

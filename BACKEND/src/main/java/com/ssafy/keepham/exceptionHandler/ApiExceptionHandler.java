@@ -4,7 +4,6 @@ import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +12,9 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.nio.file.AccessDeniedException;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RestControllerAdvice
@@ -70,5 +72,29 @@ public class ApiExceptionHandler {
                 );
 
     }
+    @ExceptionHandler({IllegalArgumentException.class, NoSuchElementException.class})
+    public ResponseEntity<Api<Object>> handleCommonException(Exception e){
+        var errorCode = e.getMessage();
+        log.error("", errorCode);
+        return ResponseEntity
+                .status(400)
+                .body(Api.ERROR(ErrorCode.BAD_REQUEST));
+    }
 
+   @ExceptionHandler({AccessDeniedException.class})
+   public ResponseEntity handleAccessDeniedException(Exception e){
+        var errorCode = e.getMessage();
+        log.error("",errorCode);
+        return ResponseEntity
+                .status(403)
+                .body(Api.ERROR(ErrorCode.DENIED_ERROR));
+    }
+   @ExceptionHandler({Exception.class})
+    public ResponseEntity handleUnexpectedException(Exception e){
+        var errorCode = e.getMessage();
+        log.error("",errorCode);
+        return ResponseEntity
+                .status(500)
+                .body(Api.ERROR(ErrorCode.SERVER_ERROR));
+   }
 }
