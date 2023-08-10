@@ -6,6 +6,9 @@ import com.ssafy.keepham.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "chat_room")
@@ -38,5 +41,6 @@ public class ChatRoomEntity extends BaseEntity {
     private boolean locked;
     @Column(length = 255, nullable = false)
     private String password;
+    private LocalDateTime closedAt;
 
 }

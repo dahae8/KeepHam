@@ -2,10 +2,7 @@ package com.ssafy.keepham.domain.chatroom.controller;
 
 import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.common.error.ErrorCode;
-import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
-import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
-import com.ssafy.keepham.domain.chatroom.dto.RoomPassword;
-import com.ssafy.keepham.domain.chatroom.dto.NewSuperUser;
+import com.ssafy.keepham.domain.chatroom.dto.*;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomService;
@@ -127,6 +124,12 @@ public class ChatRoomApiController {
     public Api<NewSuperUser> setSuperUser(@RequestBody NewSuperUser setSuperUser){
         chatRoomManager.setSuperUser(setSuperUser);
         return Api.OK(setSuperUser);
+    }
+
+    @Operation(summary = "채팅방의 종료 시간을 입력한 시간만큼 연장한다.")
+    @PutMapping("/rooms/extend")
+    public Api<ChatRoomResponse> extendRoomTime(@RequestBody ExtendRequest request){
+        return Api.OK(chatRoomManager.extendRoomTime(request));
     }
 
 

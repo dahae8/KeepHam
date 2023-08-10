@@ -52,6 +52,7 @@ public class ChatRoomConverter {
                             .locked(chatRoomEntity.isLocked())
                             .createdAt(chatRoomEntity.getCreatedAt())
                             .updatedAt(chatRoomEntity.getUpdatedAt())
+                            .closedAt(chatRoomEntity.getClosedAt())
                             .build();
 
                 }).orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT));
