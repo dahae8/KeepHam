@@ -5,6 +5,9 @@ import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.chat.db.Message;
 import com.ssafy.keepham.domain.chat.db.MessageRepository;
+import com.ssafy.keepham.domain.chatroom.converter.ChatRoomConverter;
+import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
+import com.ssafy.keepham.domain.chatroom.dto.ExtendRequest;
 import com.ssafy.keepham.domain.chatroom.dto.NewSuperUser;
 import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
@@ -36,6 +39,7 @@ public class ChatRoomManager {
     private final MessageRepository messageRepository;
     private final RedisTemplate<String, String> redisTemplate;
     private final UserService userService;
+    private final ChatRoomConverter chatRoomConverter;
 
 
 
@@ -144,5 +148,17 @@ public class ChatRoomManager {
             throw new ApiException(ErrorCode.BAD_REQUEST, "방장 위임을 요청한 유저가 방장이 아닙니다.");
         }
         room.setSuperUserId(superUser);
+    }
+
+    @Transactional
+    public ChatRoomResponse extendRoomTime(ExtendRequest request){
+        var roomId = request.getRoomId();
+        var hour = request.getHour();
+        var roomEntity = chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN);
+        if (roomEntity.getExtensionNumber() >= 3){
+            throw new ApiException(ErrorCode.BAD_REQUEST, "연장 횟수 초과");
+        }
+        roomEntity.setClosedAt(roomEntity.getClosedAt().plusHours(hour));
+        return chatRoomConverter.toResponse(roomEntity);
     }
 }

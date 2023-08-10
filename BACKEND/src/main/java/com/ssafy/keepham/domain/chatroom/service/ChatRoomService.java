@@ -10,16 +10,12 @@ import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
 import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
-import com.ssafy.keepham.domain.user.repository.UserRepository;
 import com.ssafy.keepham.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,9 +45,10 @@ public class ChatRoomService {
         entity.setBox(box);
         return Optional.ofNullable(entity)
                 .map(it -> {
-                    entity.setStatus(ChatRoomStatus.OPEN);
-                    chatRoomRepository.save(entity);
-                    return chatRoomConverter.toResponse(entity);
+                    it.setStatus(ChatRoomStatus.OPEN);
+                    var newEntity = chatRoomRepository.save(it);
+                    newEntity.setClosedAt(newEntity.getCreatedAt().plusHours(3));
+                    return chatRoomConverter.toResponse(newEntity);
                 })
                 .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST));
     }
@@ -104,6 +101,8 @@ public class ChatRoomService {
         room.getBox().setUsed(false);
         room.setStatus(ChatRoomStatus.CLOSE);
     }
+
+
 
 
 }

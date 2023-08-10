@@ -8,8 +8,8 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends MongoRepository<Message, Long> {
-    List<Message> findAllByRoomIdAndTypeOrderByTimestampDesc(Long roomId, Type messageType);
-    List<Message> findAllByRoomIdOrderByTimestampAsc(Long roomId);
+    List<Message> findAllByRoomIdAndTypeOrderByTimestampAsc(Long roomId, Type messageType);
+
 
 
 }
