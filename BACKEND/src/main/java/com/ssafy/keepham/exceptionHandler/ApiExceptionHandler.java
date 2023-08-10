@@ -83,11 +83,18 @@ public class ApiExceptionHandler {
 
    @ExceptionHandler({AccessDeniedException.class})
    public ResponseEntity handleAccessDeniedException(Exception e){
-        var erroCode = e.getMessage();
-        log.error("",erroCode);
+        var errorCode = e.getMessage();
+        log.error("",errorCode);
         return ResponseEntity
                 .status(403)
                 .body(Api.ERROR(ErrorCode.DENIED_ERROR));
     }
-
+   @ExceptionHandler({Exception.class})
+    public ResponseEntity handleUnexpectedException(Exception e){
+        var errorCode = e.getMessage();
+        log.error("",errorCode);
+        return ResponseEntity
+                .status(500)
+                .body(Api.ERROR(ErrorCode.SERVER_ERROR));
+   }
 }
