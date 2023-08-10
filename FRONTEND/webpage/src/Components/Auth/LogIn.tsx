@@ -15,7 +15,7 @@ function LogIn() {
   const navigate = useNavigate();
 
   async function validate(id: string, pw: string) {
-    const url = "http://i9c104.p.ssafy.io:48080/api/sign-in";
+    const url = import.meta.env.VITE_URL_ADRESS + "/api/sign-in";
     const data = {
       user_id: id,
       password: pw,
