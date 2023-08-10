@@ -1,8 +1,10 @@
 package com.ssafy.keepham.domain.user.entity;
 
+import com.ssafy.keepham.domain.user.common.AccountStatus;
 import com.ssafy.keepham.domain.user.common.GenderType;
 import com.ssafy.keepham.domain.user.common.UserRole;
 import com.ssafy.keepham.domain.user.dto.signup.request.SignUpRequest;
+import com.ssafy.keepham.domain.user.dto.user.request.UserDeleteRequest;
 import com.ssafy.keepham.domain.user.dto.user.request.UserUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -47,11 +49,12 @@ public class User {
     private String birthday;
 
     private Integer age;
-
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
     @Enumerated(EnumType.STRING)
     private GenderType genderType;
+    @Enumerated(EnumType.STRING)
+    private AccountStatus accountStatus;
     @CreationTimestamp
     private LocalDateTime createAt;
 
@@ -65,11 +68,15 @@ public class User {
                 .email(request.getEmail())
                 .tel(request.getTel())
                 .userRole(UserRole.USER)
+                .accountStatus(AccountStatus.ACTIVE)
                 .build();
     }
     public void update(UserUpdateRequest newUser, PasswordEncoder encoder){
         this.password = newUser.getNewPassword() == null || newUser.getNewPassword().isBlank() ? this.password : encoder.encode(newUser.getNewPassword());
         this.email = newUser.getEmail();
         this.tel = newUser.getTel();
+    }
+    public void delete(UserDeleteRequest newStatus){
+        this.accountStatus = AccountStatus.INACTIVE;
     }
 }

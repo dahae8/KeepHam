@@ -1,5 +1,6 @@
 package com.ssafy.keepham.domain.user.dto.signup.response;
 
+import com.ssafy.keepham.domain.user.common.AccountStatus;
 import com.ssafy.keepham.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,8 @@ public class SignUpResponse {
     private String email;
     @Schema(description = "회원 휴대폰")
     private String tel;
+    @Schema(description = "회원 상태")
+    private AccountStatus accountStatus;
 
     public static SignUpResponse toEntity(User user) {
         return new SignUpResponse(
@@ -30,7 +33,8 @@ public class SignUpResponse {
                 user.getName(),
                 user.getNickName(),
                 user.getEmail(),
-                user.getTel()
+                user.getTel(),
+                user.getAccountStatus()
         );
     }
 }
