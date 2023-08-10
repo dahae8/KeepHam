@@ -7,6 +7,8 @@ import com.ssafy.keepham.domain.common.BaseEntity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,6 +26,8 @@ public class ChatRoomResponse extends BaseEntity{
     private Long currentPeopleNumber;
     private String superUserId;
     private boolean locked;
+    private LocalDateTime closedAt;
+
 
 
 }
