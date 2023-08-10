@@ -60,22 +60,22 @@ public class ChatRoomManager {
             throw new ApiException(ChatRoomError.BAD_REQUEST);
         }
         
-        redisTemplate.opsForSet().add(String.valueOf(roomId),userNickname);
-        redisTemplate.expire(String.valueOf(roomId), 3600*3, TimeUnit.SECONDS);
+        redisTemplate.opsForSet().add("roomId" + String.valueOf(roomId),userNickname);
+        redisTemplate.expire(String.valueOf("roomId" + String.valueOf(roomId)), 3600*3, TimeUnit.SECONDS);
         //        chatRoomUsers.computeIfAbsent(roomId, k -> new HashSet<>()).add(userNickname);
 
         currentUserCount = getUserCountInChatRoom(roomId);
         log.info("입장 후 현재 인원 {}", currentUserCount);
         log.info("치팅방 최대 {}", maxUserCount);
-        log.info("입장 {}", redisTemplate.opsForSet().members(String.valueOf(roomId)));
+        log.info("입장 {}", redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId)));
 
-        return redisTemplate.opsForSet().members(String.valueOf(roomId));
+        return redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId));
 
     }
     // 채팅방에서 user가 떠나면 해당 방 인원 감소
     public void userLeft(Long roomId, String userNickname){
-        if (redisTemplate.opsForSet().isMember(String.valueOf(roomId),userNickname)){
-            redisTemplate.opsForSet().remove(String.valueOf(roomId), userNickname);
+        if (redisTemplate.opsForSet().isMember("roomId" + String.valueOf(roomId),userNickname)){
+            redisTemplate.opsForSet().remove("roomId" + String.valueOf(roomId), userNickname);
         }
 
         Long currentUserCount = getUserCountInChatRoom(roomId);
@@ -83,21 +83,21 @@ public class ChatRoomManager {
 
         log.info("퇴장후 현재 인원 {}", currentUserCount);
         log.info("채팅방 최대 {}", maxUserCount);
-        log.info("퇴장유저 {}", redisTemplate.opsForSet().members(String.valueOf(roomId)));
+        log.info("퇴장유저 {}", redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId)));
     }
 
     public boolean allUserClear(Long roomId){
-        redisTemplate.delete(String.valueOf(roomId));
+        redisTemplate.delete("roomId" + String.valueOf(roomId));
         return true;
     }
 
-    public Set<String> getAllUser(Long roomID){
-        return redisTemplate.opsForSet().members(String.valueOf(roomID));
+    public Set<String> getAllUser(Long roomId){
+        return redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId));
     }
 
     // 채팅방 현재 접속자 수
     public Long getUserCountInChatRoom(Long roomId){
-        return redisTemplate.opsForSet().size(String.valueOf(roomId));
+        return redisTemplate.opsForSet().size("roomId" + String.valueOf(roomId));
     }
 
     // 채팅방 최대 인원
