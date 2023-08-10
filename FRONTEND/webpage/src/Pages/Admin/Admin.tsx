@@ -118,8 +118,6 @@ export default function Admin() {
   useEffect(() => {
     const fetchBoxes = async () => {
       try {
-        // const userZipCode = window.sessionStorage.getItem("userZipCode");
-        // const url = "http://i9c104.p.ssafy.io:48080/api/boxs/" + userZipCode;
         const url = import.meta.env.VITE_URL_ADDRESS + "/api/admin/boxs";
         const response = await axios.get(url);
         setBoxes(response.data.body);

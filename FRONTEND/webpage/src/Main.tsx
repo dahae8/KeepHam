@@ -20,9 +20,12 @@ import RoomList, {
   loader as roomListLoader,
 } from "./Pages/RoomList/RoomList copy.tsx";
 import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
+// import ChatRoom, {
+//   loader as chatRoomLoader,
+// } from "./Pages/ChatRoom/ChatRoom.tsx";
 import ChatRoom, {
   loader as chatRoomLoader,
-} from "./Pages/ChatRoom/ChatRoom.tsx";
+} from "./Pages/ChatRoom/ChattroomTEST.tsx";
 import Terms from "./Pages/Terms/Terms.tsx";
 import AboutMe from "./Pages/AboutMe/AboutMe.tsx";
 import ContactUs from "./Pages/ContactUs/ContactUs.tsx";
