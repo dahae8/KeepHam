@@ -118,9 +118,9 @@ export default function Admin() {
   useEffect(() => {
     const fetchBoxes = async () => {
       try {
-        const userZipCode = window.sessionStorage.getItem("userZipCode");
-        const url = "http://i9c104.p.ssafy.io:48080/api/boxs/" + userZipCode;
-        // const url = "http://i9c104.p.ssafy.io:48080/api/admin/boxs";
+        // const userZipCode = window.sessionStorage.getItem("userZipCode");
+        // const url = "http://i9c104.p.ssafy.io:48080/api/boxs/" + userZipCode;
+        const url = "http://i9c104.p.ssafy.io:48080/api/admin/boxs";
         const response = await axios.get(url);
         setBoxes(response.data.body);
         console.log(response.data.body);
@@ -175,7 +175,14 @@ export default function Admin() {
             sx={{ mr: 2, display: { md: "none" } }}
           ></IconButton>
           <Typography variant="h5">관리자 페이지</Typography>
-          <Button variant="outlined">함 추가</Button>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              navigate("/Home/Admin/AddBox");
+            }}
+          >
+            함 추가
+          </Button>
         </div>
         <Divider />
         <div className="relative w-full min-h-[540px]" id="drawer-container">
