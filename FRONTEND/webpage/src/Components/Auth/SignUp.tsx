@@ -100,7 +100,7 @@ function SignUp() {
 
   async function checkIdinServer() {
     const url =
-      import.meta.env.VITE_URL_ADRESS + "/api/validation?userId=" + idValue;
+      import.meta.env.VITE_URL_ADDRESS + "/api/validation?userId=" + idValue;
     try {
       // 서버로 POST 요청 보내기
       const response = await axios.get(url);
