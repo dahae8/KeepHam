@@ -27,6 +27,8 @@ import Terms from "./Pages/Terms/Terms.tsx";
 import AboutMe from "./Pages/AboutMe/AboutMe.tsx";
 import ContactUs from "./Pages/ContactUs/ContactUs.tsx";
 import ServiceArea from "./Pages/ServiceArea/ServiceArea.tsx";
+import Admin from "./Pages/Admin/Admin.tsx";
+import AddBox from "./Pages/Admin/AddBox.tsx";
 
 // Styles
 import "./Styles/global.ts";
@@ -91,6 +93,14 @@ const router = createBrowserRouter([
       {
         path: "/Home/ContactUs",
         element: <ContactUs />,
+      },
+      {
+        path: "/Home/Admin",
+        element: <Admin />,
+      },
+      {
+        path: "/Home/Admin/AddBox",
+        element: <AddBox />,
       },
     ],
   },
