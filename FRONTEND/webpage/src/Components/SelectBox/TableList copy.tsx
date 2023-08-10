@@ -56,7 +56,7 @@ function TableList(props: propsType) {
     const fetchData = async () => {
       try {
         const url =
-          import.meta.env.VITE_URL_ADRESS + "/api/boxs/" + userZipCode;
+          import.meta.env.VITE_URL_ADDRESS + "/api/boxs/" + userZipCode;
         const response = await axios.get(url);
         console.log(response.data.body);
         setLoading(false);

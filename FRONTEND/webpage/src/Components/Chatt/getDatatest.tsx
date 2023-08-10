@@ -25,7 +25,7 @@ const AwsDataFetcher: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          import.meta.env.VITE_URL_ADRESS + "/api/rooms?status=OPEN",
+          import.meta.env.VITE_URL_ADDRESS + "/api/rooms?status=OPEN",
           {
             headers: {
               Authorization: `Bearer ` + { key },

@@ -43,6 +43,7 @@ function TableList(props: propsType) {
   const areaId = props.areaId;
 
   console.log(areaId);
+  console.log("받은 프롭 : ", props.data);
 
   const navigate = useNavigate();
   const zipCode = window.sessionStorage.getItem("userZipCode");
