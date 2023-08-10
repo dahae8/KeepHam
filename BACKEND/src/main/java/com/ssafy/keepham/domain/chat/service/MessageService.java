@@ -18,7 +18,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
 
     public List<Message> findMessageLog(Long roomId){
-        var messageList = messageRepository.findAllByRoomIdAndTypeOrderByTimestampDesc(roomId, Type.TALK);
+        var messageList = messageRepository.findAllByRoomIdAndTypeOrderByTimestampAsc(roomId, Type.TALK);
         return Optional.ofNullable(messageList)
                 .orElseThrow(()->new ApiException(ErrorCode.BAD_REQUEST, "채팅 로그가 존재하지 않습니다."));
     }
