@@ -53,6 +53,12 @@ interface ChatMessage {
   type: string;
   timestamp: string;
 }
+interface ChatMessage_timestamp {
+  room_id: number;
+  author: string;
+  content: string;
+  type: string;
+}
 
 function ChatRoom() {
   const theme = useTheme();
@@ -91,12 +97,11 @@ function ChatRoom() {
     const message = formData.get("message");
 
     if (client && message) {
-      const chatMessage: ChatMessage = {
+      const chatMessage: ChatMessage_timestamp = {
         room_id: roomID,
         author: nname,
         content: message.toString(),
         type: "TALK",
-        timestamp: "버리는숫자",
       };
 
       client.publish({
