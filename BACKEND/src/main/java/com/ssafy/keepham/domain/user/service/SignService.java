@@ -2,6 +2,7 @@ package com.ssafy.keepham.domain.user.service;
 
 import com.ssafy.keepham.common.error.UserErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
+import com.ssafy.keepham.domain.user.common.AccountStatus;
 import com.ssafy.keepham.domain.user.entity.User;
 import com.ssafy.keepham.domain.user.entity.UserRefreshToken;
 import com.ssafy.keepham.domain.user.repository.UserRefreshTokenRepository;
@@ -39,9 +40,9 @@ public class SignService {
         return SignUpResponse.toEntity(user);
     }
 
-    @Transactional
+    @Transactional //findByUserIdAndAccountStatus(userId, accountStatus)
     public SignInResponse signIn(SignInRequest request){
-        User user = userRepository.findByUserId(request.getUserId())
+        User user = userRepository.findByUserIdAndAccountStatus(request.getUserId(),AccountStatus.ACTIVE)
                 .filter(u -> encoder.matches(request.getPassword(), u.getPassword()))
                 .orElseThrow(() ->new ApiException(UserErrorCode.INVALID_USER));
         String accessToken = tokenProvider.createAccessToken(String.format("%s:%s",user.getUserId(),user.getUserRole()));
@@ -54,7 +55,7 @@ public class SignService {
         return new SignInResponse(user.getName(),user.getNickName(), user.getUserRole(), accessToken, refreshToken);
     }
 
-    public boolean checkId(String userId){
-        return userRepository.findByUserId(userId).isPresent();
+    public boolean checkId(String userId, AccountStatus accountStatus){
+        return userRepository.findByUserIdAndAccountStatus(userId, accountStatus).isPresent();
     }
 }

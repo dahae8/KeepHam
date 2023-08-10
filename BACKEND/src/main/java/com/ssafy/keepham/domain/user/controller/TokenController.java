@@ -15,7 +15,6 @@ public class TokenController {
 
     private final TokenProvider tokenProvider;
 
-
     @GetMapping("/verifyToken")
     public Api<String> verifyToken(@RequestHeader("Authorization") String auth){
         var result = tokenProvider.validateTokenAndGetSubject(auth);

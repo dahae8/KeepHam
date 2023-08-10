@@ -75,10 +75,6 @@ public class TokenProvider {
                     .setExpiration(Date.from(Instant.now().plus(expirationMinutes, ChronoUnit.HOURS)))
                     .compact();
         }
-        public User getUserFromSubject(String subject){
-                String userId = subject.split(":")[0];
-                return userRepository.findByUserId(userId).get();
-        }
         public String validateTokenAndGetSubject(String token){
                 return validateAndParserToken(token)
                         .getBody()

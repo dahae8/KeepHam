@@ -2,7 +2,9 @@ package com.ssafy.keepham.domain.user.service;
 
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
+import com.ssafy.keepham.domain.user.common.AccountStatus;
 import com.ssafy.keepham.domain.user.common.UserRole;
+import com.ssafy.keepham.domain.user.dto.user.request.UserDeleteRequest;
 import com.ssafy.keepham.domain.user.dto.user.request.UserUpdateRequest;
 import com.ssafy.keepham.domain.user.dto.user.response.UserDeleteResponse;
 import com.ssafy.keepham.domain.user.dto.user.response.UserInfoResponse;
@@ -12,6 +14,7 @@ import com.ssafy.keepham.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
@@ -35,14 +39,14 @@ public class UserService {
     //회원 정보 조회
     @Transactional
     public UserInfoResponse getUserInfo(String userId) {
-        return userRepository.findByUserId(userId)
+        return userRepository.findByUserIdAndAccountStatus(userId, AccountStatus.ACTIVE)
                 .map(UserInfoResponse::toDto)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
     }
     //회원 정보 수정
     @Transactional
     public Optional<UserUpdateResponse> userUpdate(String userId, UserUpdateRequest request){
-        return Optional.ofNullable(userRepository.findByUserId(userId)
+        return Optional.ofNullable(userRepository.findByUserIdAndAccountStatus(userId, AccountStatus.ACTIVE)
                 .filter(user -> encoder.matches(request.getPassword(), user.getPassword()))
                 .map(user -> {
                     user.update(request, encoder);
@@ -53,10 +57,16 @@ public class UserService {
 
     //회원 탈퇴
     @Transactional
-    public UserDeleteResponse userDelete(String userId){
-        if(!(userRepository.findByUserId(userId).isPresent())) return new UserDeleteResponse(false);
-        userRepository.deleteById(userRepository.findByUserId(userId).get().getId());
-        return new UserDeleteResponse(true);
+    public UserInfoResponse userDelete(UserDeleteRequest request){
+        Optional<User> optionalUser = userRepository.findByUserIdAndAccountStatus(request.getUserId(),AccountStatus.ACTIVE);
+        log.info("{}",optionalUser.get());
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.delete(request);
+            return UserInfoResponse.toDto(user);
+        } else {
+            throw new ApiException(ErrorCode.BAD_REQUEST,"유저 없음");
+        }
     }
 
     public UserInfoResponse getLoginUserInfo(){
@@ -84,7 +94,7 @@ public class UserService {
             return userInfoResponse;
 
         }
-        User userInfo = userRepository.findByUserId(userId)
+        User userInfo = userRepository.findByUserIdAndAccountStatus(userId, AccountStatus.ACTIVE)
                 .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 유저입니다."));
         userHash.put(key, "id", userInfo.getUserId());
         userHash.put(key, "username", userInfo.getName());
