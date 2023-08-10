@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.bootpay:backend:2.2.1" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="io.github.bootpay" artifactId="backend" version="2.2.1" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.bootpay/backend/2.2.1/f859bf30e16426099e209cc6277b6819f8a2e7c3/backend-2.2.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.bootpay/backend/2.2.1/ffcd0776d69191a5134b00b9edf1837eccb8f77f/backend-2.2.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
