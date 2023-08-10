@@ -76,7 +76,7 @@ public class UserService {
             userInfoResponse.setEmail(email);
             userInfoResponse.setName(userNickName);
             userInfoResponse.setNickName(userNickName);
-            if (role.equals(UserRole.USER)){
+            if (role.equals(UserRole.USER.name())){
                 userInfoResponse.setUserRole(UserRole.USER);
             } else {
                 userInfoResponse.setUserRole(UserRole.ADMIN);

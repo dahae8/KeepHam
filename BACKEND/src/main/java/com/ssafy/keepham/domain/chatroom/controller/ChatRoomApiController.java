@@ -5,10 +5,10 @@ import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
 import com.ssafy.keepham.domain.chatroom.dto.RoomPassword;
+import com.ssafy.keepham.domain.chatroom.dto.NewSuperUser;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomService;
-import com.ssafy.keepham.domain.user.dto.user.response.UserInfoResponse;
 import com.ssafy.keepham.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,8 +48,6 @@ public class ChatRoomApiController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "6") int pageSize
     ){
-        var userInfo = userService.getLoginUserInfo();
-        log.info("userInfo: {}", userInfo.toString());
         return Api.OK(chatRoomService.openedRoom(status, page, pageSize));
     }
 
@@ -125,7 +122,12 @@ public class ChatRoomApiController {
         return Api.OK(randomPick);
     }
 
-
+    @Operation(summary = "해당 채팅방의 방장을 바꾼다.")
+    @PutMapping("/rooms/superUser")
+    public Api<NewSuperUser> setSuperUser(@RequestBody NewSuperUser setSuperUser){
+        chatRoomManager.setSuperUser(setSuperUser);
+        return Api.OK(setSuperUser);
+    }
 
 
 }

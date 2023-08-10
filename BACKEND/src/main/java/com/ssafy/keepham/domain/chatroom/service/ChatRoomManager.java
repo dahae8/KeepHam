@@ -5,9 +5,12 @@ import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.chat.db.Message;
 import com.ssafy.keepham.domain.chat.db.MessageRepository;
+import com.ssafy.keepham.domain.chatroom.dto.NewSuperUser;
 import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
+import com.ssafy.keepham.domain.user.repository.UserRepository;
+import com.ssafy.keepham.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
@@ -15,6 +18,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -25,11 +29,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @PropertySource("classpath:kafka.properties")
 public class ChatRoomManager {
+    private final UserRepository userRepository;
 
     private final ChatRoomRepository chatRoomRepository;
     private final KafkaTemplate<String, Message> kafkaTemplate;
     private final MessageRepository messageRepository;
     private final RedisTemplate<String, String> redisTemplate;
+    private final UserService userService;
 
 
 
@@ -123,5 +129,20 @@ public class ChatRoomManager {
             result.add(userList.get(randomIndex));
         }
         return result;
+    }
+
+    @Transactional
+    public void setSuperUser(NewSuperUser newSuperUser) {
+        var roomId = newSuperUser.getRoomId();
+        var superUser = newSuperUser.getNewSuperUser();
+        userRepository.findFirstByNickName(superUser)
+                .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 유저를 방장으로 임명하고 있습니다."));
+        var room = Optional.ofNullable(chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN))
+                .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 채팅방입니다."));
+        var loginUser = userService.getLoginUserInfo().getNickName();
+        if (!loginUser.equals(room.getSuperUserId())){
+            throw new ApiException(ErrorCode.BAD_REQUEST, "방장 위임을 요청한 유저가 방장이 아닙니다.");
+        }
+        room.setSuperUserId(superUser);
     }
 }
