@@ -202,7 +202,7 @@ export default function RoomList() {
     const fetchRooms = async () => {
       try {
         const url =
-          import.meta.env.VITE_URL_ADRESS +
+          import.meta.env.VITE_URL_ADDRESS +
           "/api/rooms/zipcode/" +
           userZipCode +
           "?status=OPEN";
