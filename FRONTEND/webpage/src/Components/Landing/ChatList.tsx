@@ -29,7 +29,7 @@ export default function ChatList() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://i9c104.p.ssafy.io:48080/api/rooms?status=OPEN",
+          import.meta.env.VITE_URL_ADDRESS + "/api/rooms?status=OPEN",
           {
             headers: {
               Authorization: `Bearer ${token}`,

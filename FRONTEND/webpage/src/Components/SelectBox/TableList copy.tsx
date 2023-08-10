@@ -55,7 +55,8 @@ function TableList(props: propsType) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url = "http://i9c104.p.ssafy.io:48080/api/boxs/" + userZipCode;
+        const url =
+          import.meta.env.VITE_URL_ADDRESS + "/api/boxs/" + userZipCode;
         const response = await axios.get(url);
         console.log(response.data.body);
         setLoading(false);

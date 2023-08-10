@@ -17,9 +17,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "@/Store/hooks.ts";
 import { signIn, signOut } from "@/Store/userSlice.ts";
 import { switchTab } from "@/Store/tabSlice.ts";
+import { useState, useEffect } from "react";
 
 // const pages = ["서비스 소개", "관리자 페이지"];
-const settings = [
+const setting1 = [
   "🪪사용자명",
   "🔔알림",
   "📝사용자 정보",
@@ -27,7 +28,16 @@ const settings = [
   "🗝️로그아웃",
 ];
 
-function Header() {
+const setting2 = [
+  "🪪사용자명",
+  "🔔알림",
+  "📝사용자 정보",
+  "🛒주문내역",
+  "🗝️로그아웃",
+  "🛒함 관리",
+];
+
+function HeaderCopy() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
@@ -57,6 +67,13 @@ function Header() {
   const isLoggedIn: boolean = useAppSelector((state) => state.user.isLoggedIn);
 
   const navigate = useNavigate();
+
+  const [settings, changeSetting] = useState<string[]>([]);
+  const userRole = window.sessionStorage.getItem("userRole");
+  useEffect(() => {
+    if (userRole === "USER") changeSetting(setting1);
+    else changeSetting(setting2);
+  }, [userRole]);
 
   return (
     <AppBar position="static">
@@ -115,6 +132,10 @@ function Header() {
                           sessionStorage.removeItem("userId");
                           sessionStorage.removeItem("userRole");
                           dispatch(signOut());
+                          navigate("/Home/RoomList");
+                        }
+                        if (idx == 5) {
+                          navigate("/Home/Admin");
                         }
                       }}
                     >
@@ -151,4 +172,4 @@ function Header() {
     </AppBar>
   );
 }
-export default Header;
+export default HeaderCopy;

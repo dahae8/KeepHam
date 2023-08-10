@@ -1,49 +1,38 @@
 import { Box } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
-import { Rooms } from "@/Pages/RoomList/RoomList copy.tsx";
+import { Boxes } from "@/Pages/RoomList/RoomList copy.tsx";
 
 // 타입
 type propsType = {
-  areaId: number;
-  data: Rooms[];
+  data: Boxes[];
 };
 
 // 테이블 아이템
-function TableList(props: propsType) {
+function BoxList(props: propsType) {
   const columns: GridColDef[] = [
-    { field: "title", headerName: "제목", width: 200 },
-    {
-      field: "category",
-      headerName: "카테고리",
-      width: 100,
-    },
+    { field: "title", headerName: "함번호", width: 200 },
     {
       field: "store_id",
-      headerName: "주문 가게",
+      headerName: "기본 주소",
       width: 100,
     },
     {
       field: "dfddd",
-      headerName: "받는주소",
+      headerName: "상세주소",
       width: 100,
     },
     {
       field: "max_people_number",
-      headerName: "최대인원",
+      headerName: "우편번호",
       width: 100,
     },
     {
       field: "locked",
-      headerName: "입장가능여부",
+      headerName: "상태",
       width: 100,
     },
   ];
-
-  const areaId = props.areaId;
-
-  console.log(areaId);
-  console.log("받은 프롭 : ", props.data);
 
   const navigate = useNavigate();
   const zipCode = window.sessionStorage.getItem("userZipCode");
@@ -75,4 +64,4 @@ function TableList(props: propsType) {
   );
 }
 
-export default TableList;
+export default BoxList;

@@ -16,6 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
+// import TableList from "@/Components/RoomList/TableList.tsx";
 import TableList from "@/Components/RoomList/TableList.tsx";
 import AlbumList from "@/Components/RoomList/AlbumList.tsx";
 import { MyLocation } from "@mui/icons-material";
@@ -188,10 +189,11 @@ export default function RoomList() {
   useEffect(() => {
     const fetchBoxes = async () => {
       try {
-        const url = "http://i9c104.p.ssafy.io:48080/api/boxs/" + userZipCode;
+        const url =
+          import.meta.env.VITE_URL_ADDRESS + "/api/boxs/" + userZipCode;
         const response = await axios.get(url);
         setBoxes(response.data.body);
-        console.log(Boxes);
+        console.log("박시즈 : ", Boxes);
       } catch (error) {
         console.log(error);
       }
@@ -200,7 +202,8 @@ export default function RoomList() {
     const fetchRooms = async () => {
       try {
         const url =
-          "http://i9c104.p.ssafy.io:48080/api/rooms/zipcode/" +
+          import.meta.env.VITE_URL_ADDRESS +
+          "/api/rooms/zipcode/" +
           userZipCode +
           "?status=OPEN";
         const response = await axios.get(url);

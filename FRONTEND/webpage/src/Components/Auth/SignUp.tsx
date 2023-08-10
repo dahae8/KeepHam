@@ -31,14 +31,6 @@ function SignUp() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  // async function validate(id: string, pw: string, pw2: string, name: string, nickName: string, nuber: string) {
-  //   const url = "http://i9c104.p.ssafy.io:48080/api/sign-up";
-  //   const data = {
-  //     user_id: id,
-  //     password: pw,
-  //   };
-  // }
-
   const attNames = ["id", "pw", "pw2", "name", "nickName", "number"];
   const setter = [
     setIdHelper,
@@ -83,7 +75,7 @@ function SignUp() {
 
     if (pwConfirm && idConfirm) {
       const fetchBoxes = async () => {
-        const url = "http://i9c104.p.ssafy.io:48080/api/sign-up";
+        const url = import.meta.env.VITE_URL_ADRESS + "/api/sign-up";
         const data = {
           user_id: idValue,
           password: pwValue,
@@ -107,7 +99,8 @@ function SignUp() {
   };
 
   async function checkIdinServer() {
-    const url = "https://i9c104.p.ssafy.io/api/validation?userId=" + idValue;
+    const url =
+      import.meta.env.VITE_URL_ADDRESS + "/api/validation?userId=" + idValue;
     try {
       // 서버로 POST 요청 보내기
       const response = await axios.get(url);
