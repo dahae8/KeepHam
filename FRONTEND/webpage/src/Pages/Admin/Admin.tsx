@@ -120,7 +120,7 @@ export default function Admin() {
       try {
         // const userZipCode = window.sessionStorage.getItem("userZipCode");
         // const url = "http://i9c104.p.ssafy.io:48080/api/boxs/" + userZipCode;
-        const url = "http://i9c104.p.ssafy.io:48080/api/admin/boxs";
+        const url = import.meta.env.VITE_URL_ADRESS + "/api/admin/boxs";
         const response = await axios.get(url);
         setBoxes(response.data.body);
         console.log(response.data.body);

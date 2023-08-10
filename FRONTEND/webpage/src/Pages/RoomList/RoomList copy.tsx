@@ -188,7 +188,8 @@ export default function RoomList() {
   useEffect(() => {
     const fetchBoxes = async () => {
       try {
-        const url = "http://i9c104.p.ssafy.io:48080/api/boxs/" + userZipCode;
+        const url =
+          import.meta.env.VITE_URL_ADRESS + "/api/boxs/" + userZipCode;
         const response = await axios.get(url);
         setBoxes(response.data.body);
         console.log(Boxes);
@@ -200,7 +201,8 @@ export default function RoomList() {
     const fetchRooms = async () => {
       try {
         const url =
-          "http://i9c104.p.ssafy.io:48080/api/rooms/zipcode/" +
+          import.meta.env.VITE_URL_ADRESS +
+          "/api/rooms/zipcode/" +
           userZipCode +
           "?status=OPEN";
         const response = await axios.get(url);
