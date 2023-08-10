@@ -40,7 +40,7 @@ public class SignService {
         return SignUpResponse.toEntity(user);
     }
 
-    @Transactional //findByUserIdAndAccountStatus(userId, accountStatus)
+    @Transactional
     public SignInResponse signIn(SignInRequest request){
         User user = userRepository.findByUserIdAndAccountStatus(request.getUserId(),AccountStatus.ACTIVE)
                 .filter(u -> encoder.matches(request.getPassword(), u.getPassword()))

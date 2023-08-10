@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.keepham.common.error.TokenErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
-import com.ssafy.keepham.domain.user.entity.User;
 import com.ssafy.keepham.domain.user.entity.UserRefreshToken;
 import com.ssafy.keepham.domain.user.repository.UserRefreshTokenRepository;
 import com.ssafy.keepham.domain.user.repository.UserRepository;
+import com.ssafy.keepham.domain.user.service.UserService;
 import io.jsonwebtoken.*;
 
 import java.nio.charset.StandardCharsets;
@@ -16,6 +16,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import javax.crypto.spec.SecretKeySpec;
 
 import io.jsonwebtoken.security.Keys;
@@ -25,6 +26,9 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 /*
@@ -49,6 +53,7 @@ public class TokenProvider {
         private final long reissueLimit;
         private final ObjectMapper objectMapper = new ObjectMapper();
         private final UserRepository userRepository;
+        private final RedisTemplate<String, String> redisTemplate;
 
         public TokenProvider(
                 UserRefreshTokenRepository userRefreshTokenRepository,
@@ -56,13 +61,14 @@ public class TokenProvider {
                 @Value("${expiration-minutes}") long expirationMinutes,
                 @Value("${refresh-expiration-hours}") long refreshExpirationHours,
                 @Value("${issuer}") String issuer,
-                UserRepository userRepository
-                ){
+                UserRepository userRepository,
+                RedisTemplate<String, String> redisTemplate){
                 this.userRefreshTokenRepository = userRefreshTokenRepository;
                 this.secretKey = secretKey;
                 this.expirationMinutes = expirationMinutes;
                 this.refreshExpirationHours = refreshExpirationHours;
                 this.issuer = issuer;
+                this.redisTemplate = redisTemplate;
                 this.reissueLimit = refreshExpirationHours * 60 / expirationMinutes;
                 this.userRepository = userRepository;
         }
@@ -97,13 +103,15 @@ public class TokenProvider {
                 Date now = new Date();
                 long refreshExpirationMillis = refreshExpirationHours * 60 * 60 * 1000;
                 Date expireDate = new Date(now.getTime() + refreshExpirationHours);
+
                 String refreshToken = Jwts.builder()
                         .signWith(new SecretKeySpec(secretKey.getBytes(),SignatureAlgorithm.HS512.getJcaName()))
                         .setIssuer(issuer)
                         .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
                         .setExpiration(Date.from(Instant.now().plus(refreshExpirationHours, ChronoUnit.HOURS)))
                         .compact();
-//                redisTemplate.opsForValue().set("test",refreshToken,refreshExpirationMillis, TimeUnit.MILLISECONDS);
+                //TODO: 키값 조회 값 수정
+                redisTemplate.opsForValue().set("1234",refreshToken,refreshExpirationMillis, TimeUnit.MILLISECONDS);
                 return refreshToken;
         }
         @Transactional
