@@ -21,12 +21,10 @@ import java.util.*;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentConvert paymentConvert;
-    private final LocalDateTime currentDateTime = LocalDateTime.now();
 
     //포인트 충전 저장
     public PaymentResponse chargePoint( int price,String userNickName){
-
-
+        LocalDateTime currentDateTime = LocalDateTime.now();
         int totalpoint = price;
 
         Payment recentPayment =paymentRepository.getUserTotalPoint(userNickName);
@@ -62,6 +60,7 @@ public class PaymentService {
 
     // 포인트 전액 인출
     public PaymentResponse refundUserPoint(String userNickName){
+        LocalDateTime currentDateTime = LocalDateTime.now();
         Payment recentPayment =paymentRepository.getUserTotalPoint(userNickName);
 
         int price = -1*recentPayment.getTotalPoint();
@@ -91,4 +90,25 @@ public class PaymentService {
 
     }
 
+    //!!!테스트용!!! 금액에대한 가게에서 구입한 포인트 더미데이터 추가
+    public PaymentResponse testInsertPrice (String userNickName, int price){
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+        int totalpoint = -1*price;
+        Payment recentPayment =paymentRepository.getUserTotalPoint(userNickName);
+        if(recentPayment != null){
+            totalpoint += recentPayment.getTotalPoint();
+        }
+
+        Payment payment = new Payment();
+        payment.setUserNickName(userNickName);
+        payment.setInfo("가게명");
+        payment.setPrice(-1*price);
+        payment.setTotalPoint(totalpoint);
+        payment.setInsertTime(currentDateTime);
+        payment.setChatroomId(-1);
+        payment.setAgreement(true);
+
+        return paymentConvert.toResponse( paymentRepository.save(payment));
+    }
 }
