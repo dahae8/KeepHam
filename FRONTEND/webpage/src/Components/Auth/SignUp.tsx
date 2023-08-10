@@ -3,10 +3,12 @@
 // - 비밀번호 : 유효성검사(8~16자리, 특수문자, 대문자, 숫자 포함필수)
 // - 닉네임 : 3~8 글자, 영어,한글,숫자만 가능
 
+import { TextField, Button, Grid } from "@mui/material";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, FormHelperText } from "@mui/material";
-import { useState } from "react";
-
+import { switchTab } from "@/Store/tabSlice.ts";
+import { useAppDispatch } from "@/Store/hooks.ts";
 
 function SignUp() {
   const [idHelper, setIdHelper] = useState(" ");
@@ -15,9 +17,19 @@ function SignUp() {
   const [nameHelper, setNameHelper] = useState(" ");
   const [nickNameHelper, setNickNameHelper] = useState(" ");
   const [numberHelper, setNumberHelper] = useState(" ");
-  const [ageHelper, setAgeHelper] = useState(" ");
+
+  const [idValue, setIdValue] = useState("");
+  const [pwValue, setPwValue] = useState("");
+  const [pw2Value, setPw2Value] = useState("");
+  const [nameValue, setNameValue] = useState("");
+  const [nickNameValue, setNickNameValue] = useState("");
+  const [numberValue, setNumberValue] = useState("");
+
+  const [idConfirm, setidConfirm] = useState(null);
+  const [pwConfirm, setpwConfirm] = useState<boolean | null>(null);
 
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   // async function validate(id: string, pw: string, pw2: string, name: string, nickName: string, nuber: string) {
   //   const url = "http://i9c104.p.ssafy.io:48080/api/sign-up";
@@ -27,89 +39,100 @@ function SignUp() {
   //   };
   // }
 
-  const [age, setAge] = useState('');
+  const attNames = ["id", "pw", "pw2", "name", "nickName", "number"];
+  const setter = [
+    setIdHelper,
+    setPwHelper,
+    setPw2Helper,
+    setNameHelper,
+    setNickNameHelper,
+    setNumberHelper,
+  ];
 
-  const handleAgeChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value as string);
-  };
-
+  const blankMsg = [
+    "ID의 길이는 5자리 이상이어야 합니다",
+    "패스워드의 길이는 8자리 이상이어야 합니다",
+    "패스워드 확인란을 입력해주세요",
+    "이름을 입력해주세요",
+    "나이를 선택해주세요",
+    "채팅방에서 사용할 닉네임을 입력해주세요",
+    "전화번호를 입력해주세요",
+  ];
   const signUpHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-
     // 공백 검사
     let retErr = false;
 
-    if (!formData.get("id")) {
-      setIdHelper("ID의 길이는 5자리 이상이어야 합니다");
-      retErr = true;
-    } else {
-      setIdHelper(' ');
-    }
+    attNames.forEach((att, idx) => {
+      if (!formData.get(att)) {
+        setter[idx](blankMsg[idx]);
+        retErr = true;
+      } else {
+        setter[idx](" ");
+      }
+    });
 
-    if (!formData.get("pw")) {
-      setPwHelper("패스워드의 길이는 8자리 이상이어야 합니다");
-      retErr = true;
-    } else {
-      setPwHelper(' ');
-    }
-
-    if (!formData.get("pw2")) {
-      setPw2Helper("패스워드 확인란을 입력해주세요");
-      retErr = true;
-    } else {
-      setPw2Helper(' ');
-    }
-
-    if (!formData.get("name")) {
-      setNameHelper("이름을 입력해주세요");
-      retErr = true;
-    } else {
-      setNameHelper(' ');
-    }
-
-    if (!formData.get("nickName")) {
-      setNickNameHelper("채팅방에서 사용할 닉네임을 입력해주세요");
-      retErr = true;
-    } else {
-      setNickNameHelper(' ');
-    }
-
-    if (!formData.get("number")) {
-      setNumberHelper("전화번호를 입력해주세요");
-      retErr = true;
-    } else {
-      setNumberHelper(' ');
-    }
-
-    if (!formData.get("age")) {
-      setAgeHelper("나이를 선택해주세요");
-      retErr = true;
-    } else {
-      setAgeHelper(' ');
-    }
-
-
-    if(retErr) {
+    if (retErr) {
       return;
     }
+    console.log(pwConfirm, idConfirm);
 
+    if (pwConfirm && idConfirm) {
+      const fetchBoxes = async () => {
+        const url = "http://i9c104.p.ssafy.io:48080/api/sign-up";
+        const data = {
+          user_id: idValue,
+          password: pwValue,
+          name: nameValue,
+          nick_name: nickNameValue,
+          tel: numberValue,
+          email: "이건머야",
+        };
+        try {
+          const response = await axios.post(url, data);
+          console.log("가입여부:", response);
 
-    navigate("/Home")
+          dispatch(switchTab({ setIdx: 0 }));
+          navigate("/Auth");
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchBoxes();
+    }
+  };
+
+  async function checkIdinServer() {
+    const url = "https://i9c104.p.ssafy.io/api/validation?userId=" + idValue;
+    try {
+      // 서버로 POST 요청 보내기
+      const response = await axios.get(url);
+      console.log("확인 결과 : ", response.data.body);
+      setidConfirm(response.data.body);
+      console.log(idConfirm);
+      // 응답 데이터를 콘솔에 출력
+      return "성공";
+    } catch (error) {
+      console.error("에러메시지 :", error);
+      return "실패";
+    }
   }
-
-  function ages() {
-    const arr = [];
-      for (let i = 0; i < 120; i++) {
-        arr.push(
-          <MenuItem value={i}>{i}</MenuItem>
-        )
-      }
-      return arr;
-  }
+  useEffect(() => {
+    if (pwValue !== pw2Value && pw2Value !== "") {
+      setPw2Helper("비밀번호가 다릅니다");
+      setpwConfirm(false);
+    } else {
+      setPw2Helper(" ");
+      setpwConfirm(true);
+    }
+  }, [pwValue, pw2Value]);
+  useEffect(() => {
+    if (!idConfirm && idValue !== "") setIdHelper("중복된 아이디입니다");
+  }, [idConfirm]);
 
   return (
     <>
@@ -121,12 +144,26 @@ function SignUp() {
                 label="ID"
                 variant="standard"
                 name="id"
-                error={idHelper !== ' '}
+                error={idHelper !== " "}
                 helperText={idHelper}
+                value={idValue}
+                onChange={(e) => {
+                  setIdValue(e.target.value);
+                }}
+                onClick={() => {
+                  setIdHelper(" ");
+                }}
               />
             </Grid>
             <Grid item xs={4}>
-              <Button variant="outlined" className="text-xs">
+              <Button
+                variant="outlined"
+                className="text-xs"
+                onClick={() => {
+                  if (idValue !== "") checkIdinServer();
+                  else setIdHelper("아이디를 입력하세요");
+                }}
+              >
                 중복 체크
               </Button>
             </Grid>
@@ -135,8 +172,15 @@ function SignUp() {
                 label="비밀번호"
                 variant="standard"
                 name="pw"
-                error={pwHelper !== ' '}
+                error={pwHelper !== " "}
                 helperText={pwHelper}
+                value={pwValue}
+                onChange={(e) => {
+                  setPwValue(e.target.value);
+                }}
+                onClick={() => {
+                  setPwHelper(" ");
+                }}
               />
             </Grid>
             <Grid item xs={6}>
@@ -144,8 +188,15 @@ function SignUp() {
                 label="비밀번호 확인"
                 variant="standard"
                 name="pw2"
-                error={pw2Helper !== ' '}
+                error={pw2Helper !== " "}
                 helperText={pw2Helper}
+                value={pw2Value}
+                onChange={(e) => {
+                  setPw2Value(e.target.value);
+                }}
+                onClick={() => {
+                  if (pwValue === pw2Value) setPw2Helper(" ");
+                }}
               />
             </Grid>
             <Grid item xs={6}>
@@ -153,31 +204,31 @@ function SignUp() {
                 label="이름"
                 variant="standard"
                 name="name"
-                error={nameHelper !== ' '}
+                error={nameHelper !== " "}
                 helperText={nameHelper}
+                value={nameValue}
+                onChange={(e) => {
+                  setNameValue(e.target.value);
+                }}
+                onClick={() => {
+                  setNameHelper(" ");
+                }}
               />
-            </Grid>
-            <Grid item xs={3}>
-            <FormControl fullWidth error={ageHelper !== " "}>
-              <InputLabel>Age</InputLabel>
-              <Select
-                value={age}
-                label="나이"
-                name="age"
-                onChange={handleAgeChange}
-              >
-                {ages()}
-              </Select>
-              <FormHelperText>{ageHelper}</FormHelperText>
-            </FormControl>
             </Grid>
             <Grid item xs={8}>
               <TextField
                 label="닉네임"
                 variant="standard"
                 name="nickName"
-                error={nickNameHelper !== ' '}
+                error={nickNameHelper !== " "}
                 helperText={nickNameHelper}
+                value={nickNameValue}
+                onChange={(e) => {
+                  setNickNameValue(e.target.value);
+                }}
+                onClick={() => {
+                  setNickNameHelper(" ");
+                }}
               />
             </Grid>
             <Grid item xs={4}></Grid>
@@ -186,8 +237,15 @@ function SignUp() {
                 label="전화번호"
                 variant="standard"
                 name="number"
-                error={numberHelper !== ' '}
+                error={numberHelper !== " "}
                 helperText={numberHelper}
+                value={numberValue}
+                onChange={(e) => {
+                  setNumberValue(e.target.value);
+                }}
+                onClick={() => {
+                  setNumberHelper(" ");
+                }}
               />
             </Grid>
             <Grid item xs={4}></Grid>

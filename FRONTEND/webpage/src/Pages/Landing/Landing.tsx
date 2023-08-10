@@ -1,13 +1,8 @@
-import {
-  Box,
-  Typography,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import SetLoc from "@/Components/Landing/SetLoc.tsx";
 
 function Landing() {
-  
-
   return (
     <>
       <Box

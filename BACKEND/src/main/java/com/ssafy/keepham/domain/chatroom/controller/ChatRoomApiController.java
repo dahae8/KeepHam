@@ -1,29 +1,23 @@
 package com.ssafy.keepham.domain.chatroom.controller;
 
 import com.ssafy.keepham.common.api.Api;
-import com.ssafy.keepham.common.error.ChatRoomError;
 import com.ssafy.keepham.common.error.ErrorCode;
-import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
 import com.ssafy.keepham.domain.chatroom.dto.RoomPassword;
+import com.ssafy.keepham.domain.chatroom.dto.NewSuperUser;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomService;
-import com.ssafy.keepham.domain.user.repository.UserRepository;
-import com.ssafy.keepham.security.TokenProvider;
+import com.ssafy.keepham.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,12 +28,14 @@ public class ChatRoomApiController {
 
     private final ChatRoomService chatRoomService;
     private final ChatRoomManager chatRoomManager;
-    String tempNickName = UUID.randomUUID().toString();
+    private final UserService userService;
+
 
     @Operation(summary = "방생성")
     @PostMapping("/rooms")
     private Api<ChatRoomResponse> createRoom(@Validated @RequestBody ChatRoomRequest chatRoomRequest){
-        var userNickName = chatRoomService.getUserNickname();
+        var userInfo = userService.getLoginUserInfo();
+        var userNickName = userInfo.getNickName();
         chatRoomRequest.setSuperUserId(userNickName);
         var res = chatRoomService.createRoom(chatRoomRequest);
         return Api.OK(res);
@@ -52,20 +48,19 @@ public class ChatRoomApiController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "6") int pageSize
     ){
-
         return Api.OK(chatRoomService.openedRoom(status, page, pageSize));
     }
 
     @Operation(summary = "boxId로 채팅방 조회")
     @GetMapping("/rooms/{boxId}")
-    private Api<List<ChatRoomResponse>> findOpenedRoomByBoxId(
+    private Api<List<ChatRoomResponse>> findRoomByBoxId(
             @PathVariable Long boxId,
             @RequestParam ChatRoomStatus status,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "6") int pageSize
     ){
 
-        return Api.OK(chatRoomService.findOpenedRoomByBoxId(status, page, pageSize, boxId));
+        return Api.OK(chatRoomService.findRoomByBoxId(status, page, pageSize, boxId));
     }
 
     @Operation(summary = "zipCode로 채팅방 조회")
@@ -83,7 +78,8 @@ public class ChatRoomApiController {
     @Operation(summary = "채팅방 입장. 비밀방일시 password 전달 필요")
     @PostMapping("/rooms/{roomId}")
     public Api<Object> enterSecretRoom(@PathVariable Long roomId, @RequestBody(required = false) RoomPassword password){
-        var userNickName = chatRoomService.getUserNickname();
+        var userInfo = userService.getLoginUserInfo();
+        var userNickName = userInfo.getNickName();
         if (!chatRoomManager.isSecretRoom(roomId)){
             chatRoomManager.userJoin(roomId, userNickName);
             return Api.OK(userNickName);
@@ -126,7 +122,12 @@ public class ChatRoomApiController {
         return Api.OK(randomPick);
     }
 
-
+    @Operation(summary = "해당 채팅방의 방장을 바꾼다.")
+    @PutMapping("/rooms/superUser")
+    public Api<NewSuperUser> setSuperUser(@RequestBody NewSuperUser setSuperUser){
+        chatRoomManager.setSuperUser(setSuperUser);
+        return Api.OK(setSuperUser);
+    }
 
 
 }

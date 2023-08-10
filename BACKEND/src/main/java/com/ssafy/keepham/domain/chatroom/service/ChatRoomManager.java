@@ -5,9 +5,12 @@ import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.chat.db.Message;
 import com.ssafy.keepham.domain.chat.db.MessageRepository;
+import com.ssafy.keepham.domain.chatroom.dto.NewSuperUser;
 import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
+import com.ssafy.keepham.domain.user.repository.UserRepository;
+import com.ssafy.keepham.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
@@ -15,6 +18,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -25,11 +29,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @PropertySource("classpath:kafka.properties")
 public class ChatRoomManager {
+    private final UserRepository userRepository;
 
     private final ChatRoomRepository chatRoomRepository;
     private final KafkaTemplate<String, Message> kafkaTemplate;
     private final MessageRepository messageRepository;
     private final RedisTemplate<String, String> redisTemplate;
+    private final UserService userService;
 
 
 
@@ -54,22 +60,22 @@ public class ChatRoomManager {
             throw new ApiException(ChatRoomError.BAD_REQUEST);
         }
         
-        redisTemplate.opsForSet().add(String.valueOf(roomId),userNickname);
-        redisTemplate.expire(String.valueOf(roomId), 3600*3, TimeUnit.SECONDS);
+        redisTemplate.opsForSet().add("roomId" + String.valueOf(roomId),userNickname);
+        redisTemplate.expire(String.valueOf("roomId" + String.valueOf(roomId)), 3600*3, TimeUnit.SECONDS);
         //        chatRoomUsers.computeIfAbsent(roomId, k -> new HashSet<>()).add(userNickname);
 
         currentUserCount = getUserCountInChatRoom(roomId);
         log.info("입장 후 현재 인원 {}", currentUserCount);
         log.info("치팅방 최대 {}", maxUserCount);
-        log.info("입장 {}", redisTemplate.opsForSet().members(String.valueOf(roomId)));
+        log.info("입장 {}", redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId)));
 
-        return redisTemplate.opsForSet().members(String.valueOf(roomId));
+        return redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId));
 
     }
     // 채팅방에서 user가 떠나면 해당 방 인원 감소
     public void userLeft(Long roomId, String userNickname){
-        if (redisTemplate.opsForSet().isMember(String.valueOf(roomId),userNickname)){
-            redisTemplate.opsForSet().remove(String.valueOf(roomId), userNickname);
+        if (redisTemplate.opsForSet().isMember("roomId" + String.valueOf(roomId),userNickname)){
+            redisTemplate.opsForSet().remove("roomId" + String.valueOf(roomId), userNickname);
         }
 
         Long currentUserCount = getUserCountInChatRoom(roomId);
@@ -77,21 +83,21 @@ public class ChatRoomManager {
 
         log.info("퇴장후 현재 인원 {}", currentUserCount);
         log.info("채팅방 최대 {}", maxUserCount);
-        log.info("퇴장유저 {}", redisTemplate.opsForSet().members(String.valueOf(roomId)));
+        log.info("퇴장유저 {}", redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId)));
     }
 
     public boolean allUserClear(Long roomId){
-        redisTemplate.delete(String.valueOf(roomId));
+        redisTemplate.delete("roomId" + String.valueOf(roomId));
         return true;
     }
 
-    public Set<String> getAllUser(Long roomID){
-        return redisTemplate.opsForSet().members(String.valueOf(roomID));
+    public Set<String> getAllUser(Long roomId){
+        return redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId));
     }
 
     // 채팅방 현재 접속자 수
     public Long getUserCountInChatRoom(Long roomId){
-        return redisTemplate.opsForSet().size(String.valueOf(roomId));
+        return redisTemplate.opsForSet().size("roomId" + String.valueOf(roomId));
     }
 
     // 채팅방 최대 인원
@@ -123,5 +129,20 @@ public class ChatRoomManager {
             result.add(userList.get(randomIndex));
         }
         return result;
+    }
+
+    @Transactional
+    public void setSuperUser(NewSuperUser newSuperUser) {
+        var roomId = newSuperUser.getRoomId();
+        var superUser = newSuperUser.getNewSuperUser();
+        userRepository.findFirstByNickName(superUser)
+                .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 유저를 방장으로 임명하고 있습니다."));
+        var room = Optional.ofNullable(chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN))
+                .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 채팅방입니다."));
+        var loginUser = userService.getLoginUserInfo().getNickName();
+        if (!loginUser.equals(room.getSuperUserId())){
+            throw new ApiException(ErrorCode.BAD_REQUEST, "방장 위임을 요청한 유저가 방장이 아닙니다.");
+        }
+        room.setSuperUserId(superUser);
     }
 }
