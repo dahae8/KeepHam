@@ -10,19 +10,14 @@ import App from "@/App/App.tsx";
 import Landing from "@/Pages/Landing/Landing.tsx";
 import ChatList from "@/Components/Landing/ChatList.tsx";
 import Auth from "@/Pages/Auth/Auth.tsx";
-import UserInfo from "@/Pages/UserInfo/UserInfo.tsx";
+// import UserInfo from "@/Pages/UserInfo/UserInfo.tsx";
+import UserInfo from "@/Pages/UserInfo/UserInfo copy.tsx";
 // import Main from "@/Pages/Main/Landing.tsx";
 // import User from "./Pages/User/User.tsx";
-// import RoomList, {
-//   loader as roomListLoader,
-// } from "./Pages/RoomList/RoomList.tsx";
 import RoomList, {
   loader as roomListLoader,
 } from "./Pages/RoomList/RoomList copy.tsx";
 import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
-// import ChatRoom, {
-//   loader as chatRoomLoader,
-// } from "./Pages/ChatRoom/ChatRoom.tsx";
 import ChatRoom, {
   loader as chatRoomLoader,
 } from "./Pages/ChatRoom/ChattroomTEST.tsx";
@@ -33,7 +28,7 @@ import ServiceArea from "./Pages/ServiceArea/ServiceArea.tsx";
 import Admin from "./Pages/Admin/Admin.tsx";
 import AddBox from "./Pages/Admin/AddBox.tsx";
 import Payment from "./Pages/Payment/Payment.tsx";
-import Point from "./Pages/Point/Point.tsx"
+import Point from "./Pages/Point/Point.tsx";
 
 // Styles
 import "./Styles/global.ts";
