@@ -4,6 +4,7 @@ import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.domain.boxcontrol.producer.BoxControlProducer;
 import com.ssafy.keepham.domain.chat.db.Message;
 import com.ssafy.keepham.domain.chat.db.enums.Type;
+import com.ssafy.keepham.domain.chat.dto.MessageResponse;
 import com.ssafy.keepham.domain.chat.service.MessageService;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +32,7 @@ public class ChatController {
 
     @Operation(summary = "roomId로 해당 채팅방의 채팅내역 조회")
     @GetMapping(value = "/chat-rooms/{roomId}/messages", produces = "application/json")
-    public Api<List<Message>> getChatRoomMessages(@PathVariable Long roomId) {
+    public Api<List<MessageResponse>> getChatRoomMessages(@PathVariable Long roomId) {
         return Api.OK(messageService.findMessageLog(roomId));
     }
 
