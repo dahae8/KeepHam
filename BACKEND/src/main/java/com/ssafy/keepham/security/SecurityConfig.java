@@ -30,16 +30,19 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationEntryPoint entryPoint;
     private final List<String> CORS_ALLOW_LIST = Arrays.asList("http://localhost:5173", "http://localhost:5001");
-    private final List<String> CORS_ALLOW_METHOD = Arrays.asList("GET", "POST", "PUT", "OPTIONS");
+    private final List<String> CORS_ALLOW_METHOD = Arrays.asList("HEAD", "GET", "POST", "PUT", "OPTIONS");
+    private final List<String> CORS_ALLOW_HEADER = Arrays.asList("Authorization", "Cache-Control", "Content-Type",
+            "Access-Control-Allow-Headers", "Access-Control-Allow-Origin");
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         String ALLOW_URL[] = {"/,/**,/sign-up", "/sign-in","/swagger-ui/**", "/api/swagger-ui/**", "/api/**", "/v3/api-docs/**"};
         return http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 //                .formLogin().disable()
 //                .httpBasic().disable()
             .csrf().disable()
-            .cors().disable()
+//            .cors().disable()
             .headers(headers -> headers.frameOptions().sameOrigin())
             .authorizeHttpRequests(request -> request.requestMatchers(ALLOW_URL).permitAll()
                 .anyRequest().authenticated())
@@ -60,6 +63,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(CORS_ALLOW_LIST);
         configuration.setAllowedMethods(CORS_ALLOW_METHOD);
+        configuration.setAllowedHeaders(CORS_ALLOW_HEADER);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
