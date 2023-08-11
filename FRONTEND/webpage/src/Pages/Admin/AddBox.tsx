@@ -8,31 +8,44 @@ import { useState } from "react";
 import axios from "axios";
 
 function AddBox() {
-  const [idHelper, setIdHelper] = useState(" ");
-  const [pwHelper, setPwHelper] = useState(" ");
-  const [nameHelper, setNameHelper] = useState(" ");
+  const [typeHelper, setTypeHelper] = useState(" ");
+  const [addHelper, setAddHelper] = useState(" ");
+  const [detailHelper, setDetailHelper] = useState(" ");
+  const [zipHelper, setZipHelper] = useState(" ");
+  const [latiHelper, setLatiHelper] = useState(" ");
+  const [hardHelper, setHardHelper] = useState(" ");
 
-  const [idValue, setIdValue] = useState("");
-  const [pwValue, setPwValue] = useState("");
-  const [nameValue, setNameValue] = useState("");
+  const [typeValue, setTypeValue] = useState("");
+  const [addValue, setAddValue] = useState("");
+  const [detailValue, setDetaileValue] = useState("");
+  const [zipValue, setZipValue] = useState(" ");
+  const [latiValue, setLatiValue] = useState<number>(0);
+  const [hardValue, setHardValue] = useState<number>(0);
 
-  const [idConfirm, setidConfirm] = useState(null);
-
-  // async function validate(id: string, pw: string, pw2: string, name: string, nickName: string, nuber: string) {
-  //   const url = "http://i9c104.p.ssafy.io:48080/api/sign-up";
-  //   const data = {
-  //     user_id: id,
-  //     password: pw,
-  //   };
-  // }
-
-  const attNames = ["id", "pw", "name"];
-  const setter = [setIdHelper, setPwHelper, setNameHelper];
+  const attNames = [
+    "type",
+    "address",
+    "detail",
+    "zipcode",
+    "latitude",
+    "hardness",
+  ];
+  const setter = [
+    setTypeHelper,
+    setAddValue,
+    setDetaileValue,
+    setZipHelper,
+    setLatiHelper,
+    setHardHelper,
+  ];
 
   const blankMsg = [
-    "ID의 길이는 5자리 이상이어야 합니다",
-    "패스워드의 길이는 8자리 이상이어야 합니다",
-    "이름을 입력해주세요",
+    "Type을 입력해주세요",
+    "주소를 입력해주세요",
+    "상세주소를 입력해주세요",
+    "우편번호를 입력해주세요",
+    "위도를 입력해주세요",
+    "경도를 입력해주세요",
   ];
   const signUpHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,29 +64,33 @@ function AddBox() {
         setter[idx](" ");
       }
     });
-
     if (retErr) {
       return;
     }
-    console.log(idConfirm);
-  };
-
-  async function checkIdinServer() {
-    const url =
-      import.meta.env.VITE_URL_ADDRESS + "/api/validation?userId=" + idValue;
-    try {
-      // 서버로 POST 요청 보내기
-      const response = await axios.get(url);
-      console.log("확인 결과 : ", response.data.body);
-      setidConfirm(response.data.body);
-      console.log(idConfirm);
-      // 응답 데이터를 콘솔에 출력
-      return "성공";
-    } catch (error) {
-      console.error("에러메시지 :", error);
-      return "실패";
+    if (typeValue !== ("공용" || "개인")) {
+      setTypeHelper("Type은 공용 또는 개인 이어야합니다");
+      return;
     }
-  }
+
+    const addBox = async () => {
+      const url = import.meta.env.VITE_URL_ADDRESS + "/api/admin/boxs";
+      const data = {
+        type: typeValue,
+        address: addValue,
+        detailedAddress: detailValue,
+        zipCode: zipValue,
+        latitude: latiValue,
+        hardness: hardValue,
+      };
+      try {
+        const response = await axios.post(url, data);
+        console.log("추가여부:", response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    addBox();
+  };
 
   return (
     <>
@@ -98,64 +115,47 @@ function AddBox() {
                 <TextField
                   label="Type"
                   variant="standard"
-                  name="id"
-                  error={idHelper !== " "}
-                  helperText={idHelper}
-                  value={idValue}
+                  name="type"
+                  error={typeHelper !== " "}
+                  helperText={typeHelper}
+                  value={typeValue}
                   onChange={(e) => {
-                    setIdValue(e.target.value);
+                    setTypeValue(e.target.value);
                   }}
                   onClick={() => {
-                    setIdHelper(" ");
+                    setTypeHelper(" ");
                   }}
                 />
-              </Grid>
-              <Grid item xs={4}>
-                <Button
-                  variant="outlined"
-                  className="text-xs"
-                  onClick={() => {
-                    if (idValue !== "") checkIdinServer();
-                    else setIdHelper("아이디를 입력하세요");
-                  }}
-                >
-                  중복 체크
-                </Button>
               </Grid>
               <Grid item xs={6}>
                 <TextField
                   label="주소"
                   variant="standard"
-                  name="pw"
-                  error={pwHelper !== " "}
-                  helperText={pwHelper}
-                  value={pwValue}
+                  name="address"
+                  error={addHelper !== " "}
+                  helperText={addHelper}
+                  value={addValue}
                   onChange={(e) => {
-                    setPwValue(e.target.value);
+                    setAddValue(e.target.value);
                   }}
                   onClick={() => {
-                    setPwHelper(" ");
+                    setAddHelper(" ");
                   }}
                 />
-              </Grid>
-              <Grid item xs={4}>
-                <Button variant="outlined" className="text-xs">
-                  주소 검색
-                </Button>
               </Grid>
               <Grid item xs={6}>
                 <TextField
                   label="상세주소"
                   variant="standard"
-                  name="name"
-                  error={nameHelper !== " "}
-                  helperText={nameHelper}
-                  value={nameValue}
+                  name="detail"
+                  error={detailHelper !== " "}
+                  helperText={detailHelper}
+                  value={detailValue}
                   onChange={(e) => {
-                    setNameValue(e.target.value);
+                    setDetaileValue(e.target.value);
                   }}
                   onClick={() => {
-                    setNameHelper(" ");
+                    setDetailHelper(" ");
                   }}
                 />
               </Grid>
@@ -163,15 +163,15 @@ function AddBox() {
                 <TextField
                   label="우편번호"
                   variant="standard"
-                  name="name"
-                  error={nameHelper !== " "}
-                  helperText={nameHelper}
-                  value={nameValue}
+                  name="zipcode"
+                  error={zipHelper !== " "}
+                  helperText={zipHelper}
+                  value={zipValue}
                   onChange={(e) => {
-                    setNameValue(e.target.value);
+                    setZipValue(e.target.value);
                   }}
                   onClick={() => {
-                    setNameHelper(" ");
+                    setZipHelper(" ");
                   }}
                 />
               </Grid>
@@ -179,15 +179,16 @@ function AddBox() {
                 <TextField
                   label="위도"
                   variant="standard"
-                  name="name"
-                  error={nameHelper !== " "}
-                  helperText={nameHelper}
-                  value={nameValue}
+                  name="latitude"
+                  error={latiHelper !== " "}
+                  helperText={latiHelper}
+                  value={latiValue}
                   onChange={(e) => {
-                    setNameValue(e.target.value);
+                    const Lv = e.target.value;
+                    if (Lv !== null) setLatiValue(Number(e.target.value));
                   }}
                   onClick={() => {
-                    setNameHelper(" ");
+                    setLatiHelper(" ");
                   }}
                 />
               </Grid>
@@ -195,15 +196,16 @@ function AddBox() {
                 <TextField
                   label="경도"
                   variant="standard"
-                  name="name"
-                  error={nameHelper !== " "}
-                  helperText={nameHelper}
-                  value={nameValue}
+                  name="hardness"
+                  error={hardHelper !== " "}
+                  helperText={hardHelper}
+                  value={hardValue}
                   onChange={(e) => {
-                    setNameValue(e.target.value);
+                    const Hd = e.target.value;
+                    if (Hd !== null) setHardValue(Number(e.target.value));
                   }}
                   onClick={() => {
-                    setNameHelper(" ");
+                    setHardHelper(" ");
                   }}
                 />
               </Grid>
