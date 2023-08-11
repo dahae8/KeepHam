@@ -1,5 +1,13 @@
 import * as React from "react";
-import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Typography,
+  Grid,
+  TextField,
+} from "@mui/material";
 import { LoaderFunctionArgs, useNavigate } from "react-router-dom";
 import { MyLocation } from "@mui/icons-material";
 import { useEffect, useState } from "react";
@@ -27,6 +35,20 @@ export interface Boxes {
   used: boolean;
   valid: boolean;
   zip_code: string;
+}
+interface Stores {
+  id: number;
+  category: string;
+  store_id: number;
+  name: string;
+  address: string;
+  estimated_delivery_time: string;
+  min_order_amount: string;
+  delivery_fee_to_display: string;
+  logo_url: string;
+  thumbnail_url: string;
+  lat: 35.174343;
+  lng: 126.80091;
 }
 
 export default function Admin() {
@@ -115,6 +137,8 @@ export default function Admin() {
   const userState = window.sessionStorage.getItem("userState");
   const navigate = useNavigate();
 
+  const [selectMode, setMode] = useState(0);
+
   useEffect(() => {
     const zipCode = sessionStorage.getItem("userZipCode");
     const fetchBoxes = async () => {
@@ -171,38 +195,73 @@ export default function Admin() {
             onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { md: "none" } }}
           ></IconButton>
-          <Typography variant="h5">사용할 함을 선택하세요</Typography>
+          {selectMode === 0 && (
+            <Typography variant="h5">사용할 함을 선택하세요</Typography>
+          )}
+          {selectMode === 1 && (
+            <Typography variant="h5">가게를 선택해주세요</Typography>
+          )}
+          {selectMode === 2 && (
+            <Typography variant="h5">방정보를 정해주세요</Typography>
+          )}
         </div>
         <Divider />
         <div className="relative w-full min-h-[540px]" id="drawer-container">
           <div className="flex">
-            <Box sx={{ height: 400, width: "100%" }}>
-              <DataGrid
-                rows={Boxes}
-                getRowId={(row) => row.box_id}
-                columns={columns}
-                initialState={{
-                  pagination: {
-                    paginationModel: {
-                      pageSize: 5,
+            {selectMode === 0 && (
+              <Box sx={{ height: 400, width: "100%" }}>
+                <DataGrid
+                  rows={Boxes}
+                  getRowId={(row) => row.box_id}
+                  columns={columns}
+                  initialState={{
+                    pagination: {
+                      paginationModel: {
+                        pageSize: 5,
+                      },
                     },
-                  },
-                }}
-                pageSizeOptions={[5]}
-                onRowSelectionModelChange={(selectedRow) => {
-                  const selectedIdx: number = Number(selectedRow[0]);
-                  const boxId = selectedRow[0].toString();
-                  console.log(selectedIdx);
-                  if (userState === "isLoggedIn") {
-                    sessionStorage.setItem("selected BoxId", boxId);
-                    // console.log("이게맞을까", Boxes[);
-                    // navigate(`/Home/Chatroom/${selectedIdx}`);
-                  } else navigate("/Auth");
-                }}
-              />
-            </Box>
+                  }}
+                  pageSizeOptions={[5]}
+                  onRowSelectionModelChange={(selectedRow) => {
+                    const selectedIdx: number = Number(selectedRow[0]);
+                    const boxId = selectedRow[0].toString();
+                    console.log(selectedIdx);
+                    if (userState === "isLoggedIn") {
+                      sessionStorage.setItem("selected BoxId", boxId);
+                      setMode(1);
+                    } else navigate("/Auth");
+                  }}
+                />
+              </Box>
+            )}
+            {selectMode === 1 && (
+              <Box sx={{ height: 400, width: "100%" }}>
+                <DataGrid
+                  rows={Stores}
+                  getRowId={(row) => row.box_id}
+                  columns={columns}
+                  initialState={{
+                    pagination: {
+                      paginationModel: {
+                        pageSize: 5,
+                      },
+                    },
+                  }}
+                  pageSizeOptions={[5]}
+                  onRowSelectionModelChange={(selectedRow) => {
+                    const selectedIdx: number = Number(selectedRow[0]);
+                    const boxId = selectedRow[0].toString();
+                    console.log(selectedIdx);
+                    if (userState === "isLoggedIn") {
+                      sessionStorage.setItem("selected BoxId", boxId);
+                      setMode(1);
+                    } else navigate("/Auth");
+                  }}
+                />
+              </Box>
+            )}
           </div>
-          {location}
+          {selectMode === 0 && location}
         </div>
       </Box>
     </>
