@@ -23,23 +23,23 @@ const PocketItems: React.FC = () => {
   const sortedFilteredItems = copyFilteredItems.sort((a, b) => {
     // 날짜가 최근일수록 상단에 위치하도록 정렬
     // 만약 날짜가 같다면 id 값이 작은 순으로(최근에 입력한 순으로) 상단에 위치하도록 정렬
-    if (new Date(a.date).getTime() === new Date(b.date).getTime()) {
-      return b.id - a.id;
-    }
+    // if (new Date(a.insert_time).getTime() === new Date(b.insert_time).getTime()) {
+    //   return a - b
+    // }
 
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
+    return new Date(b.insert_time).getTime() - new Date(a.insert_time).getTime();
   });
 
   return (
     <div className="pocket__items">
-      {sortedFilteredItems.map((item) => (
+      {sortedFilteredItems.map((item, index) => (
         <Item
-          key={item.id}
-          id={item.id}
-          date={item.date}
-          title={item.title}
-          amount={item.amount}
-          amountType={item.amountType}
+          key={index}
+          id={index}
+          date={item.insert_time}
+          title={item.info}
+          amount={item.price}
+          amountType={item.info}
         />
       ))}
     </div>

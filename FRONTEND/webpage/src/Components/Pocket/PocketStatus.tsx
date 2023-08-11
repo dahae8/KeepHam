@@ -3,11 +3,10 @@ import { addComma } from "../../Utils/numberUtils";
 import "./PocketStatus.css";
 
 interface Item {
-  id: number;
-  date: Date;
-  title: string;
-  amount: number;
-  amountType: string;
+  info: string;
+  insert_time: Date;
+  price: number;
+  total_point: number;
 }
 
 interface PocketStatusProps {
@@ -25,12 +24,12 @@ const PocketStatus: React.FC<PocketStatusProps> = (props) => {
     if (props.items.length > 0) {
       // 자산, 수입, 지출 합계 계산
       props.items.forEach((item) => {
-        if (item.amountType === "income") {
-          total.balance += +item.amount;
-          total.income += +item.amount;
+        if (item.info === "충전") {
+          total.balance += +item.price;
+          total.income += +item.price;
         } else {
-          total.balance -= +item.amount;
-          total.expense += +item.amount;
+          total.balance += +item.price;
+          total.expense += +item.price;
         }
       });
     }
