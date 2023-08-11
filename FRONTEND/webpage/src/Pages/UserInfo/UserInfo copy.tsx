@@ -3,10 +3,8 @@
 // - 비밀번호 : 유효성검사(8~16자리, 특수문자, 대문자, 숫자 포함필수)
 // - 닉네임 : 3~8 글자, 영어,한글,숫자만 가능
 
-import { useNavigate } from "react-router-dom";
-import { TextField, Button, Grid, Box, Typography } from "@mui/material";
+import { TextField, Button, Grid, Box } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useAppDispatch } from "@/Store/hooks.ts";
 import axios from "axios";
 
 function UserInfo() {
@@ -16,7 +14,6 @@ function UserInfo() {
   const [pwHelper, setPwHelper] = useState(" ");
   const [pw2Helper, setPw2Helper] = useState(" ");
   const [nameHelper, setNameHelper] = useState(" ");
-  const [ageHelper, setAgeHelper] = useState(" ");
   const [nickNameHelper, setNickNameHelper] = useState(" ");
   const [numberHelper, setNumberHelper] = useState(" ");
 
@@ -27,28 +24,18 @@ function UserInfo() {
   const [nickNameValue, setNickNameValue] = useState("");
   const [numberValue, setNumberValue] = useState("");
 
-  const [idConfirm, setidConfirm] = useState(null);
   const [pwConfirm, setpwConfirm] = useState<boolean | null>(null);
+  const [NickConfirm, setNickConfirm] = useState<boolean | null>(null);
+  console.log(NickConfirm);
 
-  const dispatch = useAppDispatch();
-
-  const attNames = ["id", "pw", "pw2", "name", "age", "nickName", "number"];
+  const attNames = ["id", "pw", "pw2", "name", "nickName", "number"];
   const setter = [
     setIdHelper,
     setPwHelper,
     setPw2Helper,
     setNameHelper,
-    setAgeHelper,
     setNickNameHelper,
     setNumberHelper,
-  ];
-  const datasetter = [
-    setIdValue,
-    setPwValue,
-    setPw2Value,
-    setNameValue,
-    setNickNameValue,
-    setNumberValue,
   ];
 
   const blankMsg = [
@@ -56,12 +43,9 @@ function UserInfo() {
     "패스워드의 길이는 8자리 이상이어야 합니다",
     "패스워드 확인란을 입력해주세요",
     "이름을 입력해주세요",
-    "나이를 선택해주세요",
     "채팅방에서 사용할 닉네임을 입력해주세요",
     "전화번호를 입력해주세요",
   ];
-
-  const navigate = useNavigate();
 
   const signUpHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -81,31 +65,70 @@ function UserInfo() {
       }
     });
 
-    if (retErr) {
+    if (retErr || pwConfirm) {
       return;
     }
-
-    navigate("/Home");
+    const changeUserInfo = async () => {
+      const url = import.meta.env.VITE_URL_ADDRESS + "/api/user/" + idValue;
+      const data = {
+        password: "string",
+        new_password: "string",
+        email: "string",
+        tel: "string",
+      };
+      try {
+        const response = await axios.put(url, data);
+        console.log("가입여부:", response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    changeUserInfo();
   };
   useEffect(() => {
-    const userId = sessionStorage.getItem('userId');
+    const UserId = sessionStorage.getItem("userId");
     const fetchUserInfo = async () => {
       try {
-        const url =
-          import.meta.env.VITE_URL_ADDRESS + "/api/user/" + userId;
+        const url = import.meta.env.VITE_URL_ADDRESS + "/api/user/" + UserId;
         const response = await axios.get(url);
-        console.log(response.data.body);
-        // console.log("박시즈 : ", Boxes);
+        const data = response.data.body;
+        console.log(data);
+        setIdValue(data.user_id);
+        setNameValue(data.name);
+        setNickNameValue(data.nick_name);
+        setNumberValue(data.tel);
       } catch (error) {
         console.log(error);
       }
     };
     fetchUserInfo();
-
-    datasetter.forEach((e) => {
-      e(" dd");
-    });
   }, []);
+  useEffect(() => {
+    if (pw2Value !== pwValue) {
+      setpwConfirm(false);
+      setPw2Helper("비밀번호가 다릅니다");
+    } else {
+      setpwConfirm(true);
+      setPw2Helper(" ");
+    }
+  }, [pw2Value]);
+
+  async function checkNickinServer() {
+    const url =
+      import.meta.env.VITE_URL_ADDRESS +
+      "/api/validation/nickname?nickName=" +
+      nickNameValue;
+    try {
+      const response = await axios.get(url);
+      console.log("확인 결과 : ", response.data.body);
+      setNickConfirm(response.data.body);
+      if (response.data.body === false) {
+        setNickNameHelper("중복된 닉네임입니다");
+      } else setNickNameHelper("사용 가능한 닉네임입니다");
+    } catch (error) {
+      console.error("에러메시지 :", error);
+    }
+  }
 
   const items = (
     <Grid container spacing={4}>
@@ -117,10 +140,13 @@ function UserInfo() {
           error={idHelper !== " "}
           helperText={idHelper}
           value={idValue}
-          onChange={(e) => {
-            setIdValue(e.target.value);
-          }}
           onClick={() => {
+            setIdHelper("아이디는 변경할 수 없습니다.");
+          }}
+          onChange={() => {
+            setIdHelper("아이디는 변경할 수 없습니다.");
+          }}
+          onMouseOut={() => {
             setIdHelper(" ");
           }}
         />
@@ -134,42 +160,55 @@ function UserInfo() {
               alignItems: "end",
             }}
           >
-            <Typography variant="body2">회원탈퇴</Typography>
+            <Button
+              variant="outlined"
+              className="text-xs"
+              color="error"
+              onClick={() => {
+                setEditMode(true);
+              }}
+            >
+              회원 탈퇴
+            </Button>
           </Box>
         </Grid>
       )}
-      <Grid item xs={6}>
-        <TextField
-          label="비밀번호"
-          variant="standard"
-          name="pw"
-          error={pwHelper !== " "}
-          helperText={pwHelper}
-          value={pwValue}
-          onChange={(e) => {
-            setPwValue(e.target.value);
-          }}
-          onClick={() => {
-            setPwHelper(" ");
-          }}
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <TextField
-          label="비밀번호 확인"
-          variant="standard"
-          name="pw2"
-          error={pw2Helper !== " "}
-          helperText={pw2Helper}
-          value={pw2Value}
-          onChange={(e) => {
-            setPw2Value(e.target.value);
-          }}
-          onClick={() => {
-            if (pwValue === pw2Value) setPw2Helper(" ");
-          }}
-        />
-      </Grid>
+      {editMode && (
+        <Grid item xs={6}>
+          <TextField
+            label="비밀번호"
+            variant="standard"
+            name="pw"
+            error={pwHelper !== " "}
+            helperText={pwHelper}
+            value={pwValue}
+            onChange={(e) => {
+              if (editMode) setPwValue(e.target.value);
+            }}
+            onClick={() => {
+              setPwHelper(" ");
+            }}
+          />
+        </Grid>
+      )}
+      {editMode && (
+        <Grid item xs={6}>
+          <TextField
+            label="비밀번호 확인"
+            variant="standard"
+            name="pw2"
+            error={pw2Helper !== " "}
+            helperText={pw2Helper}
+            value={pw2Value}
+            onChange={(e) => {
+              setPw2Value(e.target.value);
+            }}
+            onClick={() => {
+              if (pwValue === pw2Value) setPw2Helper(" ");
+            }}
+          />
+        </Grid>
+      )}
       <Grid item xs={6}>
         <TextField
           label="이름"
@@ -178,10 +217,13 @@ function UserInfo() {
           error={nameHelper !== " "}
           helperText={nameHelper}
           value={nameValue}
-          onChange={(e) => {
-            setNameValue(e.target.value);
-          }}
           onClick={() => {
+            setNameHelper("이름은 변경할 수 없습니다.");
+          }}
+          onChange={() => {
+            setNameHelper("이름은 변경할 수 없습니다.");
+          }}
+          onMouseOut={() => {
             setNameHelper(" ");
           }}
         />
@@ -202,6 +244,18 @@ function UserInfo() {
           }}
         />
       </Grid>
+      <Grid item xs={4}>
+        <Button
+          variant="outlined"
+          className="text-xs"
+          onClick={() => {
+            if (idValue !== "") checkNickinServer();
+            else setIdHelper("닉네임을 입력하세요");
+          }}
+        >
+          중복 체크
+        </Button>
+      </Grid>
       <Grid item xs={4}></Grid>
       <Grid item xs={8}>
         <TextField
@@ -211,10 +265,13 @@ function UserInfo() {
           error={numberHelper !== " "}
           helperText={numberHelper}
           value={numberValue}
-          onChange={(e) => {
-            setNumberValue(e.target.value);
-          }}
           onClick={() => {
+            setNumberHelper("번호는 변경할 수 없습니다.");
+          }}
+          onChange={() => {
+            setNumberHelper("번호는 변경할 수 없습니다.");
+          }}
+          onMouseOut={() => {
             setNumberHelper(" ");
           }}
         />

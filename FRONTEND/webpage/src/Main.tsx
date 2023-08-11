@@ -17,7 +17,7 @@ import UserInfo from "@/Pages/UserInfo/UserInfo copy.tsx";
 import RoomList, {
   loader as roomListLoader,
 } from "./Pages/RoomList/RoomList copy.tsx";
-import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
+import CreateRoom from "./Pages/ChatRoom/CreateRoom.tsx";
 import ChatRoom, {
   loader as chatRoomLoader,
 } from "./Pages/ChatRoom/ChattroomTEST.tsx";
