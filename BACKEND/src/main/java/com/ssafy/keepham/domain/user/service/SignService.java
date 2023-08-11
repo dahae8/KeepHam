@@ -32,11 +32,7 @@ public class SignService {
     @Transactional
     public SignUpResponse registerUser(SignUpRequest request){
         User user = userRepository.save(User.toEntity(request,encoder));
-        try {
-            userRepository.flush();
-        }catch (DataIntegrityViolationException e){
-            throw new IllegalArgumentException("이미 사용중인 아이디입니다.");
-        }
+        userRepository.flush();
         return SignUpResponse.toEntity(user);
     }
 
@@ -44,7 +40,7 @@ public class SignService {
     public SignInResponse signIn(SignInRequest request){
         User user = userRepository.findByUserIdAndAccountStatus(request.getUserId(),AccountStatus.ACTIVE)
                 .filter(u -> encoder.matches(request.getPassword(), u.getPassword()))
-                .orElseThrow(() ->new ApiException(UserErrorCode.INVALID_USER));
+                .orElseThrow(() -> new ApiException(UserErrorCode.INVALID_USER));
         String accessToken = tokenProvider.createAccessToken(String.format("%s:%s",user.getUserId(),user.getUserRole()));
         String refreshToken = tokenProvider.createRefreshToken();
         userRefreshTokenRepository.findById(user.getId())
@@ -57,5 +53,9 @@ public class SignService {
 
     public boolean checkId(String userId, AccountStatus accountStatus){
         return userRepository.findByUserIdAndAccountStatus(userId, accountStatus).isPresent();
+    }
+
+    public boolean checkNickname(String nickName, AccountStatus accountStatus){
+        return userRepository.findByNickNameAndAccountStatus(nickName, accountStatus).isPresent();
     }
 }
