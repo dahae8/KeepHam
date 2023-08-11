@@ -74,7 +74,7 @@ function SignUp() {
     console.log(pwConfirm, idConfirm);
 
     if (pwConfirm && idConfirm) {
-      const fetchBoxes = async () => {
+      const addUser = async () => {
         const url = import.meta.env.VITE_URL_ADDRESS + "/api/sign-up";
         const data = {
           user_id: idValue,
@@ -94,7 +94,7 @@ function SignUp() {
           console.log(error);
         }
       };
-      fetchBoxes();
+      addUser();
     }
   };
 
@@ -102,12 +102,10 @@ function SignUp() {
     const url =
       import.meta.env.VITE_URL_ADDRESS + "/api/validation?userId=" + idValue;
     try {
-      // 서버로 POST 요청 보내기
       const response = await axios.get(url);
       console.log("확인 결과 : ", response.data.body);
       setidConfirm(response.data.body);
       console.log(idConfirm);
-      // 응답 데이터를 콘솔에 출력
       return "성공";
     } catch (error) {
       console.error("에러메시지 :", error);
