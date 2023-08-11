@@ -46,4 +46,5 @@ public class Menu {
     String reorderRateMessage;
     Integer menuSetId;
     Integer id;
+    String name;
 }
