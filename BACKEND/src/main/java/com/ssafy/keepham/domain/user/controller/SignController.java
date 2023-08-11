@@ -33,7 +33,13 @@ public class SignController {
 
     @Operation(summary = "ID 중복확인 : 중복이면 false ")
     @GetMapping("/validation")
-    public Api<Boolean> getUserId(@RequestParam String userId, AccountStatus accountStatus){
-        return Api.OK(!signService.checkId(userId,accountStatus));
+    public Api<Boolean> getUserId(@RequestParam String userId){
+        return Api.OK(!signService.checkId(userId));
+    }
+
+    @Operation(summary = "nickname 중복확인 : 중복이면 false")
+    @GetMapping("/validation/nickname")
+    public Api<Boolean> getNickname(@RequestParam String nickName){
+        return Api.OK((!signService.checkNickname(nickName)));
     }
 }
