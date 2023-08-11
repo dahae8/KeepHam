@@ -29,7 +29,7 @@ import java.util.List;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationEntryPoint entryPoint;
-    private final List<String> CORS_ALLOW_LIST = Arrays.asList("http://localhost:5173", "http://localhost:5001");
+    private final List<String> CORS_ALLOW_LIST = Arrays.asList("http://localhost:5173", "http://localhost:5001", "https://i9c104.p.ssafy.io");
     private final List<String> CORS_ALLOW_METHOD = Arrays.asList("HEAD", "GET", "POST", "PUT", "OPTIONS");
     private final List<String> CORS_ALLOW_HEADER = Arrays.asList("Authorization", "Cache-Control", "Content-Type",
             "Access-Control-Allow-Headers", "Access-Control-Allow-Origin");

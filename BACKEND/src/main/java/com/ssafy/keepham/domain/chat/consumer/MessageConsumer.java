@@ -31,13 +31,13 @@ public class MessageConsumer {
     private final MessageRepository messageRepository;
     private final MessageConverter messageConverter;
 
-    @KafkaListener(topics = "${kafka.chat.topic}", groupId = "${kafka.chat.group-id}+19", containerFactory = "chatKafkaListenerContainerFactory")
+    @KafkaListener(topics = "${kafka.chat.topic}", groupId = "${kafka.chat.group-id}+10", containerFactory = "chatKafkaListenerContainerFactory")
     public void getMessage(Message message){
         log.info("리스너를 통해 전달중");
-        messagingTemplate.convertAndSend("/subscribe/message/" + message.getRoomId(), message);
+        messagingTemplate.convertAndSend("/subscribe/message/" + message.getRoomId(), messageConverter.toResponse(message));
     }
 
-    @KafkaListener(topics = "${kafka.box-arrive.topic}", groupId = "${kafka.chat.group-id}+10", containerFactory = "chatKafkaListenerContainerFactory")
+    @KafkaListener(topics = "${kafka.box-arrive.topic}", groupId = "${kafka.chat.group-id}+15", containerFactory = "chatKafkaListenerContainerFactory")
     public void getArriveMessage(Message message){
         // 박스에서 오는 메세지는 결국 boxId, type만 올 것이다.
         Long roomId = Optional.ofNullable(chatRoomRepository.findByBoxIdAndStatus(message.getBoxId(), ChatRoomStatus.OPEN))
