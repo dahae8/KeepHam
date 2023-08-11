@@ -16,11 +16,10 @@ export const FilterContext = React.createContext<{
 });
 
 interface Item {
-  id: number;
-  date: Date;
-  title: string;
-  amount: number;
-  amountType: string;
+  info: string;
+  insert_time: Date;
+  price: number;
+  total_point: number;
 }
 
 interface PocketContainerProps {
@@ -35,11 +34,11 @@ const PocketContainer: React.FC<PocketContainerProps> = (props) => {
 
   if (props.items.length > 0) {
     filteredItems = props.items.filter(
-      (item) => item.date.getFullYear().toString() === filterBaseYear
+      (item) => new Date(item.insert_time).getFullYear().toString() === filterBaseYear
     );
 
     filteredExpenses = filteredItems.filter(
-      (item) => item.amountType === "expense"
+      (item) => item.info === "expense"
     );
   }
 

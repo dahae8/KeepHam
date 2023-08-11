@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Bootpay from '@bootpay/client-js';
 import './Point.css';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function Point() {
 
@@ -25,12 +26,40 @@ function Point() {
         },
       });
 
+      
+      const AccessToken = localStorage.getItem("AccessToken");
+      console.log('AccessToken', AccessToken)
+
+      const fetchPayment = async () => {
+        try {
+          const url = import.meta.env.VITE_URL_ADDRESS + "/api/payment/charge";
+          const response2 = await axios.post(url,
+            {
+              price: response.data.price,
+              receiptId: response.data.receipt_id,
+            },
+            {
+              headers:{
+              Authorization: `Bearer ` + AccessToken}
+            },
+          );
+          console.log('response2.date.body', response2.data.body);
+    
+          console.log('response2', response2);
+    
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
       switch (response.event) {
         case "issued":
           // 가상계좌 입금 완료 처리
           break;
         case "done":
           console.log(response);
+          fetchPayment();
+          
           alert("결제가 완료되었습니다.")
           navigate('/Home/UserInfo')
           
