@@ -23,6 +23,7 @@ public class MenuResponse {
     String reorderRateMessage;
     Integer menuSetId;
     Integer id;
+    String name;
     public static MenuResponse from(Menu menu){
         return new MenuResponse(
                 menu.getItemId(),
@@ -38,7 +39,8 @@ public class MenuResponse {
                 menu.getTopDisplayedItemOrder(),
                 menu.getReorderRateMessage(),
                 menu.getMenuSetId(),
-                menu.getId()
+                menu.getId(),
+                menu.getName()
         );
     }
 }
