@@ -51,11 +51,11 @@ public class SignService {
         return new SignInResponse(user.getName(),user.getNickName(), user.getUserRole(), accessToken, refreshToken);
     }
 
-    public boolean checkId(String userId, AccountStatus accountStatus){
-        return userRepository.findByUserIdAndAccountStatus(userId, accountStatus).isPresent();
+    public boolean checkId(String userId){
+        return userRepository.findByUserIdAndAccountStatus(userId, AccountStatus.ACTIVE).isPresent();
     }
 
-    public boolean checkNickname(String nickName, AccountStatus accountStatus){
-        return userRepository.findByNickNameAndAccountStatus(nickName, accountStatus).isPresent();
+    public boolean checkNickname(String nickName){
+        return userRepository.findByNickName(nickName).isPresent();
     }
 }
