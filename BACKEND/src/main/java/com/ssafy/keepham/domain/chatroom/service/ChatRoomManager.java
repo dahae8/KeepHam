@@ -79,6 +79,7 @@ public class ChatRoomManager {
     // 채팅방에서 user가 떠나면 해당 방 인원 감소
     public void userLeft(Long roomId, String userNickname){
         if (redisTemplate.opsForSet().isMember("roomId" + String.valueOf(roomId),userNickname)){
+            log.info("퇴장유저 {}", redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId)));
             redisTemplate.opsForSet().remove("roomId" + String.valueOf(roomId), userNickname);
         }
 
@@ -87,7 +88,6 @@ public class ChatRoomManager {
 
         log.info("퇴장후 현재 인원 {}", currentUserCount);
         log.info("채팅방 최대 {}", maxUserCount);
-        log.info("퇴장유저 {}", redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId)));
     }
 
     public boolean allUserClear(Long roomId){
