@@ -2,10 +2,11 @@ package com.ssafy.keepham.domain.chat.controller;
 
 import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.domain.boxcontrol.producer.BoxControlProducer;
-import com.ssafy.keepham.domain.chat.db.Message;
-import com.ssafy.keepham.domain.chat.db.enums.Type;
+import com.ssafy.keepham.domain.chat.entity.Message;
+import com.ssafy.keepham.domain.chat.entity.enums.Type;
 import com.ssafy.keepham.domain.chat.dto.MessageResponse;
 import com.ssafy.keepham.domain.chat.service.MessageService;
+import com.ssafy.keepham.domain.chatroom.entity.enums.RoomUserStatus;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +60,7 @@ public class ChatController {
             log.info("User '{}' joined chat room {}", message.getAuthor(), roomId);
         } else if (message.getType() == Type.EXIT) {
             log.info("User '{}' left chat room {}", message.getAuthor(), roomId);
-            chatRoomManager.userLeft(roomId, message.getAuthor());
+            chatRoomManager.userLeft(roomId, message.getAuthor(), RoomUserStatus.EXIT);
         }
         return message;
     }
