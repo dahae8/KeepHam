@@ -1,6 +1,6 @@
-package com.ssafy.keepham.domain.chat.db;
+package com.ssafy.keepham.domain.chat.entity;
 
-import com.ssafy.keepham.domain.chat.db.enums.Type;
+import com.ssafy.keepham.domain.chat.entity.enums.Type;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

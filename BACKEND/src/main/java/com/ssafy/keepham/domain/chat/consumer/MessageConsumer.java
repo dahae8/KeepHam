@@ -2,11 +2,9 @@ package com.ssafy.keepham.domain.chat.consumer;
 
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
-import com.ssafy.keepham.domain.box.entity.Box;
-import com.ssafy.keepham.domain.box.repository.BoxRepository;
 import com.ssafy.keepham.domain.chat.converter.MessageConverter;
-import com.ssafy.keepham.domain.chat.db.Message;
-import com.ssafy.keepham.domain.chat.db.MessageRepository;
+import com.ssafy.keepham.domain.chat.entity.Message;
+import com.ssafy.keepham.domain.chat.entity.MessageRepository;
 import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;

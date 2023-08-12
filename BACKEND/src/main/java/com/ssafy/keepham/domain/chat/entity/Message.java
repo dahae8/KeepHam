@@ -1,14 +1,12 @@
-package com.ssafy.keepham.domain.chat.db;
+package com.ssafy.keepham.domain.chat.entity;
 
-import com.ssafy.keepham.domain.chat.db.enums.Type;
-import jakarta.annotation.Nonnull;
+import com.ssafy.keepham.domain.chat.entity.enums.Type;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 

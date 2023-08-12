@@ -1,6 +1,6 @@
 package com.ssafy.keepham.domain.chat.converter;
 
-import com.ssafy.keepham.domain.chat.db.Message;
+import com.ssafy.keepham.domain.chat.entity.Message;
 import com.ssafy.keepham.domain.chat.dto.MessageResponse;
 import org.springframework.stereotype.Component;
 

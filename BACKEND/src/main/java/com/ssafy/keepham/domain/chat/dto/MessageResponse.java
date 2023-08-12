@@ -1,6 +1,6 @@
 package com.ssafy.keepham.domain.chat.dto;
 
-import com.ssafy.keepham.domain.chat.db.enums.Type;
+import com.ssafy.keepham.domain.chat.entity.enums.Type;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter

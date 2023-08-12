@@ -75,7 +75,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler({IllegalArgumentException.class, NoSuchElementException.class})
     public ResponseEntity<Api<Object>> handleCommonException(Exception e){
         var errorCode = e.getMessage();
-        log.error("{}", errorCode);
+        log.error("handleCommonException: {}", e.toString());
         return ResponseEntity
                 .status(400)
                 .body(Api.ERROR(ErrorCode.BAD_REQUEST));
@@ -84,7 +84,7 @@ public class ApiExceptionHandler {
    @ExceptionHandler({AccessDeniedException.class})
    public ResponseEntity<Api<Object>> handleAccessDeniedException(Exception e){
         var errorCode = e.getMessage();
-        log.error("{}",errorCode);
+        log.error("handleAccessDeniedException : {}",errorCode);
         return ResponseEntity
                 .status(403)
                 .body(Api.ERROR(ErrorCode.DENIED_ERROR));
@@ -92,7 +92,7 @@ public class ApiExceptionHandler {
    @ExceptionHandler({Exception.class})
     public ResponseEntity<Api<Object>> handleUnexpectedException(Exception e){
         var errorCode = e.getMessage();
-        log.error("{}",errorCode);
+        log.error("handleUnexpectedException : {}",errorCode);
         return ResponseEntity
                 .status(500)
                 .body(Api.ERROR(ErrorCode.SERVER_ERROR));
