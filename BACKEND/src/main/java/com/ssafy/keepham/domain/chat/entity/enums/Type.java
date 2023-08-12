@@ -1,4 +1,4 @@
-package com.ssafy.keepham.domain.chat.db.enums;
+package com.ssafy.keepham.domain.chat.entity.enums;
 
 import lombok.AllArgsConstructor;
 

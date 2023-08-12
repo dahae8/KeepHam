@@ -1,6 +1,6 @@
 package com.ssafy.keepham.domain.chat.config;
 
-import com.ssafy.keepham.domain.chat.db.Message;
+import com.ssafy.keepham.domain.chat.entity.Message;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
