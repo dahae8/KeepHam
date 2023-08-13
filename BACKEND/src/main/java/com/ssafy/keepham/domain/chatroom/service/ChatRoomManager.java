@@ -16,6 +16,7 @@ import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.entity.enums.RoomUserStatus;
 import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
 import com.ssafy.keepham.domain.chatroom.repository.RoomUserRepository;
+import com.ssafy.keepham.domain.user.entity.User;
 import com.ssafy.keepham.domain.user.repository.UserRepository;
 import com.ssafy.keepham.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -102,10 +103,12 @@ public class ChatRoomManager {
     }
     // 채팅방에서 user가 떠나면 해당 방 인원 감소
     @Transactional
-    public void userLeft(Long roomId, String userNickname, RoomUserStatus status){
+    public boolean userLeft(Long roomId, String userNickname, RoomUserStatus status){
         var entity = roomUserRepository.findFirstByRoomIdAndUserNickName(roomId, userNickname)
                 .orElseThrow(()-> new ApiException(ErrorCode.BAD_REQUEST,"이미 퇴장한 유저거나 채팅방에 존재하지 않는 유저입니다."));
         entity.setStatus(status);
+
+
         roomUserRepository.save(entity);
         log.info("퇴장유저 {}", redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId)));
         redisTemplate.opsForSet().remove("roomId" + String.valueOf(roomId), userNickname);
@@ -113,8 +116,25 @@ public class ChatRoomManager {
         Long currentUserCount = getUserCountInChatRoom(roomId);
         int maxUserCount = getMaxUsersInChatRoom(roomId);
 
+        var room = chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN);
+
+        if (room.getSuperUserId().equals(userNickname)){
+            Set<String> randomUser = pickRandomUsers(getAllUser(roomId),1);
+            if (randomUser.isEmpty()){
+                room.setStatus(ChatRoomStatus.CLOSE);
+                return false;
+            }
+            var superUser = NewSuperUser.builder()
+                    .roomId(roomId)
+                    .newSuperUser(randomUser.iterator().next())
+                    .build();
+            setSuperUser(superUser);
+        }
+
+
         log.info("퇴장후 현재 인원 {}", currentUserCount);
         log.info("채팅방 최대 {}", maxUserCount);
+        return true;
     }
 
     @Transactional
@@ -175,6 +195,9 @@ public class ChatRoomManager {
 
         List<String> userList = new ArrayList<>(users);
         Set<String> result = new HashSet<>();
+        if (userList.size() == 0) {
+            return result;
+        }
 
         Random random = new Random();
         while (result.size() < count){
@@ -230,5 +253,6 @@ public class ChatRoomManager {
         userLeft(roomId, kickedUserNickName, RoomUserStatus.KICKED);
 
     }
+
 
 }
