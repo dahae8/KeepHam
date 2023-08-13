@@ -66,6 +66,7 @@ public class PaymentService {
         int price = -1*recentPayment.getTotalPoint();
 
         Payment payment = new Payment();
+
         payment.setUserNickName(recentPayment.getUserNickName());
         payment.setInfo("환불");
         payment.setPrice(price);
@@ -74,7 +75,10 @@ public class PaymentService {
         payment.setChatroomId(-1);
         payment.setAgreement(true);
 
-        return paymentConvert.toResponse( paymentRepository.save(recentPayment));
+        System.out.println(payment.getPrice());
+        System.out.println(payment.getTotalPoint());
+
+        return paymentConvert.toResponse( paymentRepository.save(payment));
     }
 
     //로그인된 유저의 총 포인트 조회

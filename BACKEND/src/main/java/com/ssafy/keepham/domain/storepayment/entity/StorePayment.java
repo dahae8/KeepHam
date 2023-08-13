@@ -1,14 +1,15 @@
 package com.ssafy.keepham.domain.storepayment.entity;
 
-import jakarta.persistence.Id;
 import lombok.*;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@RedisHash(value = "StorePayment", timeToLive = 10800)
+@RedisHash(value = "StorePayment")
 public class StorePayment {
 
     //키값
@@ -26,6 +27,5 @@ public class StorePayment {
 
     //가격
     private int price;
-
 
 }
