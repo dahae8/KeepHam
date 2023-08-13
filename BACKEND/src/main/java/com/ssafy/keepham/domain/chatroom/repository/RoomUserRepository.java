@@ -12,7 +12,6 @@ import java.util.Optional;
 public interface RoomUserRepository extends MongoRepository<RoomUserEntity, Long> {
 
     Optional<RoomUserEntity> findFirstByRoomIdAndUserNickName(Long roomId, String nickName);
-    List<RoomUserEntity> findAllByRoomId(Long roomId);
     List<RoomUserEntity> findAllByRoomIdAndStatus(Long roomId, RoomUserStatus status);
 
 

@@ -31,7 +31,6 @@ public class ChatRoomConverter {
                             .storeId(chatRoomRequest.getStoreId())
                             .extensionNumber(chatRoomRequest.getExtensionNumber())
                             .maxPeopleNumber(chatRoomRequest.getMaxPeopleNumber())
-                            .superUserId(chatRoomRequest.getSuperUserId())
                             .locked(chatRoomRequest.isLocked())
                             .password(chatRoomRequest.getPassword())
                             .build();
