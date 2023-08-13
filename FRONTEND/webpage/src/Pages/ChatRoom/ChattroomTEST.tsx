@@ -82,20 +82,22 @@ function ChatRoom() {
     setRoomPw(params);
   }
 
+  const roomInfomation = useLoaderData() as roomInfoType;
+  const roomId = roomInfomation.roomId;
+
+
   function navDisplay() {
     if (navIdx === 1) {
       return <BoxSettings getPassword={getPassword} />;
     } else if (navIdx === 2) {
       return <SelectItems />;
     } else if (navIdx === 3) {
-      return <UserSelect />;
+      return <UserSelect roomId={roomId} />;
     } else {
       return <></>;
     }
   }
-  const roomInfomation = useLoaderData() as roomInfoType;
-  const roomId = roomInfomation.roomId;
-
+ 
   const sendHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -612,7 +614,7 @@ function ChatRoom() {
                 borderBottomLeftRadius: 8,
               }}
             >
-              <UserList />
+              <UserList roomId={roomId}/>
             </Box>
           </Box>
         </Box>
