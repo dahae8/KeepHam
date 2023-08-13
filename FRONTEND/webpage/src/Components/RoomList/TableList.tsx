@@ -84,7 +84,7 @@ function TableList(props: propsType) {
             console.log("선택방번호:",props.data,selectedIdx);
             for (let i = 0; i < Number(props.data.length); i++) {
               if (props.data[i].id === selectedIdx) {
-                sessionStorage.setItem("storeName", props.data[i].store_name.toString());
+                sessionStorage.setItem("storeName", props.data[i].store_name);
                 sessionStorage.setItem('roomTitle',props.data[i].title.toString());
                 sessionStorage.setItem('superUser',props.data[i].super_user_id.toString());
                 sessionStorage.setItem('enterBoxId',props.data[i].box.box_id.toString());
