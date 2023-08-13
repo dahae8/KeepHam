@@ -102,7 +102,11 @@ public class ChatRoomService {
     // 채팅방 상태 close로 변경
     @Transactional
     public void closeRoom(Long roomId){
+        var user = userService.getLoginUserInfo();
         var room = chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN);
+        if (!user.getNickName().equals(room.getSuperUserId())){
+            throw new ApiException(ErrorCode.BAD_REQUEST, "방 종료는 방장만 할 수 있습니다.");
+        }
         chatRoomManager.allUserClear(roomId);
         room.getBox().setUsed(false);
         room.setStatus(ChatRoomStatus.CLOSE);
