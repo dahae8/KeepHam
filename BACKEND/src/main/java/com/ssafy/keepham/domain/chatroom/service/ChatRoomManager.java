@@ -124,11 +124,8 @@ public class ChatRoomManager {
 
         if (room.getSuperUserId().equals(userNickname)){
             Set<String> randomUser = pickRandomUsers(getAllUser(roomId),1);
-            var superUser = NewSuperUser.builder()
-                    .roomId(roomId)
-                    .newSuperUser(randomUser.iterator().next())
-                    .build();
-            setSuperUser(superUser);
+            room.setSuperUserId(randomUser.iterator().next());
+            chatRoomRepository.save(room);
         }
 
 
