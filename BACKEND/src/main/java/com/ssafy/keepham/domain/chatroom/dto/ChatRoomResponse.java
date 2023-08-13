@@ -20,6 +20,7 @@ public class ChatRoomResponse extends BaseEntity{
     private String title;
     private ChatRoomStatus status;
     private Long storeId;
+    private String storeName;
     private BoxResponse box;
     private int extensionNumber;
     private int maxPeopleNumber;

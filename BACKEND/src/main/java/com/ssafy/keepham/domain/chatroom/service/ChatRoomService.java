@@ -103,6 +103,7 @@ public class ChatRoomService {
     @Transactional
     public void closeRoom(Long roomId){
         var room = chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN);
+        chatRoomManager.allUserClear(roomId);
         room.getBox().setUsed(false);
         room.setStatus(ChatRoomStatus.CLOSE);
     }
