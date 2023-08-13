@@ -130,6 +130,7 @@ function LogIn() {
                 }}
               >
                 <TextField
+                  type="password"
                   label="password"
                   variant="standard"
                   name="pw"
