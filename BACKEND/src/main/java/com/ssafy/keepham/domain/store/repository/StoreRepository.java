@@ -13,4 +13,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
             "ACOS(SIN(RADIANS(:lat)) * SIN(RADIANS(s.lat)) + " +
             "COS(RADIANS(:lat)) * COS(RADIANS(s.lat)) * COS(RADIANS(:lng - s.lng))) * 6371000 <= 500")
     List<Store> findAllByAddressAndLocation(@Param("address") String address, @Param("lat") float lat, @Param("lng") float lng);
+
+    Store findFirstByStoreId(Long storeId);
+
 }
