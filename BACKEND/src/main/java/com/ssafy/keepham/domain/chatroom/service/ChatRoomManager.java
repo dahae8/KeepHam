@@ -65,7 +65,7 @@ public class ChatRoomManager {
         Optional<RoomUserEntity> roomUser = roomUserRepository.findFirstByRoomIdAndUserNickName(roomId, userNickname);
 
         if (roomUser.isPresent()) {
-            if (roomUser.get().getUserNickName().equals(userNickname)) {
+            if (roomUser.get().getUserNickName().equals(userNickname) && roomUser.get().getStatus().equals(RoomUserStatus.NORMAL)) {
                 throw new ApiException(ErrorCode.BAD_REQUEST, "이미 채팅방에 존재하는 유저입니다.");
             }
             if (roomUser.get()
