@@ -46,13 +46,13 @@ public class ChatRoomService {
         }
         box.setUsed(true);
         entity.setBox(box);
-//        chatRoomManager.userJoin(entity.getId(), userService.getLoginUserInfo().getNickName());
         return Optional.ofNullable(entity)
                 .map(it -> {
                     it.setStatus(ChatRoomStatus.OPEN);
                     var newEntity = chatRoomRepository.save(it);
                     newEntity.setClosedAt(newEntity.getCreatedAt().plusHours(3));
                     newEntity.setSuperUserId(userNickName);
+                    chatRoomManager.userJoin(newEntity.getId(), userService.getLoginUserInfo().getNickName());
                     return chatRoomConverter.toResponse(newEntity);
                 })
                 .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST));

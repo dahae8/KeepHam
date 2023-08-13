@@ -61,7 +61,6 @@ public class ChatRoomManager {
 
     // 채팅방에 user 접속하면 해당 방 인원 1 증가
     public Set<String> userJoin(Long roomId, String userNickname){
-        // TODO 이미 존재하는 유저 재입장 막기
         Optional<RoomUserEntity> roomUser = roomUserRepository.findFirstByRoomIdAndUserNickName(roomId, userNickname);
 
         if (roomUser.isPresent()) {
