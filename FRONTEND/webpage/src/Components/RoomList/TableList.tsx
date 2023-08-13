@@ -88,10 +88,9 @@ function TableList(props: propsType) {
                 sessionStorage.setItem('roomTitle',props.data[i].title.toString());
                 sessionStorage.setItem('superUser',props.data[i].super_user_id.toString());
                 sessionStorage.setItem('enterBoxId',props.data[i].box.box_id.toString());
+                sessionStorage.setItem('storeId',props.data[i].store_id.toString());
               }
             }
-
-
             navigate(`/Home/Chatroom/${selectedIdx}`);
           } else navigate("/Auth");
         }}
