@@ -102,7 +102,6 @@ public class ChatRoomManager {
 
     }
     // 채팅방에서 user가 떠나면 해당 방 인원 감소
-    @Transactional
     public boolean userLeft(Long roomId, String userNickname, RoomUserStatus status){
         var entity = roomUserRepository.findFirstByRoomIdAndUserNickName(roomId, userNickname)
                 .orElseThrow(()-> new ApiException(ErrorCode.BAD_REQUEST,"이미 퇴장한 유저거나 채팅방에 존재하지 않는 유저입니다."));
@@ -115,15 +114,16 @@ public class ChatRoomManager {
 
         Long currentUserCount = getUserCountInChatRoom(roomId);
         int maxUserCount = getMaxUsersInChatRoom(roomId);
-
         var room = chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN);
+
+        if (currentUserCount == 0){
+            room.setStatus(ChatRoomStatus.CLOSE);
+            chatRoomRepository.save(room);
+            return false;
+        }
 
         if (room.getSuperUserId().equals(userNickname)){
             Set<String> randomUser = pickRandomUsers(getAllUser(roomId),1);
-            if (randomUser.isEmpty()){
-                room.setStatus(ChatRoomStatus.CLOSE);
-                return false;
-            }
             var superUser = NewSuperUser.builder()
                     .roomId(roomId)
                     .newSuperUser(randomUser.iterator().next())
@@ -207,7 +207,6 @@ public class ChatRoomManager {
         return result;
     }
 
-    @Transactional
     public void setSuperUser(NewSuperUser newSuperUser) {
         var roomId = newSuperUser.getRoomId();
         var superUser = newSuperUser.getNewSuperUser();
@@ -220,6 +219,7 @@ public class ChatRoomManager {
             throw new ApiException(ErrorCode.BAD_REQUEST, "방장 위임을 요청한 유저가 방장이 아닙니다.");
         }
         room.setSuperUserId(superUser);
+        chatRoomRepository.save(room);
     }
 
     @Transactional
