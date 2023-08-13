@@ -101,7 +101,7 @@ function ChatRoom() {
 
   // const [inputMessage, setInputMessage] = useState("");
   const [sockmessages, setsockMessages] = useState<ChatMessage[]>([]);
-  const [roomPassword, setRoomPw] = useState<number>();
+  const [roomPassword, setRoomPw] = useState<number>(-1);
 
   const [storeMenu, setMenu] = useState<menuInfo[]>([]);
   const [allowSelectMenu,setAllowSelectMenu]=useState(true); 
@@ -117,7 +117,7 @@ function ChatRoom() {
 
   function navDisplay() {
     if (navIdx === 1) {
-      return <BoxSettings getPassword={getPassword} allow={allowMenu}/>;
+      return <BoxSettings  getPassword={getPassword} allow={allowMenu} roomPw={roomPassword}/>;
     } else if (navIdx === 2) {
       return (
           <TableContainer
