@@ -34,8 +34,11 @@ public class ChatRoomService {
     private final BoxRepository boxRepository;
     private final UserService userService;
 
+
     @Transactional
     public ChatRoomResponse createRoom(ChatRoomRequest chatRoomRequest){
+        var userInfo = userService.getLoginUserInfo();
+        var userNickName = userInfo.getNickName();
         var entity = chatRoomConverter.toEntity(chatRoomRequest);
         var box = boxRepository.findFirstById(chatRoomRequest.getBoxId());
         if (box.isUsed()) {
@@ -43,12 +46,13 @@ public class ChatRoomService {
         }
         box.setUsed(true);
         entity.setBox(box);
-        chatRoomManager.userJoin(entity.getId(), userService.getLoginUserInfo().getNickName());
+//        chatRoomManager.userJoin(entity.getId(), userService.getLoginUserInfo().getNickName());
         return Optional.ofNullable(entity)
                 .map(it -> {
                     it.setStatus(ChatRoomStatus.OPEN);
                     var newEntity = chatRoomRepository.save(it);
                     newEntity.setClosedAt(newEntity.getCreatedAt().plusHours(3));
+                    newEntity.setSuperUserId(userNickName);
                     return chatRoomConverter.toResponse(newEntity);
                 })
                 .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST));
@@ -99,6 +103,7 @@ public class ChatRoomService {
     @Transactional
     public void closeRoom(Long roomId){
         var room = chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN);
+        chatRoomManager.allUserClear(roomId);
         room.getBox().setUsed(false);
         room.setStatus(ChatRoomStatus.CLOSE);
     }

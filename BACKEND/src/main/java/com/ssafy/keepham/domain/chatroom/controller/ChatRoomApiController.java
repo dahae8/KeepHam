@@ -29,10 +29,8 @@ public class ChatRoomApiController {
 
     @Operation(summary = "방생성")
     @PostMapping("/rooms")
-    private Api<ChatRoomResponse> createRoom(@Validated @RequestBody ChatRoomRequest chatRoomRequest){
-        var userInfo = userService.getLoginUserInfo();
-        var userNickName = userInfo.getNickName();
-        chatRoomRequest.setSuperUserId(userNickName);
+    private Api<ChatRoomResponse> createRoom(@RequestBody ChatRoomRequest chatRoomRequest){
+
         var res = chatRoomService.createRoom(chatRoomRequest);
         return Api.OK(res);
     }
@@ -129,6 +127,13 @@ public class ChatRoomApiController {
     @PutMapping("/rooms/extend")
     public Api<ChatRoomResponse> extendRoomTime(@RequestBody ExtendRequest request){
         return Api.OK(chatRoomManager.extendRoomTime(request));
+    }
+
+    @Operation(summary = "특정 유저를 추방합니다. 추방은 방장만 가능합니다.")
+    @PutMapping("/rooms/kick")
+    public Api<Boolean> kickUser(@RequestBody KickRequest request){
+        chatRoomManager.kickUser(request);
+        return Api.OK(true);
     }
 
 

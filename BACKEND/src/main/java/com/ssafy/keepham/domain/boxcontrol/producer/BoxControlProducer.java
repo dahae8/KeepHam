@@ -1,7 +1,7 @@
 package com.ssafy.keepham.domain.boxcontrol.producer;
 
-import com.ssafy.keepham.domain.chat.db.Message;
-import com.ssafy.keepham.domain.chat.db.MessageRepository;
+import com.ssafy.keepham.domain.chat.entity.Message;
+import com.ssafy.keepham.domain.chat.entity.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
