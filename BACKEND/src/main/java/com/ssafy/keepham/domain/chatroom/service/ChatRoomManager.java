@@ -120,11 +120,11 @@ public class ChatRoomManager {
 
     @Transactional
     public boolean allUserClear(Long roomId){
-        roomUserRepository.findAllByRoomId(roomId).stream()
-                        .map(it -> {
-                            it.setStatus(RoomUserStatus.EXIT);
-                            return null;
-                        });
+        List<RoomUserEntity> roomUsers = roomUserRepository.findAllByRoomIdAndStatus(roomId, RoomUserStatus.NORMAL);
+        roomUsers.forEach(user -> {
+            user.setStatus(RoomUserStatus.EXIT);
+            roomUserRepository.save(user);
+        });
         redisTemplate.delete("roomId" + String.valueOf(roomId));
         return true;
     }
