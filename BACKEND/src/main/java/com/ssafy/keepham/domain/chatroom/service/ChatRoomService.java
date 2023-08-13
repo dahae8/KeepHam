@@ -39,7 +39,6 @@ public class ChatRoomService {
     public ChatRoomResponse createRoom(ChatRoomRequest chatRoomRequest){
         var userInfo = userService.getLoginUserInfo();
         var userNickName = userInfo.getNickName();
-        chatRoomRequest.setSuperUserId(userNickName);
         var entity = chatRoomConverter.toEntity(chatRoomRequest);
         var box = boxRepository.findFirstById(chatRoomRequest.getBoxId());
         if (box.isUsed()) {
@@ -53,6 +52,7 @@ public class ChatRoomService {
                     it.setStatus(ChatRoomStatus.OPEN);
                     var newEntity = chatRoomRepository.save(it);
                     newEntity.setClosedAt(newEntity.getCreatedAt().plusHours(3));
+                    newEntity.setSuperUserId(userNickName);
                     return chatRoomConverter.toResponse(newEntity);
                 })
                 .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST));
