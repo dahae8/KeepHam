@@ -29,6 +29,7 @@ import UserSelect from "@/Components/ChatRoom/UserSelect.tsx";
 import UserList from "@/Components/ChatRoom/UserList.tsx";
 import { Client, Message } from "@stomp/stompjs";
 import axios from "axios";
+import TableContainer from "@mui/material/TableContainer";
 
 type roomInfoType = {
   roomId: number;
@@ -66,6 +67,23 @@ interface ChatMessage_timestamp {
   content: string;
   type: string;
 }
+export interface menuInfo {
+  item: number;
+  store_id: number;
+  original_image: string;
+  review_count: number;
+  subtitle: string;
+  description: string;
+  price: number;
+  slug: string;
+  image: string;
+  section: string;
+  top_displayed_item_order: number;
+  reorder_rate_message: "";
+  menu_set_id: number;
+  id: number;
+  name: string;
+}
 
 function ChatRoom() {
   const theme = useTheme();
@@ -85,17 +103,31 @@ function ChatRoom() {
   const [sockmessages, setsockMessages] = useState<ChatMessage[]>([]);
   const [roomPassword, setRoomPw] = useState<number>();
 
+  const [storeMenu, setMenu] = useState<menuInfo[]>([]);
+  const [allowSelectMenu,setAllowSelectMenu]=useState(true); 
+
   const navigate = useNavigate();
 
   function getPassword(params: number) {
     setRoomPw(params);
   }
+  function allowMenu(){
+    setAllowSelectMenu(!allowSelectMenu);
+  }
 
   function navDisplay() {
     if (navIdx === 1) {
-      return <BoxSettings getPassword={getPassword} />;
+      return <BoxSettings getPassword={getPassword} allow={allowMenu}/>;
     } else if (navIdx === 2) {
-      return <SelectItems />;
+      return (
+          <TableContainer
+            sx={{ maxHeight: "100%", height: "100%", scrollbarWidth: "none" }}
+          >
+            {storeMenu.map((e) => (
+              <SelectItems name={e.name} price={e.price} image={e.image} allow={allowSelectMenu} key={e.menu_set_id}/>
+            ))}
+          </TableContainer>
+      );
     } else if (navIdx === 3) {
       return <UserSelect />;
     } else {
@@ -244,6 +276,21 @@ function ChatRoom() {
 
     newClient.activate();
     setClient(newClient);
+
+    //가게메뉴정보 불러오기
+    const addRoom = async () => {
+      // const key = localStorage.getItem('AccessToken');
+      const storeId = sessionStorage.getItem("storeId");
+      const url = import.meta.env.VITE_URL_ADDRESS + "/api/store/" + storeId;
+      try {
+        const response = await axios.get(url);
+        setMenu(response.data.data);
+        console.log(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    addRoom();
 
     return () => {
       newClient.deactivate();
