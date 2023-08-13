@@ -61,11 +61,10 @@ public class ChatRoomManager {
 
     // 채팅방에 user 접속하면 해당 방 인원 1 증가
     public Set<String> userJoin(Long roomId, String userNickname){
-        // TODO 이미 존재하는 유저 재입장 막기
         Optional<RoomUserEntity> roomUser = roomUserRepository.findFirstByRoomIdAndUserNickName(roomId, userNickname);
 
         if (roomUser.isPresent()) {
-            if (roomUser.get().getUserNickName().equals(userNickname)) {
+            if (roomUser.get().getUserNickName().equals(userNickname) && roomUser.get().getStatus().equals(RoomUserStatus.NORMAL)) {
                 throw new ApiException(ErrorCode.BAD_REQUEST, "이미 채팅방에 존재하는 유저입니다.");
             }
             if (roomUser.get()
@@ -147,7 +146,11 @@ public class ChatRoomManager {
     // 채팅방 현재 접속자 수
     public Long getUserCountInChatRoom(Long roomId){
         Long size = redisTemplate.opsForSet().size("roomId" + String.valueOf(roomId));
-        return size != null ? size : 0;
+        if (size != null) {
+            return size;
+        }
+        getAllUser(roomId);
+        return redisTemplate.opsForSet().size("roomId" + String.valueOf(roomId));
     }
 
     // 채팅방 최대 인원

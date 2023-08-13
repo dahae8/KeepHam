@@ -1,10 +1,17 @@
 import * as React from "react";
-import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { LoaderFunctionArgs, useNavigate } from "react-router-dom";
 import { MyLocation } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import CreateRoomInfo from "@/Components/ChatRoom/CreateRoomInfo";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const areaId = params.areaId;
@@ -27,6 +34,22 @@ export interface Boxes {
   used: boolean;
   valid: boolean;
   zip_code: string;
+}
+// lat: 35.174343;
+// lng: 126.80091;
+interface Stores {
+  id: number;
+  category: string;
+  store_id: number;
+  name: string;
+  address: string;
+  estimated_delivery_time: string;
+  min_order_amount: string;
+  delivery_fee_to_display: string;
+  logo_url: string;
+  thumbnail_url: string;
+  lat: number;
+  lng: number;
 }
 
 export default function Admin() {
@@ -54,11 +77,8 @@ export default function Admin() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       oncomplete: function (data: any) {
         const adr: string = data.jibunAddress;
-
         const idx: number = adr.indexOf("동 ");
-
         const shortName: string = adr.substring(0, idx + 1);
-
         const zipCode: number = data.zonecode;
 
         setAddress(shortName);
@@ -115,6 +135,9 @@ export default function Admin() {
   const userState = window.sessionStorage.getItem("userState");
   const navigate = useNavigate();
 
+  const [selectMode, setMode] = useState(0);
+  const [Stores, setStores] = useState<Stores[]>([]);
+
   useEffect(() => {
     const zipCode = sessionStorage.getItem("userZipCode");
     const fetchBoxes = async () => {
@@ -122,24 +145,46 @@ export default function Admin() {
         const url = import.meta.env.VITE_URL_ADDRESS + "/api/boxs/" + zipCode;
         const response = await axios.get(url);
         setBoxes(response.data.body);
-        console.log(response.data.body);
+        // console.log("ddd" ,response.data.body);
       } catch (error) {
         console.log(error);
       }
     };
     fetchBoxes();
   }, []);
-  const columns: GridColDef[] = [
-    { field: "box_id", headerName: "함번호", width: 200 },
+
+  const fetchStores = async (a: string, b: number, c: number) => {
+    const addRess = a.toString();
+    const latitude = b.toString();
+    const hardness = c.toString();
+    console.log("dfdd", addRess, latitude, hardness);
+    const queryParams = {
+      address: addRess,
+      lat: latitude,
+      lng: hardness,
+    };
+    axios
+      .get("https://i9c104.p.ssafy.io/api/stores", { params: queryParams })
+      .then((res) => {
+        console.log("https", res.data.data);
+        setStores(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const boxsColumn: GridColDef[] = [
+    { field: "box_id", headerName: "함번호", width: 100 },
     {
       field: "address",
       headerName: "기본 주소",
-      width: 100,
+      width: 150,
     },
     {
       field: "detailed_address",
       headerName: "상세주소",
-      width: 100,
+      width: 150,
     },
     {
       field: "zip_code",
@@ -149,6 +194,28 @@ export default function Admin() {
     {
       field: "used",
       headerName: "사용중",
+      width: 100,
+    },
+  ];
+  const storeColumn: GridColDef[] = [
+    {
+      field: "name",
+      headerName: "가게이름",
+      width: 300,
+    },
+    {
+      field: "min_order_amount",
+      headerName: "배달료",
+      width: 100,
+    },
+    {
+      field: "delivery_fee_to_display",
+      headerName: "최소주문금액",
+      width: 100,
+    },
+    {
+      field: "estimated_delivery_time",
+      headerName: "배달예상시간",
       width: 100,
     },
   ];
@@ -171,38 +238,91 @@ export default function Admin() {
             onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { md: "none" } }}
           ></IconButton>
-          <Typography variant="h5">사용할 함을 선택하세요</Typography>
+          {selectMode === 0 && (
+            <Typography variant="h5">사용할 함을 선택하세요</Typography>
+          )}
+          {selectMode === 1 && (
+            <Typography variant="h5">가게를 선택해주세요</Typography>
+          )}
+          {selectMode === 2 && (
+            <Typography variant="h5">방정보를 입력해주세요</Typography>
+          )}
         </div>
         <Divider />
         <div className="relative w-full min-h-[540px]" id="drawer-container">
           <div className="flex">
-            <Box sx={{ height: 400, width: "100%" }}>
-              <DataGrid
-                rows={Boxes}
-                getRowId={(row) => row.box_id}
-                columns={columns}
-                initialState={{
-                  pagination: {
-                    paginationModel: {
-                      pageSize: 5,
+            {selectMode === 0 && (
+              <Box sx={{ height: 700, width: "100%" }}>
+                <DataGrid
+                  rows={Boxes}
+                  getRowId={(row) => row.box_id}
+                  columns={boxsColumn}
+                  initialState={{
+                    pagination: {
+                      paginationModel: {
+                        pageSize: 20,
+                      },
                     },
-                  },
-                }}
-                pageSizeOptions={[5]}
-                onRowSelectionModelChange={(selectedRow) => {
-                  const selectedIdx: number = Number(selectedRow[0]);
-                  const boxId = selectedRow[0].toString();
-                  console.log(selectedIdx);
-                  if (userState === "isLoggedIn") {
-                    sessionStorage.setItem("selected BoxId", boxId);
-                    // console.log("이게맞을까", Boxes[);
-                    // navigate(`/Home/Chatroom/${selectedIdx}`);
-                  } else navigate("/Auth");
-                }}
-              />
-            </Box>
+                  }}
+                  pageSizeOptions={[20]}
+                  onRowSelectionModelChange={(selectedRow) => {
+                    const selectedIdx: number = Number(selectedRow[0]);
+                    const boxId = selectedRow[0].toString();
+                    console.log("선택함번호",selectedIdx);
+                    if (userState === "isLoggedIn") {
+                      sessionStorage.setItem("selected BoxId", boxId);
+                      for (let i = 0; i < Number(Boxes.length); i++) {
+                        if (Boxes[i].box_id === selectedRow[0]) {
+                          if (Boxes[i].used == false) {
+                            fetchStores(
+                              Boxes[i].address,
+                              Boxes[i].latitude,
+                              Boxes[i].hardness
+                            );
+                            setMode(1);
+                          }
+                        }
+                      }
+                    } else navigate("/Auth");
+                  }}
+                />
+              </Box>
+            )}
+            {selectMode === 1 && (
+              <Box sx={{ height: 800, width: "100%" }}>
+                <DataGrid
+                  rows={Stores}
+                  getRowId={(row) => row.id}
+                  columns={storeColumn}
+                  initialState={{
+                    pagination: {
+                      paginationModel: {
+                        pageSize: 30,
+                      },
+                    },
+                  }}
+                  pageSizeOptions={[30]}
+                  onRowSelectionModelChange={(selectedRow) => {
+                    const selectedIdx: number = Number(selectedRow[0]);
+                    // const storeId = selectedRow[0].toString();
+                    console.log("선택가게번호",selectedIdx);
+                    if (userState === "isLoggedIn") {
+                      for (let i = 0; i < Number(Stores.length); i++) {
+                        if (Stores[i].id === selectedIdx) {
+                          sessionStorage.setItem("selected StoreInfo", Stores[i].store_id.toString());
+                          sessionStorage.setItem('storeName',Stores[i].name.toString());
+                          sessionStorage.setItem('storeCategory',Stores[i].category.toString());
+                          setMode(2);                          
+                        }
+                      }
+                    } else navigate("/Auth");
+                  }}
+                />
+              </Box>
+            )}
+            {selectMode===2 && <CreateRoomInfo/>}
           </div>
-          {location}
+          {selectMode === 0 && location}
         </div>
       </Box>
     </>

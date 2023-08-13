@@ -61,6 +61,7 @@ export interface Rooms {
   store_id: number;
   box: Boxes;
   extension_number: number;
+  store_name : string;
   max_people_number: number;
   current_people_number: number;
   super_user_id: string;
