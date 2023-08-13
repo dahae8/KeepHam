@@ -15,7 +15,11 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
+import {
+  LoaderFunctionArgs,
+  useLoaderData,
+  useNavigate,
+} from "react-router-dom";
 // import TableList from "@/Components/RoomList/TableList.tsx";
 import TableList from "@/Components/RoomList/TableList.tsx";
 import AlbumList from "@/Components/RoomList/AlbumList.tsx";
@@ -57,6 +61,7 @@ export interface Rooms {
   store_id: number;
   box: Boxes;
   extension_number: number;
+  store_name : string;
   max_people_number: number;
   current_people_number: number;
   super_user_id: string;
@@ -77,6 +82,7 @@ export default function RoomList() {
   const [address, setAddress] = React.useState(
     sessionStorage.getItem("userLocation")!
   );
+  const navigate = useNavigate();
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -183,22 +189,9 @@ export default function RoomList() {
   );
 
   const [Rooms, setRooms] = useState<Rooms[]>([]);
-  const [Boxes, setBoxes] = useState<Boxes[]>([]);
-  const userZipCode = window.sessionStorage.getItem("userZipCode");
 
   useEffect(() => {
-    const fetchBoxes = async () => {
-      try {
-        const url =
-          import.meta.env.VITE_URL_ADDRESS + "/api/boxs/" + userZipCode;
-        const response = await axios.get(url);
-        setBoxes(response.data.body);
-        console.log("박시즈 : ", Boxes);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchBoxes();
+    const userZipCode = window.sessionStorage.getItem("userZipCode");
     const fetchRooms = async () => {
       try {
         const url =
@@ -236,6 +229,14 @@ export default function RoomList() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h5">채팅방 목록</Typography>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              navigate("/Home/CreateRoom");
+            }}
+          >
+            방만들기
+          </Button>
         </div>
         <Divider />
         <div className="relative w-full min-h-[540px]" id="drawer-container">

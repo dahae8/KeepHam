@@ -28,7 +28,7 @@ public class SuperBoxController {
     @PostMapping
     public Api<Object> createBox(@RequestBody BoxSaveRequest boxSaveRequest){
         String boxType  = boxSaveRequest.getType();
-        String zipCode  = boxSaveRequest.getType();
+        String zipCode  = boxSaveRequest.getZipCode();
 
         if( !boxType.equals("공용") && !boxType.equals("개인")){
             return Api.ERROR(BoxError.BOX_BAD_REQUEST, String.format("type의 [%s]은/는 요휴하지 않는 형식입니다. '공용' 또는 '개인'중에 지정해 보내주세요.", boxType));

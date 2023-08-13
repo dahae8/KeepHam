@@ -5,9 +5,9 @@ interface DateLabelProps {
 }
 
 const DateLabel: React.FC<DateLabelProps> = (props) => {
-  const year = props.date.getFullYear();
-  const month = ("00" + (props.date.getMonth() + 1)).slice(-2);
-  const day = ("00" + props.date.getDate()).slice(-2);
+  const year = new Date(props.date).getFullYear();
+  const month = ("00" + (new Date(props.date).getMonth() + 1)).slice(-2);
+  const day = ("00" + new Date(props.date).getDate()).slice(-2);
 
   return (
     <span className="fs-small fw-light">

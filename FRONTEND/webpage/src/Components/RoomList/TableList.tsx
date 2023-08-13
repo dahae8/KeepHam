@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { Rooms } from "@/Pages/RoomList/RoomList copy.tsx";
+import axios from "axios";
 
 // 타입
 type propsType = {
@@ -19,9 +20,9 @@ function TableList(props: propsType) {
       width: 100,
     },
     {
-      field: "store_id",
+      field: "store_name",
       headerName: "주문 가게",
-      width: 100,
+      width: 250,
     },
     {
       field: "dfddd",
@@ -39,16 +40,8 @@ function TableList(props: propsType) {
       width: 100,
     },
   ];
-
-  const areaId = props.areaId;
-
-  console.log(areaId);
-  console.log("받은 프롭 : ", props.data);
-
   const navigate = useNavigate();
-  const zipCode = window.sessionStorage.getItem("userZipCode");
   const userState = window.sessionStorage.getItem("userState");
-  console.log(zipCode);
 
   return (
     <Box sx={{ height: 400, width: "100%" }}>
@@ -65,10 +58,42 @@ function TableList(props: propsType) {
         pageSizeOptions={[5]}
         onRowSelectionModelChange={(selectedRow) => {
           const selectedIdx: number = Number(selectedRow[0]);
-          console.log(selectedIdx);
-          if (userState === "isLoggedIn")
+          if (userState === "isLoggedIn") {
+            const key = window.localStorage.getItem("AccessToken");
+            const increasePeaple = async () => {
+              try {
+                const url =
+                  import.meta.env.VITE_URL_ADDRESS +
+                  "/api/rooms/" +
+                  selectedIdx;
+                const response = await axios.post(
+                  url,
+                  {},
+                  {
+                    headers: {
+                      Authorization: `Bearer ` + key,
+                    },
+                  }
+                );
+                console.log(response.data.body);
+              } catch (error) {
+                console.log(error);
+              }
+            };
+            increasePeaple();
+            console.log("선택방번호:",props.data,selectedIdx);
+            for (let i = 0; i < Number(props.data.length); i++) {
+              if (props.data[i].id === selectedIdx) {
+                sessionStorage.setItem("storeName", props.data[i].store_name);
+                sessionStorage.setItem('roomTitle',props.data[i].title.toString());
+                sessionStorage.setItem('superUser',props.data[i].super_user_id.toString());
+                sessionStorage.setItem('enterBoxId',props.data[i].box.box_id.toString());
+              }
+            }
+
+
             navigate(`/Home/Chatroom/${selectedIdx}`);
-          else navigate("/Auth");
+          } else navigate("/Auth");
         }}
       />
     </Box>

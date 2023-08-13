@@ -15,7 +15,11 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
+import {
+  LoaderFunctionArgs,
+  useNavigate,
+  useLoaderData,
+} from "react-router-dom";
 import BoxSettings from "@/Components/ChatRoom/BoxSettings.tsx";
 import ChatInterface, {
   messageType,
@@ -35,10 +39,12 @@ type roomInfoType = {
 };
 
 export async function loader({ params }: LoaderFunctionArgs) {
+  const roomTitle = sessionStorage.getItem("roomTitle");
+  const storeTitle = sessionStorage.getItem("storeName");
   const info: roomInfoType = {
     roomId: Number(params.roomId),
-    roomTitle: "커피 마실 사람 구해요!",
-    store: "컴포즈커피 수완점",
+    roomTitle: roomTitle!,
+    store: storeTitle!,
     step: 1,
     remainTime: "15:00",
   };
@@ -55,6 +61,7 @@ interface ChatMessage {
 }
 interface ChatMessage_timestamp {
   room_id: number;
+  box_id: number;
   author: string;
   content: string;
   type: string;
@@ -63,7 +70,7 @@ interface ChatMessage_timestamp {
 function ChatRoom() {
   const theme = useTheme();
   const bigSize = useMediaQuery(theme.breakpoints.up("xl"));
-  const [navIdx, setNavIdx] = useState(1);
+  const [navIdx, setNavIdx] = useState(0);
   const [showUsers, setShowUsers] = useState(false);
   const [msgText, setMsgText] = useState("");
 
@@ -72,13 +79,21 @@ function ChatRoom() {
   const [messages, setMessages] = useState<messageType[]>([]);
 
   const [client, setClient] = useState<Client | null>(null);
-  const [nname, setNickname] = useState("null");
+  const nname = window.sessionStorage.getItem("userNick")!.toString();
+
   // const [inputMessage, setInputMessage] = useState("");
   const [sockmessages, setsockMessages] = useState<ChatMessage[]>([]);
+  const [roomPassword, setRoomPw] = useState<number>();
+
+  const navigate = useNavigate();
+
+  function getPassword(params: number) {
+    setRoomPw(params);
+  }
 
   function navDisplay() {
     if (navIdx === 1) {
-      return <BoxSettings />;
+      return <BoxSettings getPassword={getPassword} />;
     } else if (navIdx === 2) {
       return <SelectItems />;
     } else if (navIdx === 3) {
@@ -87,6 +102,12 @@ function ChatRoom() {
       return <></>;
     }
   }
+  const roomInfomation = useLoaderData() as roomInfoType;
+  const roomId = roomInfomation.roomId;
+
+  const userNick = sessionStorage.getItem("userNick");
+  const superNick = sessionStorage.getItem("superUser");
+  const boxId = Number(sessionStorage.getItem("enterBoxId"));
 
   const sendHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -98,14 +119,14 @@ function ChatRoom() {
 
     if (client && message) {
       const chatMessage: ChatMessage_timestamp = {
-        room_id: roomID,
+        room_id: roomId,
+        box_id: boxId,
         author: nname,
         content: message.toString(),
         type: "TALK",
       };
-
       client.publish({
-        destination: `/app/sendMessage/${roomID}`, // 채팅 메시지를 처리하는 엔드포인트
+        destination: `/app/sendMessage/${roomId}`, // 채팅 메시지를 처리하는 엔드포인트
         body: JSON.stringify(chatMessage),
       });
       console.log("보낸메시지:", chatMessage);
@@ -113,8 +134,66 @@ function ChatRoom() {
     }
   };
 
-  const roomID = 29;
+  function closeRoom() {
+    const deleteRoom = async () => {
+      const key = localStorage.getItem("AccessToken");
+      const url = import.meta.env.VITE_URL_ADDRESS + "/api/rooms/" + roomId;
+      try {
+        const response = await axios.put(url, {
+          headers: {
+            Authorization: `Bearer ` + key,
+          },
+        });
+        console.log(response);
+        navigate("/Home/RoomList");
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    deleteRoom();
+  }
+  function goingOutRoom() {
+    if (client) {
+      const enterMessage: ChatMessage_timestamp = {
+        room_id: roomId,
+        box_id: boxId,
+        author: nname,
+        content: nname + " 님이 퇴장하셧습니다",
+        type: "EXIT",
+      };
+      client.publish({
+        destination: `/app/joinUser/${roomId}`,
+        body: JSON.stringify(enterMessage),
+      });
+      console.log("도망!!!");
+    }
+    navigate("/Home/RoomList");
+  }
+
+  // 함 비밀번호 설정시 실행
   useEffect(() => {
+    if (client && roomPassword) {
+      const chatMessage: ChatMessage_timestamp = {
+        room_id: roomId,
+        box_id: boxId,
+        author: nname,
+        content: roomPassword.toString(),
+        type: "PASSWORD",
+      };
+
+      client.publish({
+        destination: `/app/sendMessage/${roomId}`, // 채팅 메시지를 처리하는 엔드포인트
+        body: JSON.stringify(chatMessage),
+      });
+      console.log("비밀번호:", chatMessage);
+      setMsgText("");
+    }
+  }, [roomPassword]);
+
+  //입장 실행
+  useEffect(() => {
+    // setNickname();
+
     // WebSocket 연결 설정
     const newClient = new Client({
       brokerURL: "wss://i9c104.p.ssafy.io/api/my-chat", // WebSocket 서버 주소
@@ -126,13 +205,26 @@ function ChatRoom() {
     newClient.onConnect = () => {
       // 특정 채팅방의 메시지를 구독
       newClient.subscribe(
-        `/subscribe/message/${roomID}`,
+        `/subscribe/message/${roomId}`,
         (message: Message) => {
           const chatMessage: ChatMessage = JSON.parse(message.body);
           console.log("받은 메시지 : ", chatMessage);
           setsockMessages((prevMessages) => [...prevMessages, chatMessage]);
         }
       );
+
+      //등장메시지
+      const enterMessage: ChatMessage_timestamp = {
+        room_id: roomId,
+        box_id: boxId,
+        author: nname,
+        content: nname + " 등장!",
+        type: "ENTER",
+      };
+      newClient.publish({
+        destination: `/app/joinUser/${roomId}`,
+        body: JSON.stringify(enterMessage),
+      });
     };
 
     const fetchMessages = async () => {
@@ -140,11 +232,10 @@ function ChatRoom() {
         const url =
           import.meta.env.VITE_URL_ADDRESS +
           "/api/chat-rooms/" +
-          roomID +
+          roomId +
           "/messages";
         const response = await axios.get(url);
         setsockMessages(response.data.body);
-        console.log("기존 채팅 내용 : ", sockmessages);
       } catch (error) {
         console.log(error);
       }
@@ -153,7 +244,6 @@ function ChatRoom() {
 
     newClient.activate();
     setClient(newClient);
-    setNickname(window.sessionStorage.getItem("userId")!.toString());
 
     return () => {
       newClient.deactivate();
@@ -161,10 +251,14 @@ function ChatRoom() {
   }, []);
 
   useEffect(() => {
-    const userId = sessionStorage.getItem("userId");
+    console.log("ddd");
+  }, [client]);
+
+  useEffect(() => {
+    // const userId = sessionStorage.getItem("userId");
     const messageFormchange: messageType[] = sockmessages.map((e) => {
       let byMee = true;
-      if (e.author !== userId) byMee = false;
+      if (e.author !== nname) byMee = false;
       return {
         byMe: byMee,
         sender: e.author,
@@ -262,9 +356,27 @@ function ChatRoom() {
                 justifyContent: "end",
               }}
             >
-              <Typography variant="h6" noWrap>
-                채팅방 종료
-              </Typography>
+              {superNick === userNick && (
+                <button
+                  onClick={() => {
+                    closeRoom();
+                  }}
+                >
+                  <Typography variant="h6" noWrap>
+                    채팅방 종료
+                  </Typography>
+                </button>
+              )}
+
+              <button
+                onClick={() => {
+                  goingOutRoom();
+                }}
+              >
+                <Typography variant="h6" noWrap>
+                  채팅방 나가기
+                </Typography>
+              </button>
             </Box>
             <Box
               sx={{
