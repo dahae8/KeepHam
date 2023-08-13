@@ -146,7 +146,7 @@ public class ChatRoomManager {
 
     // 채팅방 현재 접속자 수
     public Long getUserCountInChatRoom(Long roomId){
-        Long count;
+        Long count = 0L;
         Long size = redisTemplate.opsForSet().size("roomId" + String.valueOf(roomId));
         if (size != null) {
             count = size;
