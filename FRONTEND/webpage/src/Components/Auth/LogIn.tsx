@@ -28,6 +28,7 @@ function LogIn() {
       // 응답 데이터를 콘솔에 출력
       localStorage.setItem("AccessToken", response.data.body.access_token);
       sessionStorage.setItem("userRole", response.data.body.user_role);
+      sessionStorage.setItem("userNick", response.data.body.nick_name);
       return "성공";
     } catch (error) {
       console.error("에러메시지 :", error);

@@ -312,6 +312,8 @@ export default function Admin() {
                       for (let i = 0; i < Number(Stores.length); i++) {
                         if (Stores[i].id === selectedIdx) {
                           sessionStorage.setItem("selected StoreInfo", Stores[i].store_id.toString());
+                          sessionStorage.setItem('storeName',Stores[i].name.toString());
+                          sessionStorage.setItem('storeCategory',Stores[i].category.toString());
                           setMode(2);                          
                         }
                       }

@@ -10,14 +10,13 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
 
-
 interface forCreateRoom {
   title: string;
   store_id: number;
   box_id: number;
   extension_number: number;
   max_people_number: number;
-  super_user_id: string;
+  super_user_id: string|null;
   locked: boolean;
   password: string;
 }
@@ -35,19 +34,9 @@ function Addroom() {
 
   const navigate = useNavigate();
 
-
-  const attNames = [
-    "title",
-    "maxpeopleNumber",
-  ];
-  const setter = [
-    settitleHelper,
-    setmxpeopleValue,
-  ];
-  const blankMsg = [
-    "방제목을 입력해주세요",
-    "최대인원 수를 설정해주세요",
-  ];
+  const attNames = ["title", "maxpeopleNumber"];
+  const setter = [settitleHelper, setmxpeopleValue];
+  const blankMsg = ["방제목을 입력해주세요", "최대인원 수를 설정해주세요"];
 
   const signUpHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -66,7 +55,7 @@ function Addroom() {
         setter[idx](" ");
       }
     });
-    if(roomMode&&pwValue===""){
+    if (roomMode && pwValue === "") {
       setPwHelper("비빌번호를 설정해주세요");
       return;
     }
@@ -75,10 +64,10 @@ function Addroom() {
     }
 
     const addRoom = async () => {
-      const key = localStorage.getItem('AccessToken');
-      const userId = sessionStorage.getItem('userId');
-      const boxId = sessionStorage.getItem('selected BoxId');
-      const storeId = sessionStorage.getItem('selected StoreInfo');
+      const key = localStorage.getItem("AccessToken");
+      const userId = sessionStorage.getItem("userId");
+      const boxId = sessionStorage.getItem("selected BoxId");
+      const storeId = sessionStorage.getItem("selected StoreInfo");
       const url = import.meta.env.VITE_URL_ADDRESS + "/api/rooms";
       const data: forCreateRoom = {
         title: titleValue,
@@ -86,24 +75,27 @@ function Addroom() {
         box_id: Number(boxId),
         extension_number: 1,
         max_people_number: Number(mxpeopleValue),
-        super_user_id: userId!,
+        super_user_id: userId,
         locked: roomMode,
         password: pwValue,
       };
       try {
-        const response = await axios.post(url,data,{
+        console.log("asdfasdf",data);
+        const response = await axios.post(url, data, {
           headers: {
-            Authorization: `Bearer ` +  key,
+            Authorization: `Bearer ` + key,
           },
         });
         const roomId = response.data.body.id;
-        navigate("/Home/Chatroom/"+roomId);
+        sessionStorage.setItem("roomTitle", titleValue);
+        sessionStorage.setItem("superUser", userId!.toString());
+        console.log(response.data.body);
+        navigate("/Home/Chatroom/" + roomId);
       } catch (error) {
         console.log(error);
       }
     };
     addRoom();
-
   };
 
   return (
@@ -144,7 +136,6 @@ function Addroom() {
               </Grid>
               <Grid item xs={6}>
                 <TextField
-
                   label="최대인원"
                   variant="standard"
                   name="maxpeopleNumber"
@@ -196,8 +187,7 @@ function Addroom() {
                     helperText={pwHelper}
                     value={pwValue}
                     onChange={(e) => {
-                      if(pwValue.length<6)
-                      setPwValue(e.target.value);
+                      if (pwValue.length < 6) setPwValue(e.target.value);
                     }}
                     onClick={() => {
                       setPwHelper(" ");

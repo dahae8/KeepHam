@@ -20,9 +20,9 @@ function TableList(props: propsType) {
       width: 100,
     },
     {
-      field: "store_id",
+      field: "store_name",
       headerName: "주문 가게",
-      width: 100,
+      width: 250,
     },
     {
       field: "dfddd",
@@ -81,6 +81,16 @@ function TableList(props: propsType) {
               }
             };
             increasePeaple();
+            console.log("선택방번호:",props.data,selectedIdx);
+            for (let i = 0; i < Number(props.data.length); i++) {
+              if (props.data[i].id === selectedIdx) {
+                sessionStorage.setItem("storeName", props.data[i].store_name.toString());
+                sessionStorage.setItem('roomTitle',props.data[i].title.toString());
+                sessionStorage.setItem('superUser',props.data[i].super_user_id.toString());
+                sessionStorage.setItem('enterBoxId',props.data[i].box.box_id.toString());
+              }
+            }
+
 
             navigate(`/Home/Chatroom/${selectedIdx}`);
           } else navigate("/Auth");
