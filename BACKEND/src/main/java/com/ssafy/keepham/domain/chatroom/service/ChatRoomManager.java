@@ -118,6 +118,7 @@ public class ChatRoomManager {
 
         if (currentUserCount == 0){
             room.setStatus(ChatRoomStatus.CLOSE);
+            room.getBox().setUsed(false);
             chatRoomRepository.save(room);
             return false;
         }
