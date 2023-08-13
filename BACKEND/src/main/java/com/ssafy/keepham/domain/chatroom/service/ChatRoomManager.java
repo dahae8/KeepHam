@@ -146,8 +146,15 @@ public class ChatRoomManager {
 
     // 채팅방 현재 접속자 수
     public Long getUserCountInChatRoom(Long roomId){
+        Long count;
         Long size = redisTemplate.opsForSet().size("roomId" + String.valueOf(roomId));
-        return size != null ? size : 0;
+        if (size != null) {
+            count = size;
+        } else {
+            var currentUser = Optional.ofNullable(roomUserRepository.findAllByRoomIdAndStatus(roomId, RoomUserStatus.NORMAL));
+            count = currentUser.isPresent() ? currentUser.get().size() : 0L;
+        }
+        return count;
     }
 
     // 채팅방 최대 인원
