@@ -118,9 +118,9 @@ public class ChatRoomApiController {
 
     @Operation(summary = "해당 채팅방의 방장을 바꾼다.")
     @PutMapping("/rooms/superUser")
-    public Api<NewSuperUser> setSuperUser(@RequestBody NewSuperUser setSuperUser){
-        chatRoomManager.setSuperUser(setSuperUser);
-        return Api.OK(setSuperUser);
+    public Api<NewSuperUser> setSuperUser(@RequestBody NewSuperUser newSuperUser){
+        chatRoomManager.setSuperUser(newSuperUser);
+        return Api.OK(newSuperUser);
     }
 
     @Operation(summary = "채팅방의 종료 시간을 입력한 시간만큼 연장한다.")

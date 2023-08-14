@@ -17,7 +17,6 @@ import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.entity.enums.RoomUserStatus;
 import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
 import com.ssafy.keepham.domain.chatroom.repository.RoomUserRepository;
-import com.ssafy.keepham.domain.user.entity.User;
 import com.ssafy.keepham.domain.user.repository.UserRepository;
 import com.ssafy.keepham.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
