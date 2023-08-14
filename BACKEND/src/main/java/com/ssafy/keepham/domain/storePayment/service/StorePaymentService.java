@@ -17,7 +17,11 @@ import com.ssafy.keepham.domain.storePayment.dto.StorePaymentRequest;
 import com.ssafy.keepham.domain.storePayment.dto.StorePaymentResponse;
 import com.ssafy.keepham.domain.storePayment.entity.StorePayment;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -36,6 +40,11 @@ public class StorePaymentService {
     //유저 메뉴 확정
     public StorePaymentResponse saveUsermMenu(StorePaymentRequest storePaymentRequest, String userNickName) {
 
+        String key = "StorePayment:" +storePaymentRequest.getRoomId()+":"+userNickName;
+        StorePayment storePayment = storePaymentRedisTemplate.opsForValue().get(key);
+        if(storePayment == null){
+            throw new ApiException(ErrorCode.BAD_REQUEST,"이미 메뉴확정내역이 있습니다.");
+        }
 
         var entity = storePaymentConvert.toEntity(storePaymentRequest, userNickName);
         return Optional.ofNullable(entity)
@@ -74,12 +83,22 @@ public class StorePaymentService {
 
     //roomId에 해당하는 유저 수 확인하기
     public Long getcountStorePayment(Long roomId) {
-        var room = Optional.ofNullable(chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN))
-                .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 채팅방입니다."));
 
-        String redisKey = "StorePayment:" +roomId;
-        // Redis에서 데이터 조회
-        return storePaymentRedisTemplate.opsForSet().size(redisKey);
+        String pattern = "*StorePayment:" +roomId;
+
+        RedisConnectionFactory connectionFactory = storePaymentRedisTemplate.getConnectionFactory();
+
+        try (RedisConnection connection = connectionFactory.getConnection()) {
+            ScanOptions scanOptions = ScanOptions.scanOptions().match(pattern + "*").count(100).build();
+            Cursor<byte[]> cursor = connection.scan(scanOptions);
+            long count = 0;
+            while (cursor.hasNext()) {
+                cursor.next();
+                count++;
+            }
+            return count;
+        }
+
     }
 
     //채팅방 방장 id 가져오기
@@ -93,20 +112,21 @@ public class StorePaymentService {
         }
     }
 
-    //방장 정보 삭제
-    public void deleteStorePayment(String userNickName) {
-        storePaymentRedisTemplate.delete("StorePayment:" + userNickName);
-    }
 
     //배달비 + 금액해서 mysql 저장
-    public List<PaymentUserResponse> saveUserPayment(ConfirmSuperIdRequest confirmSuperIdRequest){
+    public List<PaymentUserResponse> saveUserPayment(ConfirmSuperIdRequest confirmSuperIdRequest, String superUser){
         int dividedDeliveryfee = confirmSuperIdRequest.getDividedDeliveryfee();
         List<PaymentUserResponse> resList = new ArrayList<>();
+        Long roomId = confirmSuperIdRequest.getRoomId();
 
-        Set<StorePayment> storePaymentList = storePaymentRedisTemplate.opsForSet()
-                .members("StorePayment:roomId:" + confirmSuperIdRequest.getRoomId());
+        //redis 정보 가저오기
+        List<StorePayment> storePayments = new ArrayList<>();
+        Set<String> idList =  chatRoomManager.getAllUser(roomId);
+        for(String id :idList ){
+            if( id.equals(superUser)) continue;
 
-        for(StorePayment storePayment : storePaymentList){
+            String redisKey = "StorePayment:" +roomId+":"+id;
+            StorePayment storePayment = storePaymentRedisTemplate.opsForValue().get(redisKey);
 
             String userNickName = storePayment.getUserNickName();
             int totalPoint = paymentService.getUserTotalPoint(userNickName);
@@ -117,7 +137,9 @@ public class StorePaymentService {
 
             PaymentUserResponse res = storePaymentConvert.toResponsePayment(paymentRepository.save(payment));
             resList.add(res);
+            storePaymentRedisTemplate.delete(redisKey);
         }
+
         return resList;
     }
 

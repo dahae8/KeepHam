@@ -9,6 +9,7 @@ import com.ssafy.keepham.domain.storePayment.dto.StorePaymentResponse;
 import com.ssafy.keepham.domain.storePayment.entity.StorePayment;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Component
@@ -42,6 +43,7 @@ public class StorePaymentConvert {
 
 
     public Payment toPayment(StorePayment storePayment,int dividedDeliveryfee, int totalPoint ){
+        LocalDateTime currentDateTime = LocalDateTime.now();
         return Optional.ofNullable(storePayment)
                 .map(it -> {
                     return Payment.builder()
@@ -51,6 +53,7 @@ public class StorePaymentConvert {
                             .totalPoint(totalPoint)
                             .chatroomId(storePayment.getRoomId())
                             .agreement(false)
+                            .insertTime(currentDateTime)
                             .build();
                 }).orElseThrow(()->new ApiException(ErrorCode.NULL_POINT));
     }

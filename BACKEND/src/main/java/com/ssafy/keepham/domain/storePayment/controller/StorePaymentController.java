@@ -59,16 +59,19 @@ public class StorePaymentController {
         //인원수 확인
         Long countChatroom = chatRoomManager.getUserCountInChatRoom(roomId);
         Long countStorePaymet = storePaymentService.getcountStorePayment(roomId);
-        if(!countChatroom.equals(countStorePaymet)){
+
+        System.out.println(countChatroom+":"+countStorePaymet);
+
+        if(countChatroom!=countStorePaymet){
             Object StorePaymentError;
             return Api.ERROR(ErrorCode.BAD_REQUEST,"채팅방인원수와 메뉴확정 완료한 인원수가 다릅니다.");
         }
 
         //방장 redis 정보 삭제
-        storePaymentService.deleteStorePayment(userNickName);
+        storePaymentService.deleteByUserNickName(userNickName, confirmSuperIdRequest.getRoomId());
 
         //배달비 + 금액해서 mysql 저장
-        return Api.OK(storePaymentService.saveUserPayment(confirmSuperIdRequest));
+        return Api.OK(storePaymentService.saveUserPayment(confirmSuperIdRequest,userNickName));
 
 
     }

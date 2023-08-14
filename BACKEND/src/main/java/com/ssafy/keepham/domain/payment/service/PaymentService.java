@@ -74,7 +74,7 @@ public class PaymentService {
         payment.setChatroomId(-1);
         payment.setAgreement(true);
 
-        return paymentConvert.toResponse( paymentRepository.save(recentPayment));
+        return paymentConvert.toResponse( paymentRepository.save(payment));
     }
 
     //로그인된 유저의 총 포인트 조회
