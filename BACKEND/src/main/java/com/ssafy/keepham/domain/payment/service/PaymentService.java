@@ -66,6 +66,7 @@ public class PaymentService {
         int price = -1*recentPayment.getTotalPoint();
 
         Payment payment = new Payment();
+
         payment.setUserNickName(recentPayment.getUserNickName());
         payment.setInfo("환불");
         payment.setPrice(price);
@@ -73,6 +74,9 @@ public class PaymentService {
         payment.setInsertTime(currentDateTime);
         payment.setChatroomId(-1);
         payment.setAgreement(true);
+
+        System.out.println(payment.getPrice());
+        System.out.println(payment.getTotalPoint());
 
         return paymentConvert.toResponse( paymentRepository.save(payment));
     }

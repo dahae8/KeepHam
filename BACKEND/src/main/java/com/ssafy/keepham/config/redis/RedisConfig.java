@@ -1,6 +1,6 @@
 package com.ssafy.keepham.config.redis;
 
-import com.ssafy.keepham.domain.storePayment.entity.StorePayment;
+import com.ssafy.keepham.domain.storepayment.entity.StorePayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.Set;
@@ -38,12 +38,7 @@ public class RedisConfig {
     public RedisTemplate<String, StorePayment> storePaymentRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, StorePayment> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
-
-        // JSON 직렬화 설정
-        Jackson2JsonRedisSerializer<StorePayment> jsonSerializer = new Jackson2JsonRedisSerializer<>(StorePayment.class);
-        redisTemplate.setValueSerializer(jsonSerializer);
-        redisTemplate.setHashValueSerializer(jsonSerializer);
-
+        redisTemplate.setValueSerializer(new GenericToStringSerializer<>(StorePayment.class));
         return redisTemplate;
     }
 
