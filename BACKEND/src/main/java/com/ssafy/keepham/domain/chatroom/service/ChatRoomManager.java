@@ -70,6 +70,8 @@ public class ChatRoomManager {
             if (roomUser.get().getUserNickName().equals(userNickname)) {
                 roomUser.get().setStatus(RoomUserStatus.NORMAL);
                 roomUserRepository.save(roomUser.get());
+                return redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId));
+
             }
             if (roomUser.get()
                     .getStatus()
