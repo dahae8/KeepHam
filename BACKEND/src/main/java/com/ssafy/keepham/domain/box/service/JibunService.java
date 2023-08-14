@@ -13,7 +13,9 @@ public class JibunService {
     //유요한 우편번호 확인하기 true=>유요하지 않음, false => 유요함
     public boolean checkoutZipCode (String zipCode){
         Jibun jibun = jibunRepository.findFirstByZipCode(zipCode);
-
-        return jibun==null ;
+        if(jibun==null )
+            return true;
+        else
+            return false ;
     }
 }
