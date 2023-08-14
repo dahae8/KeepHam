@@ -3,6 +3,7 @@ package com.ssafy.keepham.domain.chatroom.service;
 import com.ssafy.keepham.common.error.ChatRoomError;
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
+import com.ssafy.keepham.domain.box.repository.BoxRepository;
 import com.ssafy.keepham.domain.chat.entity.Message;
 import com.ssafy.keepham.domain.chat.entity.MessageRepository;
 import com.ssafy.keepham.domain.chatroom.converter.ChatRoomConverter;
@@ -46,6 +47,7 @@ public class ChatRoomManager {
     private final UserService userService;
     private final ChatRoomConverter chatRoomConverter;
     private final RoomUserRepository roomUserRepository;
+    private final BoxRepository boxRepository;
 
 
 
@@ -65,8 +67,9 @@ public class ChatRoomManager {
         Optional<RoomUserEntity> roomUser = roomUserRepository.findFirstByRoomIdAndUserNickName(roomId, userNickname);
 
         if (roomUser.isPresent()) {
-            if (roomUser.get().getUserNickName().equals(userNickname) && roomUser.get().getStatus().equals(RoomUserStatus.NORMAL)) {
-                throw new ApiException(ErrorCode.BAD_REQUEST, "이미 채팅방에 존재하는 유저입니다.");
+            if (roomUser.get().getUserNickName().equals(userNickname)) {
+                roomUser.get().setStatus(RoomUserStatus.NORMAL);
+                roomUserRepository.save(roomUser.get());
             }
             if (roomUser.get()
                     .getStatus()
@@ -118,7 +121,9 @@ public class ChatRoomManager {
 
         if (currentUserCount == 0){
             room.setStatus(ChatRoomStatus.CLOSE);
-            room.getBox().setUsed(false);
+            var box = room.getBox();
+            box.setUsed(false);
+            boxRepository.save(box);
             chatRoomRepository.save(room);
             return false;
         }
