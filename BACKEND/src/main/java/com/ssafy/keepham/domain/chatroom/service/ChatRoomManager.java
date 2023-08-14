@@ -6,6 +6,7 @@ import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.box.repository.BoxRepository;
 import com.ssafy.keepham.domain.chat.entity.Message;
 import com.ssafy.keepham.domain.chat.entity.MessageRepository;
+import com.ssafy.keepham.domain.chat.entity.enums.Type;
 import com.ssafy.keepham.domain.chatroom.converter.ChatRoomConverter;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
 import com.ssafy.keepham.domain.chatroom.dto.ExtendRequest;
@@ -189,6 +190,9 @@ public class ChatRoomManager {
 
 
     public void sendMessageToRoom(@Payload Message message){
+        if (message.getType().equals(Type.INFO)) {
+            message.setAuthor("공지");
+        }
         message.setTimestamp(LocalDateTime.now());
         messageRepository.save(message);
         kafkaTemplate.send("kafka-chat", message);
@@ -226,6 +230,13 @@ public class ChatRoomManager {
         }
         room.setSuperUserId(superUser);
         chatRoomRepository.save(room);
+        var message = Message.builder()
+                .author("공지")
+                .roomId(roomId)
+                .type(Type.INFO)
+                .content(superUser + "님이 새로운 방장이 되었습니다.")
+                .build();
+        sendMessageToRoom(message);
     }
 
     @Transactional
@@ -257,8 +268,13 @@ public class ChatRoomManager {
             throw new ApiException(ErrorCode.BAD_REQUEST, "자기 자신을 강퇴할 수 없습니다.");
         }
         userLeft(roomId, kickedUserNickName, RoomUserStatus.KICKED);
+        var message = Message.builder()
+                .author("공지")
+                .roomId(roomId)
+                .content(kickedUserNickName + "이 강퇴되었습니다.")
+                .type(Type.KICK)
+                .build();
 
+        sendMessageToRoom(message);
     }
-
-
 }
