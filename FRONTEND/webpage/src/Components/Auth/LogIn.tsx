@@ -76,7 +76,6 @@ function LogIn() {
       const sessionStorage = window.sessionStorage;
       sessionStorage.setItem("userState", "isLoggedIn");
       sessionStorage.setItem("userId", userId);
-      sessionStorage.setItem("userNick", userId);
 
       navigate("/Home/RoomList");
       console.log("로그인 성공");
