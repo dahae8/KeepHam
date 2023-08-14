@@ -70,6 +70,8 @@ public class ChatRoomManager {
             if (roomUser.get().getUserNickName().equals(userNickname)) {
                 roomUser.get().setStatus(RoomUserStatus.NORMAL);
                 roomUserRepository.save(roomUser.get());
+                redisTemplate.opsForSet().add("roomId" + String.valueOf(roomId),userNickname);
+                redisTemplate.expire(String.valueOf("roomId" + String.valueOf(roomId)), 3600*3, TimeUnit.SECONDS);
                 return redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId));
 
             }
