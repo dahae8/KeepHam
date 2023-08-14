@@ -22,11 +22,7 @@ public interface PaymentRepository extends JpaRepository<Payment,Long> {
             "ORDER BY time DESC",nativeQuery = true)
     List<Payment> getByUserNickName(String userNickName);
 
+    Payment findByUserNickNameAndChatroomIdAndAgreement(String userNickName, Long roomId, boolean b);
 
-
-    Payment findByUserNickNameAndChatroomIdAndAgreement(String userNickName, Long chatroomId, boolean b);
-
-
-
-    List<Payment> findAllByChatroomIdAndAgreement(Long chatroomId, boolean b);
+    List<Payment> findAllByChatroomIdAndAgreement(Long roomId, boolean b);
 }
