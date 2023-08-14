@@ -18,7 +18,7 @@ import java.util.TimeZone;
 public class KeephamApplication {
 
     @PostConstruct
-    public void started() {
+    public void started()   {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
     }
 
