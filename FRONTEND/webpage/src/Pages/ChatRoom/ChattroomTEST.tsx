@@ -113,6 +113,9 @@ function ChatRoom() {
   function allowMenu() {
     setAllowSelectMenu(!allowSelectMenu);
   }
+  function setcount() {
+    console.log("dfsd");
+  }
 
   function navDisplay() {
     if (navIdx === 1) {
@@ -134,7 +137,9 @@ function ChatRoom() {
               price={e.price}
               image={e.image}
               allow={allowSelectMenu}
-              key={e.menu_set_id}
+              key={e.item}
+              count={e.review_count}
+              setcount={setcount}
             />
           ))}
         </TableContainer>
@@ -148,10 +153,10 @@ function ChatRoom() {
   const roomInfomation = useLoaderData() as roomInfoType;
   const roomId = roomInfomation.roomId;
 
-  const userNick = sessionStorage.getItem("userNick");
-  const superNick = sessionStorage.getItem("superUser");
+  const userId = sessionStorage.getItem("userId");
+  const superId = sessionStorage.getItem("superUser");
   const boxId = Number(sessionStorage.getItem("enterBoxId"));
-  const nname = sessionStorage.getItem("userNick").toString();
+  const nname = sessionStorage.getItem("userNick")!.toString();
 
   const sendHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -180,14 +185,19 @@ function ChatRoom() {
 
   function closeRoom() {
     const deleteRoom = async () => {
-      const key = localStorage.getItem("AccessToken");
+      const key = sessionStorage.getItem("AccessToken");
+      console.log(key);
       const url = import.meta.env.VITE_URL_ADDRESS + "/api/rooms/" + roomId;
       try {
-        const response = await axios.put(url, {
-          headers: {
-            Authorization: `Bearer ` + key,
-          },
-        });
+        const response = await axios.put(
+          url,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ` + key,
+            },
+          }
+        );
         console.log(response);
         navigate("/Home/RoomList");
       } catch (error) {
@@ -290,8 +300,8 @@ function ChatRoom() {
 
     //가게메뉴정보 불러오기
     const addRoom = async () => {
-      // const key = localStorage.getItem('AccessToken');
-      const storeId = sessionStorage.getItem("storeId");
+      // const key = sessionStorage.getItem('AccessToken');
+      const storeId = sessionStorage.getItem("selected StoreInfo");
       const url = import.meta.env.VITE_URL_ADDRESS + "/api/store/" + storeId;
       try {
         const response = await axios.get(url);
@@ -429,8 +439,8 @@ function ChatRoom() {
                 justifyContent: "end",
               }}
             >
-              {superNick === userNick && (
-                <button
+              {userId === superId && (
+                <Button
                   onClick={() => {
                     closeRoom();
                   }}
@@ -438,7 +448,7 @@ function ChatRoom() {
                   <Typography variant="h6" noWrap>
                     채팅방 종료
                   </Typography>
-                </button>
+                </Button>
               )}
 
               <button
