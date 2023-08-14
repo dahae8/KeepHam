@@ -17,8 +17,8 @@ class MsgClass:
         self.box_id = box_id
         self.type = msgType
 
-message1 = {"boxId": 88, "type": "ARRIVE" }
 
-def send():
+def send(boxId):
+    message1 = {"boxId": boxId, "type": "ARRIVE" }
     producer.send("box-arrive", value=message1)  # queue에 데이터 저장
     producer.flush()  # queue 데이터 전송
