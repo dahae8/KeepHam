@@ -151,7 +151,7 @@ function ChatRoom() {
   const userNick = sessionStorage.getItem("userNick");
   const superNick = sessionStorage.getItem("superUser");
   const boxId = Number(sessionStorage.getItem("enterBoxId"));
-  const nname = sessionStorage.getItem("userNick").toString();
+  const nname = sessionStorage.getItem("userNick")!.toString();
 
   const sendHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
