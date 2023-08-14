@@ -39,18 +39,25 @@ public class ChatController {
     @MessageMapping("/sendMessage/{roomId}")
     public void sendMessageToRoom(@Payload Message message, @DestinationVariable Long roomId){
         log.info("message : {}", message);
-        if (message.getType() == Type.OPEN){
-            log.info("OPEN 메세지");
-            boxControlProducer.sendOpenMessageToBox(message);
-        } else if(message.getType() == Type.PASSWORD){
-            log.info("KeyPad 암호");
-            boxControlProducer.sendKeyPadPasswordMessageToBox(message);
-        }
-        else {
-            log.info("채팅 메세지");
-            chatRoomManager.sendMessageToRoom(message);
+        switch (message.getType()) {
+            case OPEN -> {
+                log.info("OPEN 메세지");
+                boxControlProducer.sendOpenMessageToBox(message);
+                break;
+            }
+            case PASSWORD -> {
+                log.info("KeyPad 암호");
+                boxControlProducer.sendKeyPadPasswordMessageToBox(message);
+                break;
+            }
+            default -> {
+                log.info("{} 메세지", message.getType());
+                chatRoomManager.sendMessageToRoom(message);
+                break;
+            }
         }
     }
+
 
     @MessageMapping("/joinUser/{roomId}")
     @SendTo("/subscribe/message/{roomId}")
@@ -62,6 +69,7 @@ public class ChatController {
             log.info("User '{}' left chat room {}", message.getAuthor(), roomId);
             chatRoomManager.userLeft(roomId, message.getAuthor(), RoomUserStatus.EXIT);
         }
+        message.setAuthor("공지 : ");
         return message;
     }
 

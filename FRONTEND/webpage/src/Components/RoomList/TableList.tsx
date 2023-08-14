@@ -59,7 +59,7 @@ function TableList(props: propsType) {
         onRowSelectionModelChange={(selectedRow) => {
           const selectedIdx: number = Number(selectedRow[0]);
           if (userState === "isLoggedIn") {
-            const key = window.localStorage.getItem("AccessToken");
+            const key = window.sessionStorage.getItem("AccessToken");
             const increasePeaple = async () => {
               try {
                 const url =
@@ -98,7 +98,7 @@ function TableList(props: propsType) {
                   props.data[i].box.box_id.toString()
                 );
                 sessionStorage.setItem(
-                  "storeId",
+                  "selected StoreInfo",
                   props.data[i].store_id.toString()
                 );
               }
