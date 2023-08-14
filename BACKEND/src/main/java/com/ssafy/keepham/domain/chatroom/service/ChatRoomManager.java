@@ -102,6 +102,7 @@ public class ChatRoomManager {
 
     }
     // 채팅방에서 user가 떠나면 해당 방 인원 감소
+    @Transactional
     public boolean userLeft(Long roomId, String userNickname, RoomUserStatus status){
         var entity = roomUserRepository.findFirstByRoomIdAndUserNickName(roomId, userNickname)
                 .orElseThrow(()-> new ApiException(ErrorCode.BAD_REQUEST,"이미 퇴장한 유저거나 채팅방에 존재하지 않는 유저입니다."));
