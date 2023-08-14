@@ -6,18 +6,19 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 
 type propsType = {
   name: string;
   price: number;
   image: string;
-  allow:boolean;
-  key:number;
+  allow: boolean;
+  key: number;
+  count: number;
+  setcount: () => void;
 };
 
 function SelectItems(props: propsType) {
-  const [count, setCount] = React.useState(0);
   return (
     <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
       <ListItem alignItems="flex-start" key={props.key}>
@@ -33,24 +34,32 @@ function SelectItems(props: propsType) {
             </React.Fragment>
           }
         />
-        <Button onClick={()=>{
-          if(props.allow){  
-            setCount(count+1);
-          }
-        }}>+</Button>
+        <Button
+          onClick={() => {
+            if (props.allow) {
+              console.log("ddd");
+            }
+          }}
+        >
+          +
+        </Button>
         <Typography
           sx={{ display: "inline" }}
           component="span"
           variant="h6"
           color="text.primary"
         >
-          {count}
+          {props.count}
         </Typography>
-        <Button onClick={()=>{
-          if(count>0&&props.allow){
-            setCount(count-1);
-          }
-        }}>-</Button>
+        <Button
+          onClick={() => {
+            if (props.count > 0 && props.allow) {
+              console.log("ddd");
+            }
+          }}
+        >
+          -
+        </Button>
       </ListItem>
       <Divider variant="inset" component="li" />
     </List>

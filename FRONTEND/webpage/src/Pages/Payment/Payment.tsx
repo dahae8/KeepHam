@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PocketContainer from "../../Components/Pocket/PocketContainer";
 import "../../Styles/font.css";
 import "../../Styles/button.css";
-import axios from 'axios';
+import axios from "axios";
 
 // interface Item {
 //   id: number;
@@ -38,53 +38,49 @@ const Payment: React.FC = () => {
   // ];
 
   const [items, setItems] = useState([]);
-  
+
   useEffect(() => {
+    const AccessToken = sessionStorage.getItem("AccessToken");
+    console.log("AccessToken", AccessToken);
 
-  const AccessToken = localStorage.getItem("AccessToken")
-  console.log('AccessToken', AccessToken)
+    const fetchPayment = async () => {
+      try {
+        const url = import.meta.env.VITE_URL_ADDRESS + "/api/payment";
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ` + AccessToken,
+          },
+        });
+        console.log(response.data.body);
 
-
-
-  const fetchPayment = async () => {
-    try {
-      const url = import.meta.env.VITE_URL_ADDRESS + "/api/payment";
-      const response = await axios.get(url,{
-        headers:{
-          Authorization: `Bearer ` + AccessToken}
-      });
-      console.log(response.data.body);
-
-      console.log(response);
-      setItems(response.data.body);
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  fetchPayment();
-  console.log('items', items)
-
-}, []);
+        console.log(response);
+        setItems(response.data.body);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchPayment();
+    console.log("items", items);
+  }, []);
 
   // useEffect(() => {
 
-  //   const localItemsJSON = localStorage.getItem("items");
+  //   const localItemsJSON = sessionstorage.getItem("items");
 
   //   if (localItemsJSON === null) {
-  //     localStorage.setItem("items", JSON.stringify(items));
+  //     sessionstorage.setItem("items", JSON.stringify(items));
   //   } else {
   //     const localItems: Item[] = JSON.parse(localItemsJSON);
   //     const copyLocalItems = localItems.map((item) => ({
   //       ...item,
   //       date: new Date(item.date),
   //     }));
-  //     localStorage.setItem("items", JSON.stringify(copyLocalItems));
+  //     sessionstorage.setItem("items", JSON.stringify(copyLocalItems));
   //   }
   // }, []);
 
   // useEffect(() => {
-  //   localStorage.setItem("items", JSON.stringify(items));
+  //   sessionstorage.setItem("items", JSON.stringify(items));
   // }, [items]);
 
   return (

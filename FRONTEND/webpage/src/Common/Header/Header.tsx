@@ -111,7 +111,7 @@ function Header() {
 
                         if (idx === 4) {
                           sessionStorage.setItem("userState", "isLoggedOut");
-                          localStorage.removeItem("AccessToken");
+                          sessionStorage.removeItem("AccessToken");
                           sessionStorage.removeItem("userId");
                           sessionStorage.removeItem("userRole");
                           dispatch(signOut());

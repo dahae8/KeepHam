@@ -26,7 +26,7 @@ function LogIn() {
       const response = await axios.post(url, data);
       console.log("로그인 결과 : ", response.data.body);
       // 응답 데이터를 콘솔에 출력
-      localStorage.setItem("AccessToken", response.data.body.access_token);
+      sessionStorage.setItem("AccessToken", response.data.body.access_token);
       sessionStorage.setItem("userRole", response.data.body.user_role);
       sessionStorage.setItem("userNick", response.data.body.nick_name);
       return "성공";
@@ -76,6 +76,7 @@ function LogIn() {
       const sessionStorage = window.sessionStorage;
       sessionStorage.setItem("userState", "isLoggedIn");
       sessionStorage.setItem("userId", userId);
+      sessionStorage.setItem("userNick", userId);
 
       navigate("/Home/RoomList");
       console.log("로그인 성공");

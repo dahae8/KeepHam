@@ -1,11 +1,5 @@
 import * as React from "react";
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
 import { LoaderFunctionArgs, useNavigate } from "react-router-dom";
 import { MyLocation } from "@mui/icons-material";
 import { useEffect, useState } from "react";
@@ -166,7 +160,7 @@ export default function Admin() {
     axios
       .get("https://i9c104.p.ssafy.io/api/stores", { params: queryParams })
       .then((res) => {
-        console.log("https", res.data.data);
+        console.log("https", res);
         setStores(res.data.data);
       })
       .catch((err) => {
@@ -175,16 +169,16 @@ export default function Admin() {
   };
 
   const boxsColumn: GridColDef[] = [
-    { field: "box_id", headerName: "함번호", width: 100 },
+    { field: "box_id", headerName: "함번호", width: 50 },
     {
       field: "address",
       headerName: "기본 주소",
-      width: 150,
+      width: 200,
     },
     {
       field: "detailed_address",
       headerName: "상세주소",
-      width: 150,
+      width: 250,
     },
     {
       field: "zip_code",
@@ -206,7 +200,7 @@ export default function Admin() {
     {
       field: "min_order_amount",
       headerName: "배달료",
-      width: 100,
+      width: 150,
     },
     {
       field: "delivery_fee_to_display",
@@ -252,7 +246,7 @@ export default function Admin() {
         <div className="relative w-full min-h-[540px]" id="drawer-container">
           <div className="flex">
             {selectMode === 0 && (
-              <Box sx={{ height: 700, width: "100%" }}>
+              <Box sx={{ height: 600, width: "100%" }}>
                 <DataGrid
                   rows={Boxes}
                   getRowId={(row) => row.box_id}
@@ -268,7 +262,7 @@ export default function Admin() {
                   onRowSelectionModelChange={(selectedRow) => {
                     const selectedIdx: number = Number(selectedRow[0]);
                     const boxId = selectedRow[0].toString();
-                    console.log("선택함번호",selectedIdx);
+                    console.log("선택함번호", selectedIdx);
                     if (userState === "isLoggedIn") {
                       sessionStorage.setItem("selected BoxId", boxId);
                       for (let i = 0; i < Number(Boxes.length); i++) {
@@ -289,7 +283,7 @@ export default function Admin() {
               </Box>
             )}
             {selectMode === 1 && (
-              <Box sx={{ height: 800, width: "100%" }}>
+              <Box sx={{ height: 600, width: "100%" }}>
                 <DataGrid
                   rows={Stores}
                   getRowId={(row) => row.id}
@@ -305,14 +299,23 @@ export default function Admin() {
                   onRowSelectionModelChange={(selectedRow) => {
                     const selectedIdx: number = Number(selectedRow[0]);
                     // const storeId = selectedRow[0].toString();
-                    console.log("선택가게번호",selectedIdx);
+                    console.log("선택가게번호", selectedIdx);
                     if (userState === "isLoggedIn") {
                       for (let i = 0; i < Number(Stores.length); i++) {
                         if (Stores[i].id === selectedIdx) {
-                          sessionStorage.setItem("selected StoreInfo", Stores[i].store_id.toString());
-                          sessionStorage.setItem('storeName',Stores[i].name.toString());
-                          sessionStorage.setItem('storeCategory',Stores[i].category.toString());
-                          setMode(2);                          
+                          sessionStorage.setItem(
+                            "selected StoreInfo",
+                            Stores[i].store_id.toString()
+                          );
+                          sessionStorage.setItem(
+                            "storeName",
+                            Stores[i].name.toString()
+                          );
+                          sessionStorage.setItem(
+                            "storeCategory",
+                            Stores[i].category.toString()
+                          );
+                          setMode(2);
                         }
                       }
                     } else navigate("/Auth");
@@ -320,7 +323,7 @@ export default function Admin() {
                 />
               </Box>
             )}
-            {selectMode===2 && <CreateRoomInfo/>}
+            {selectMode === 2 && <CreateRoomInfo />}
           </div>
           {selectMode === 0 && location}
         </div>
