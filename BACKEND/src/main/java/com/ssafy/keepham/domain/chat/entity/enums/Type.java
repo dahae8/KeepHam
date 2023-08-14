@@ -10,7 +10,9 @@ public enum Type {
     EXIT("종료"),
     ARRIVE("주문 도착"),
     OPEN("상자 개방"),
-    PASSWORD("키패드 암호");
+    PASSWORD("키패드 암호"),
+    INFO("공지사항"),
+    KICK("강퇴");
 
 
     private final String description;
