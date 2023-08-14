@@ -1,21 +1,23 @@
-package com.ssafy.keepham.domain.storepayment.service;
+package com.ssafy.keepham.domain.storePayment.service;
 
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
+import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import com.ssafy.keepham.domain.payment.entity.Payment;
 import com.ssafy.keepham.domain.payment.repository.PaymentRepository;
 import com.ssafy.keepham.domain.payment.service.PaymentService;
-import com.ssafy.keepham.domain.storepayment.convert.StorePaymentConvert;
-import com.ssafy.keepham.domain.storepayment.dto.ConfirmSuperIdRequest;
-import com.ssafy.keepham.domain.storepayment.dto.PaymentUserResponse;
-import com.ssafy.keepham.domain.storepayment.dto.StorePaymentRequest;
-import com.ssafy.keepham.domain.storepayment.dto.StorePaymentResponse;
-import com.ssafy.keepham.domain.storepayment.entity.StorePayment;
+import com.ssafy.keepham.domain.storePayment.dto.UserMenuPrice;
+import com.ssafy.keepham.domain.storePayment.repository.StorePaymentRepository;
+import com.ssafy.keepham.domain.storePayment.convert.StorePaymentConvert;
+import com.ssafy.keepham.domain.storePayment.dto.ConfirmSuperIdRequest;
+import com.ssafy.keepham.domain.storePayment.dto.PaymentUserResponse;
+import com.ssafy.keepham.domain.storePayment.dto.StorePaymentRequest;
+import com.ssafy.keepham.domain.storePayment.dto.StorePaymentResponse;
+import com.ssafy.keepham.domain.storePayment.entity.StorePayment;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,7 +26,8 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class StorePaymentService {
-    private final RedisTemplate<String, StorePayment> storePaymentRedisTemplate;
+    private final StorePaymentRepository storePaymentRepository;
+
     private final PaymentRepository paymentRepository;
     private final StorePaymentConvert storePaymentConvert;
     private final ChatRoomRepository chatRoomRepository;
@@ -32,14 +35,29 @@ public class StorePaymentService {
     private final ChatRoomManager chatRoomManager;
 
     //유저 메뉴 확정
-    public StorePaymentResponse saveUsermMenu(StorePaymentRequest storePaymentRequest, String userNickName) {
-        var entity = storePaymentConvert.toEntity(storePaymentRequest, userNickName);
-        return Optional.ofNullable(entity)
-                .map(it -> {
-                    storePaymentRedisTemplate.opsForValue().set("StorePayment:" + it.getId(), it);
-                    return storePaymentConvert.toResponse(it);
-                })
-                .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST));
+    public List<StorePaymentResponse> saveUsermMenu(StorePaymentRequest storePaymentRequest, String userNickName) {
+
+        StorePayment checkDB = storePaymentRepository.findFirstByUserNickName(userNickName);
+        if(checkDB != null ){
+            throw new ApiException(ErrorCode.BAD_REQUEST,"이미 메뉴확정 되었습니다.");
+        }
+
+        List<StorePaymentResponse> resList = new ArrayList<>();
+
+        for(UserMenuPrice userMenu : storePaymentRequest.getMenus()){
+            StorePayment storePayment = new StorePayment();
+            storePayment.setRoomId(storePaymentRequest.getRoomId());
+            storePayment.setUserNickName(userNickName);
+            storePayment.setStore(storePaymentRequest.getStoreName());
+
+            storePayment.setMenu(userMenu.getMenu());
+            storePayment.setCount(userMenu.getCount());
+            storePayment.setPrice(userMenu.getPrice());
+            StorePaymentResponse res = storePaymentConvert.toResponse(storePaymentRepository.save(storePayment));
+            resList.add(res);
+        }
+        return resList;
+
     }
 
 
@@ -47,10 +65,10 @@ public class StorePaymentService {
     public HashMap<String, Object> deleteByUserNickName(String userNickName) {
         HashMap<String, Object> res = new HashMap<>();
 
-        StorePayment storePayment = storePaymentRedisTemplate.opsForValue().get("StorePayment:" + userNickName);
+        StorePayment storePayment = storePaymentRepository.findFirstByUserNickName(userNickName);
 
         if (storePayment != null) {
-            storePaymentRedisTemplate.delete("StorePayment:" + userNickName);
+            storePaymentRepository.deleteByUserNickName(userNickName);
             res.put("result", String.format("[%s]의 메뉴확정내역이 삭제되었습니다.", userNickName));
         } else {
             res.put("result", String.format("[%s]의 메뉴확정내역이 없습니다.", userNickName));
@@ -65,8 +83,14 @@ public class StorePaymentService {
         var room = Optional.ofNullable(chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN))
                 .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 채팅방입니다."));
 
-        // Redis에서 데이터 조회
-        return storePaymentRedisTemplate.opsForSet().size("StorePayment:roomId:" + roomId);
+        List<StorePayment> storePayments = storePaymentRepository.findByRoomId(roomId);
+        Set<String> uniqueUserNickNames = new HashSet<>();
+
+        for (StorePayment storePayment : storePayments) {
+            uniqueUserNickNames.add(storePayment.getUserNickName());
+        }
+
+        return (long) uniqueUserNickNames.size();
     }
 
     //채팅방 방장 id 가져오기
@@ -80,30 +104,45 @@ public class StorePaymentService {
         }
     }
 
-    //방장 정보 삭제
-    public void deleteStorePayment(String userNickName) {
-        storePaymentRedisTemplate.delete("StorePayment:" + userNickName);
-    }
-
     //배달비 + 금액해서 mysql 저장
-    public List<PaymentUserResponse> saveUserPayment(ConfirmSuperIdRequest confirmSuperIdRequest){
+    public List<PaymentUserResponse> saveUserPayment(ConfirmSuperIdRequest confirmSuperIdRequest,String userNickName) {
         int dividedDeliveryfee = confirmSuperIdRequest.getDividedDeliveryfee();
         List<PaymentUserResponse> resList = new ArrayList<>();
 
-        Set<StorePayment> storePaymentList = storePaymentRedisTemplate.opsForSet()
-                .members("StorePayment:roomId:" + confirmSuperIdRequest.getRoomId());
+        //체팅방 유저 목록
+        Set<String> ids = chatRoomManager.getAllUser(confirmSuperIdRequest.getRoomId());
+        for (String id : ids) {
+            //빙징 제외
+            if (id.equals(userNickName)) {
+                storePaymentRepository.deleteByUserNickName(id);
+                continue;
+            }
 
-        for(StorePayment storePayment : storePaymentList){
+            List<StorePayment> storePaymentList = storePaymentRepository.findByUserNickName(id);
+            System.out.println("~~~~~"+storePaymentList.size());
+            int price = confirmSuperIdRequest.getDividedDeliveryfee();
+            for (StorePayment sp : storePaymentList) {
+                price = price + (sp.getPrice() * sp.getCount());
+            }
+            StorePayment storePayment = storePaymentList.get(0);
 
-            String userNickName = storePayment.getUserNickName();
-            int totalPoint = paymentService.getUserTotalPoint(userNickName);
-            totalPoint -=storePayment.getPrice();
-            totalPoint -=dividedDeliveryfee;
+            int totalPoint = paymentService.getUserTotalPoint(id);
+            LocalDateTime currentDateTime = LocalDateTime.now();
 
-            Payment payment = storePaymentConvert.toPayment(storePayment, dividedDeliveryfee, totalPoint);
+            Payment payment = new Payment();
+            payment.setUserNickName(id);
+            payment.setInfo(storePayment.getStore());
+            payment.setPrice(-1 * price);
+            payment.setTotalPoint(totalPoint - price);
+            payment.setInsertTime(currentDateTime);
+            payment.setChatroomId(storePayment.getRoomId());
+            payment.setAgreement(false);
 
             PaymentUserResponse res = storePaymentConvert.toResponsePayment(paymentRepository.save(payment));
             resList.add(res);
+
+            storePaymentRepository.deleteByUserNickName(id);
+
         }
         return resList;
     }
@@ -123,19 +162,24 @@ public class StorePaymentService {
         Long numberTrue = (long) listPayment.size();
         Long countChatroom = chatRoomManager.getUserCountInChatRoom(roomId);
 
+        System.out.println(numberTrue+" : "+ (countChatroom-1));
         if( numberTrue == countChatroom-1 ){
             int price=0;
             for(Payment pay : listPayment){
                 price+=pay.getPrice();
             }
 
-            int totalpoint = -1*price;
-            totalpoint += paymentService.getUserTotalPoint(userNickName);
+            ChatRoomEntity room = Optional.ofNullable(chatRoomRepository.findFirstById(roomId))
+                    .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 채팅방입니다."));
 
             LocalDateTime currentDateTime = LocalDateTime.now();
 
+            System.out.println(room.getSuperUserId());
+
+            int totalpoint =  paymentService.getUserTotalPoint(room.getSuperUserId())-price;
+
             Payment savePayment = new Payment();
-            savePayment.setUserNickName(userNickName);
+            savePayment.setUserNickName(room.getSuperUserId());
             savePayment.setInfo(listPayment.get(0).getInfo());
             savePayment.setPrice(-1*price);
             savePayment.setTotalPoint(totalpoint);

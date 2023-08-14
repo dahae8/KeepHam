@@ -1,15 +1,17 @@
-package com.ssafy.keepham.domain.storepayment.entity;
+package com.ssafy.keepham.domain.storePayment.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@EqualsAndHashCode
+@ToString
 @Builder
-@RedisHash(value = "StorePayment")
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(collection = "StorePayment")
 public class StorePayment {
 
     //키값
@@ -24,6 +26,12 @@ public class StorePayment {
 
     //가게명
     private String store;
+
+    //메뉴명
+    private String menu;
+
+    //개수
+    private int count;
 
     //가격
     private int price;

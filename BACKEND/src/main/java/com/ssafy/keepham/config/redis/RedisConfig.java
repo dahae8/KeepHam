@@ -1,6 +1,5 @@
 package com.ssafy.keepham.config.redis;
 
-import com.ssafy.keepham.domain.storePayment.entity.StorePayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,19 +30,6 @@ public class RedisConfig {
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
         redisTemplate.setConnectionFactory(redisConnectionFactory());
-        return redisTemplate;
-    }
-
-    @Bean
-    public RedisTemplate<String, StorePayment> storePaymentRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, StorePayment> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
-
-        // JSON 직렬화 설정
-        Jackson2JsonRedisSerializer<StorePayment> jsonSerializer = new Jackson2JsonRedisSerializer<>(StorePayment.class);
-        redisTemplate.setValueSerializer(jsonSerializer);
-        redisTemplate.setHashValueSerializer(jsonSerializer);
-
         return redisTemplate;
     }
 
