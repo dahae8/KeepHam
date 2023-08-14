@@ -1,7 +1,8 @@
-package com.ssafy.keepham.domain.storepayment.dto;
+package com.ssafy.keepham.domain.storePayment.dto;
 
-import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -10,16 +11,13 @@ import lombok.*;
 @Builder
 public class StorePaymentRequest {
 
-    @JsonSetter("roomId")
     private Long roomId;
     //체팅방 번호
 
-    @JsonSetter("store")
-    private String store;
+    private String storeName;
     //가게명
 
-    @JsonSetter("price")
-    private int price;
-    //가격
+    private List<UserMenuPrice> menus;
+    //목록
 
 }

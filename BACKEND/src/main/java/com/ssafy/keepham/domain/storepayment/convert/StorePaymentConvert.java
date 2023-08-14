@@ -1,31 +1,18 @@
-package com.ssafy.keepham.domain.storepayment.convert;
+package com.ssafy.keepham.domain.storePayment.convert;
 
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.payment.entity.Payment;
-import com.ssafy.keepham.domain.storepayment.dto.PaymentUserResponse;
-import com.ssafy.keepham.domain.storepayment.dto.StorePaymentRequest;
-import com.ssafy.keepham.domain.storepayment.dto.StorePaymentResponse;
-import com.ssafy.keepham.domain.storepayment.entity.StorePayment;
+import com.ssafy.keepham.domain.storePayment.dto.PaymentUserResponse;
+import com.ssafy.keepham.domain.storePayment.dto.StorePaymentRequest;
+import com.ssafy.keepham.domain.storePayment.dto.StorePaymentResponse;
+import com.ssafy.keepham.domain.storePayment.entity.StorePayment;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
 public class StorePaymentConvert {
-
-    public StorePayment toEntity(StorePaymentRequest storePaymentRequest, String userNickName){
-        return Optional.ofNullable(storePaymentRequest)
-                .map(it -> {
-                    return StorePayment.builder()
-                            .roomId(storePaymentRequest.getRoomId())
-                            .userNickName(userNickName)
-                            .store(storePaymentRequest.getStore())
-                            .price(storePaymentRequest.getPrice())
-                            .build();
-                }).orElseThrow(()->new ApiException(ErrorCode.NULL_POINT));
-    }
-
     public StorePaymentResponse toResponse(StorePayment storePayment){
 
         return Optional.ofNullable(storePayment)
@@ -34,25 +21,12 @@ public class StorePaymentConvert {
                             .roomId(storePayment.getRoomId())
                             .userNickName(storePayment.getUserNickName())
                             .store(storePayment.getStore())
+                            .menu(storePayment.getMenu())
+                            .count(storePayment.getCount())
                             .price(storePayment.getPrice())
                             .build();
                 }).orElseThrow(()->new ApiException(ErrorCode.NULL_POINT));
 
-    }
-
-
-    public Payment toPayment(StorePayment storePayment,int dividedDeliveryfee, int totalPoint ){
-        return Optional.ofNullable(storePayment)
-                .map(it -> {
-                    return Payment.builder()
-                            .userNickName(storePayment.getUserNickName())
-                            .info(storePayment.getStore())
-                            .price(-1*(storePayment.getPrice()+dividedDeliveryfee))
-                            .totalPoint(totalPoint)
-                            .chatroomId(storePayment.getRoomId())
-                            .agreement(false)
-                            .build();
-                }).orElseThrow(()->new ApiException(ErrorCode.NULL_POINT));
     }
 
     public PaymentUserResponse toResponsePayment(Payment payment){

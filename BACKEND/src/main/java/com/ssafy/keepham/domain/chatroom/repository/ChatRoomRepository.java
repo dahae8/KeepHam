@@ -32,4 +32,5 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Long> 
     ChatRoomEntity findFirstByIdAndStatus(Long id, ChatRoomStatus status);
     ChatRoomEntity findByBoxIdAndStatus(Long boxId, ChatRoomStatus status);
 
+    ChatRoomEntity findFirstById(Long roomId);
 }

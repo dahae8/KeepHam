@@ -1,4 +1,4 @@
-package com.ssafy.keepham.domain.storepayment.dto;
+package com.ssafy.keepham.domain.storePayment.dto;
 
 import jakarta.persistence.Id;
 import lombok.*;
@@ -18,6 +18,12 @@ public class StorePaymentResponse {
 
     private String store;
     //가게명
+
+    private String menu;
+    //메뉴명
+
+    private int count;
+    //개수
 
     private int price;
     //가격
