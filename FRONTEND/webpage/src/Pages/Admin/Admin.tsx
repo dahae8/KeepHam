@@ -112,24 +112,28 @@ export default function Admin() {
   );
 
   const [Boxes, setBoxes] = useState<Boxes[]>([]);
-  const userState = window.sessionStorage.getItem("userState");
+  // const userState = window.sessionStorage.getItem("userState");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBoxes = async () => {
       try {
+        const key = sessionStorage.getItem("AccessToken");
         const url = import.meta.env.VITE_URL_ADDRESS + "/api/admin/boxs";
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ` + key,
+          },
+        });
         setBoxes(response.data.body);
         console.log(response.data.body);
-
-        console.log(Boxes);
       } catch (error) {
         console.log(error);
       }
     };
     fetchBoxes();
   }, []);
+
   const columns: GridColDef[] = [
     { field: "box_id", headerName: "함번호", width: 200 },
     {
@@ -148,7 +152,7 @@ export default function Admin() {
       width: 100,
     },
     {
-      field: "locked",
+      field: "status",
       headerName: "상태",
       width: 100,
     },
@@ -185,7 +189,7 @@ export default function Admin() {
         <Divider />
         <div className="relative w-full min-h-[540px]" id="drawer-container">
           <div className="flex">
-            <Box sx={{ height: 400, width: "100%" }}>
+            <Box sx={{ height: 400, width: "100%", maxHeight: 600 }}>
               <DataGrid
                 rows={Boxes}
                 getRowId={(row) => row.box_id}
@@ -198,13 +202,13 @@ export default function Admin() {
                   },
                 }}
                 pageSizeOptions={[5]}
-                onRowSelectionModelChange={(selectedRow) => {
-                  const selectedIdx: number = Number(selectedRow[0]);
-                  console.log(selectedIdx);
-                  if (userState === "isLoggedIn")
-                    navigate(`/Home/Chatroom/${selectedIdx}`);
-                  else navigate("/Auth");
-                }}
+                // onRowSelectionModelChange={(selectedRow) => {
+                //   const selectedIdx: number = Number(selectedRow[0]);
+                //   console.log(selectedIdx);
+                //   if (userState === "isLoggedIn")
+                //     navigate(`/Home/Chatroom/${selectedIdx}`);
+                //   else navigate("/Auth");
+                // }}
               />
             </Box>
           </div>

@@ -16,7 +16,7 @@ interface forCreateRoom {
   box_id: number;
   extension_number: number;
   max_people_number: number;
-  super_user_id: string|null;
+  super_user_id: string | null;
   locked: boolean;
   password: string;
 }
@@ -64,7 +64,7 @@ function Addroom() {
     }
 
     const addRoom = async () => {
-      const key = localStorage.getItem("AccessToken");
+      const key = sessionStorage.getItem("AccessToken");
       const userId = sessionStorage.getItem("userId");
       const boxId = sessionStorage.getItem("selected BoxId");
       const storeId = sessionStorage.getItem("selected StoreInfo");
@@ -80,7 +80,7 @@ function Addroom() {
         password: pwValue,
       };
       try {
-        console.log("asdfasdf",data);
+        console.log("asdfasdf", data);
         const response = await axios.post(url, data, {
           headers: {
             Authorization: `Bearer ` + key,

@@ -24,7 +24,7 @@ export default function ChatList() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("AccessToken");
+    const token = sessionStorage.getItem("AccessToken");
     console.log("chatlist 토큰 : ", token);
     const fetchData = async () => {
       try {

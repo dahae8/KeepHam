@@ -21,7 +21,7 @@ const AwsDataFetcher: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const key = window.localStorage.getItem("AccessToken");
+    const key = window.sessionStorage.getItem("AccessToken");
     const fetchData = async () => {
       try {
         const response = await axios.get(

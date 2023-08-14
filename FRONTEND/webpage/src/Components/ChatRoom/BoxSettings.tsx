@@ -11,7 +11,9 @@ type propsType = {
 
 function BoxSettings(props: propsType) {
   const [pwValue, setPwValue] = useState<number>(0);
-  
+  const userId = sessionStorage.getItem("userId");
+  const superId = sessionStorage.getItem("superUser");
+
   return (
     <>
       <Box
@@ -53,14 +55,16 @@ function BoxSettings(props: propsType) {
             </Button>
           </Grid>
           <Grid item xs={12}>
-            <Button
-              variant="contained"
-              onClick={() => {
-                props.allow();
-              }}
-            >
-              메뉴선택잠그기
-            </Button>
+            {superId === userId && (
+              <Button
+                variant="contained"
+                onClick={() => {
+                  props.allow();
+                }}
+              >
+                메뉴선택잠그기
+              </Button>
+            )}
           </Grid>
           <Grid item xs={12}>
             <Box
