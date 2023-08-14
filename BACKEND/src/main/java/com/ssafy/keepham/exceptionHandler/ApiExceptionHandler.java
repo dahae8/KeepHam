@@ -89,12 +89,12 @@ public class ApiExceptionHandler {
                 .status(403)
                 .body(Api.ERROR(ErrorCode.DENIED_ERROR));
     }
-   @ExceptionHandler({Exception.class})
-    public ResponseEntity<Api<Object>> handleUnexpectedException(Exception e){
-        var errorCode = e.getMessage();
-        log.error("handleUnexpectedException : {}",errorCode);
-        return ResponseEntity
-                .status(500)
-                .body(Api.ERROR(ErrorCode.SERVER_ERROR));
-   }
+//   @ExceptionHandler({Exception.class})
+//    public ResponseEntity<Api<Object>> handleUnexpectedException(Exception e){
+//        var errorCode = e.getMessage();
+//        log.error("handleUnexpectedException : {}",errorCode);
+//        return ResponseEntity
+//                .status(500)
+//                .body(Api.ERROR(ErrorCode.SERVER_ERROR));
+//   }
 }

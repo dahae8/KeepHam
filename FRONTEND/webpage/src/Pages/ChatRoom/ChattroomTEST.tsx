@@ -97,36 +97,47 @@ function ChatRoom() {
   const [messages, setMessages] = useState<messageType[]>([]);
 
   const [client, setClient] = useState<Client | null>(null);
-  const nname = window.sessionStorage.getItem("userNick")!.toString();
 
   // const [inputMessage, setInputMessage] = useState("");
   const [sockmessages, setsockMessages] = useState<ChatMessage[]>([]);
   const [roomPassword, setRoomPw] = useState<number>(-1);
 
   const [storeMenu, setMenu] = useState<menuInfo[]>([]);
-  const [allowSelectMenu,setAllowSelectMenu]=useState(true); 
+  const [allowSelectMenu, setAllowSelectMenu] = useState(true);
 
   const navigate = useNavigate();
 
   function getPassword(params: number) {
     setRoomPw(params);
   }
-  function allowMenu(){
+  function allowMenu() {
     setAllowSelectMenu(!allowSelectMenu);
   }
 
   function navDisplay() {
     if (navIdx === 1) {
-      return <BoxSettings  getPassword={getPassword} allow={allowMenu} roomPw={roomPassword}/>;
+      return (
+        <BoxSettings
+          getPassword={getPassword}
+          allow={allowMenu}
+          roomPw={roomPassword}
+        />
+      );
     } else if (navIdx === 2) {
       return (
-          <TableContainer
-            sx={{ maxHeight: "100%", height: "100%", scrollbarWidth: "none" }}
-          >
-            {storeMenu.map((e) => (
-              <SelectItems name={e.name} price={e.price} image={e.image} allow={allowSelectMenu} key={e.menu_set_id}/>
-            ))}
-          </TableContainer>
+        <TableContainer
+          sx={{ maxHeight: "100%", height: "100%", scrollbarWidth: "none" }}
+        >
+          {storeMenu.map((e) => (
+            <SelectItems
+              name={e.name}
+              price={e.price}
+              image={e.image}
+              allow={allowSelectMenu}
+              key={e.menu_set_id}
+            />
+          ))}
+        </TableContainer>
       );
     } else if (navIdx === 3) {
       return <UserSelect />;
@@ -140,6 +151,7 @@ function ChatRoom() {
   const userNick = sessionStorage.getItem("userNick");
   const superNick = sessionStorage.getItem("superUser");
   const boxId = Number(sessionStorage.getItem("enterBoxId"));
+  const nname = sessionStorage.getItem("userNick")!.toString();
 
   const sendHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -197,7 +209,6 @@ function ChatRoom() {
         destination: `/app/joinUser/${roomId}`,
         body: JSON.stringify(enterMessage),
       });
-      console.log("도망!!!");
     }
     navigate("/Home/RoomList");
   }
@@ -293,6 +304,21 @@ function ChatRoom() {
     addRoom();
 
     return () => {
+      if (client) {
+        const enterMessage: ChatMessage_timestamp = {
+          room_id: roomId,
+          box_id: boxId,
+          author: nname,
+          content: nname + " 님이 퇴장하셧습니다",
+          type: "EXIT",
+        };
+        client.publish({
+          destination: `/app/joinUser/${roomId}`,
+          body: JSON.stringify(enterMessage),
+        });
+        console.log("퇴장!!!");
+      }
+
       newClient.deactivate();
     };
   }, []);
