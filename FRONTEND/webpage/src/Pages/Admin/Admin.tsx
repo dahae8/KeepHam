@@ -135,16 +135,16 @@ export default function Admin() {
   }, []);
 
   const columns: GridColDef[] = [
-    { field: "box_id", headerName: "함번호", width: 200 },
+    { field: "box_id", headerName: "함번호", width: 50 },
     {
       field: "address",
       headerName: "기본 주소",
-      width: 100,
+      width: 200,
     },
     {
       field: "detailed_address",
       headerName: "상세주소",
-      width: 100,
+      width: 200,
     },
     {
       field: "zip_code",
