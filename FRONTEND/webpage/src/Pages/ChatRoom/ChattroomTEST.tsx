@@ -24,12 +24,11 @@ import BoxSettings from "@/Components/ChatRoom/BoxSettings.tsx";
 import ChatInterface, {
   messageType,
 } from "@/Components/ChatRoom/ChatInterface.tsx";
-import SelectItems from "@/Components/ChatRoom/SelectItems.tsx";
+import SelectMenus, { menuInfo } from "@/Components/ChatRoom/SelectMenus.tsx";
 import UserSelect from "@/Components/ChatRoom/UserSelect.tsx";
 import UserList from "@/Components/ChatRoom/UserList.tsx";
 import { Client, Message } from "@stomp/stompjs";
 import axios from "axios";
-import TableContainer from "@mui/material/TableContainer";
 
 type roomInfoType = {
   roomId: number;
@@ -67,23 +66,6 @@ interface ChatMessage_timestamp {
   content: string;
   type: string;
 }
-export interface menuInfo {
-  item: number;
-  store_id: number;
-  original_image: string;
-  review_count: number;
-  subtitle: string;
-  description: string;
-  price: number;
-  slug: string;
-  image: string;
-  section: string;
-  top_displayed_item_order: number;
-  reorder_rate_message: "";
-  menu_set_id: number;
-  id: number;
-  name: string;
-}
 
 function ChatRoom() {
   const theme = useTheme();
@@ -113,8 +95,13 @@ function ChatRoom() {
   function allowMenu() {
     setAllowSelectMenu(!allowSelectMenu);
   }
-  function setcount() {
-    console.log("dfsd");
+  function setCount(id: number, count: number): void {
+    const tempMenu: menuInfo[] = storeMenu.map((menu) => {
+      if (menu.id == id) menu.count = menu.count + count;
+      return menu;
+    });
+
+    setMenu(tempMenu);
   }
 
   function navDisplay() {
@@ -128,21 +115,11 @@ function ChatRoom() {
       );
     } else if (navIdx === 2) {
       return (
-        <TableContainer
-          sx={{ maxHeight: "100%", height: "100%", scrollbarWidth: "none" }}
-        >
-          {storeMenu.map((e) => (
-            <SelectItems
-              name={e.name}
-              price={e.price}
-              image={e.image}
-              allow={allowSelectMenu}
-              key={e.item}
-              count={e.review_count}
-              setcount={setcount}
-            />
-          ))}
-        </TableContainer>
+        <SelectMenus
+          menuList={storeMenu}
+          setCount={setCount}
+          selectable={allowSelectMenu}
+        />
       );
     } else if (navIdx === 3) {
       return <UserSelect />;
@@ -305,8 +282,20 @@ function ChatRoom() {
       const url = import.meta.env.VITE_URL_ADDRESS + "/api/store/" + storeId;
       try {
         const response = await axios.get(url);
-        setMenu(response.data.data);
-        console.log(response.data.data);
+        const tempMenu: menuInfo[] = response.data.data;
+        const filteredMenu: menuInfo[] = [];
+        const idList: number[] = [];
+
+        tempMenu.forEach((menu) => {
+          if (!idList.includes(menu.id)) {
+            idList.push(menu.id);
+            menu.count = 0;
+            filteredMenu.push(menu);
+          }
+        });
+
+        setMenu(filteredMenu);
+        // console.log(response.data.data);
       } catch (error) {
         console.log(error);
       }
