@@ -60,7 +60,7 @@ function Point() {
           fetchPayment();
 
           alert("결제가 완료되었습니다.");
-          navigate("/Home/UserInfo");
+          navigate("/Home/Payment");
 
           // 결제 완료 처리
           break;
