@@ -1,20 +1,15 @@
-package com.ssafy.keepham.domain.storePayment.controller;
+package com.ssafy.keepham.domain.storepayment.controller;
 
 import com.ssafy.keepham.common.api.Api;
-import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.error.StorePaymentError;
-import com.ssafy.keepham.common.exception.ApiException;
-import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
-import com.ssafy.keepham.domain.storePayment.dto.ConfirmSuperIdRequest;
-import com.ssafy.keepham.domain.storePayment.dto.StorePaymentRequest;
-import com.ssafy.keepham.domain.storePayment.service.StorePaymentService;
+import com.ssafy.keepham.domain.storepayment.dto.ConfirmSuperIdRequest;
+import com.ssafy.keepham.domain.storepayment.dto.StorePaymentRequest;
+import com.ssafy.keepham.domain.storepayment.service.StorePaymentService;
 import com.ssafy.keepham.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -74,7 +69,7 @@ public class StorePaymetController {
     }
 
     //유저 구매 확정
-    @Operation(summary = "유저 구메 확정")
+    @Operation(summary = "유저 구매 확정")
     @PostMapping("/user/{roomId}")
     public Api<Object> confirmUser(@PathVariable Long roomId){
 
@@ -84,6 +79,20 @@ public class StorePaymetController {
 
         return Api.OK(storePaymentService.confirmUser(userNickName,roomId));
 
+    }
+
+    //현재 메뉴 확정된 유저 목록
+    @Operation(summary = "현재 메뉴 확정된 유저 목록")
+    @GetMapping("/user/{roomId}")
+    public  Api<Object> confirmAllUser(@PathVariable Long roomId){
+        return Api.OK(storePaymentService.confirmAllUser(roomId));
+    }
+
+    //유저별 확정된 메뉴 목록
+    @Operation(summary = "유저별 확정된 메뉴 목록")
+    @GetMapping("/user/menu/{roomId}")
+    public  Api<Object> confirmUserMenu(@PathVariable Long roomId){
+        return Api.OK(storePaymentService.confirmUserMenu(roomId));
     }
 
 
