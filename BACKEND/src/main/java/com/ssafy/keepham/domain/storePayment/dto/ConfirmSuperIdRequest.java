@@ -1,4 +1,4 @@
-package com.ssafy.keepham.domain.storepayment.dto;
+package com.ssafy.keepham.domain.storePayment.dto;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.*;
