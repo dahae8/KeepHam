@@ -10,7 +10,7 @@ import com.ssafy.keepham.domain.payment.entity.Payment;
 import com.ssafy.keepham.domain.payment.repository.PaymentRepository;
 import com.ssafy.keepham.domain.payment.service.PaymentService;
 import com.ssafy.keepham.domain.storepayment.dto.*;
-import com.ssafy.keepham.domain.storepayment.service.repository.StorePaymentRepository;
+import com.ssafy.keepham.domain.storepayment.repository.StorePaymentRepository;
 import com.ssafy.keepham.domain.storepayment.convert.StorePaymentConvert;
 import com.ssafy.keepham.domain.storepayment.entity.StorePayment;
 import lombok.RequiredArgsConstructor;
