@@ -14,9 +14,7 @@ import Auth from "@/Pages/Auth/Auth.tsx";
 import UserInfo from "@/Pages/UserInfo/UserInfo copy.tsx";
 // import Main from "@/Pages/Main/Landing.tsx";
 // import User from "./Pages/User/User.tsx";
-import RoomList, {
-  loader as roomListLoader,
-} from "./Pages/RoomList/RoomList copy.tsx";
+import RoomList from "./Pages/RoomList/RoomList copy.tsx";
 import CreateRoom from "./Pages/ChatRoom/CreateRoom.tsx";
 import ChatRoom, {
   loader as chatRoomLoader,
@@ -55,7 +53,6 @@ const router = createBrowserRouter([
       {
         path: "/Home/RoomList",
         element: <RoomList />,
-        loader: roomListLoader,
       },
       {
         path: "/Home/chatRoom/:roomId",
@@ -122,10 +119,12 @@ const router = createBrowserRouter([
 declare module "@mui/material/styles" {
   interface Palette {
     gray: Palette["primary"];
+    darkgray: Palette["primary"];
   }
 
   interface PaletteOptions {
     gray?: PaletteOptions["primary"];
+    darkgray?: PaletteOptions["primary"];
   }
 }
 
@@ -140,12 +139,18 @@ const theme = createTheme({
       light: "#B6BAC3",
       dark: "#6C7280",
     },
+    darkgray: {
+      main: "#4A4E5A",
+      light: "#5B616E",
+      dark: "#40434C",
+    }
   },
 });
 
 declare module "@mui/material/Button" {
   interface ButtonPropsColorOverrides {
     gray: true;
+    darkgray: true;
   }
 }
 

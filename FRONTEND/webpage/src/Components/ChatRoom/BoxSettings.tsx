@@ -5,14 +5,13 @@ import QRCode from "react-qr-code";
 
 type propsType = {
   getPassword: (e: number) => void;
-  allow: () => void;
   roomPw: number;
+  openBox: () => void;
 };
 
 function BoxSettings(props: propsType) {
   const [pwValue, setPwValue] = useState<number>(0);
-  const userId = sessionStorage.getItem("userId");
-  const superId = sessionStorage.getItem("superUser");
+  const [verify, setVerify] = useState<number>(0);
 
   return (
     <>
@@ -24,9 +23,29 @@ function BoxSettings(props: propsType) {
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Typography variant="h6" color={"white"}>
-              함 정보
+              함 개방
             </Typography>
             <Divider />
+          </Grid>
+          <Grid item xs={8}>
+            <TextField
+              label="Password"
+              autoComplete="current-password"
+              variant="standard"
+              onChange={(e) => {
+                setVerify(Number(e.target.value));
+              }}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                if (pwValue === verify) props.openBox();
+              }}
+            >
+              함 개방
+            </Button>
           </Grid>
           <Grid item xs={12}>
             <Typography variant="h6" color={"white"}>
@@ -53,18 +72,6 @@ function BoxSettings(props: propsType) {
             >
               설정
             </Button>
-          </Grid>
-          <Grid item xs={12}>
-            {superId === userId && (
-              <Button
-                variant="contained"
-                onClick={() => {
-                  props.allow();
-                }}
-              >
-                메뉴선택잠그기
-              </Button>
-            )}
           </Grid>
           <Grid item xs={12}>
             <Box

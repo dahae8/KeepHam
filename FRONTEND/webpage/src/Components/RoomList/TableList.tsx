@@ -1,13 +1,12 @@
 import { Box } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
-import { Rooms } from "@/Pages/RoomList/RoomList copy.tsx";
+import { exRooms } from "@/Pages/RoomList/RoomList copy.tsx";
 import axios from "axios";
 
 // 타입
 type propsType = {
-  areaId: number;
-  data: Rooms[];
+  data: exRooms[];
 };
 
 // 테이블 아이템
@@ -25,7 +24,7 @@ function TableList(props: propsType) {
       width: 250,
     },
     {
-      field: "dfddd",
+      field: "address",
       headerName: "받는주소",
       width: 100,
     },

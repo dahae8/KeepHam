@@ -1,21 +1,11 @@
 import * as React from "react";
 import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
-import { LoaderFunctionArgs, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { MyLocation } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import CreateRoomInfo from "@/Components/ChatRoom/CreateRoomInfo";
-
-export async function loader({ params }: LoaderFunctionArgs) {
-  const areaId = params.areaId;
-  // 서버정보 필요
-  const boxName = "다농 오피스텔";
-  const boxAddress = "광주 장덕동";
-  const boxStatus = "정상";
-
-  return { areaId, boxName, boxAddress, boxStatus };
-}
+import CreateRoomInfo from "@/Components/ChatRoom/CreateRoomInfo.tsx";
 
 export interface Boxes {
   address: string;
@@ -145,7 +135,7 @@ export default function Admin() {
       }
     };
     fetchBoxes();
-  }, []);
+  }, [address]);
 
   const fetchStores = async (a: string, b: number, c: number) => {
     const addRess = a.toString();
