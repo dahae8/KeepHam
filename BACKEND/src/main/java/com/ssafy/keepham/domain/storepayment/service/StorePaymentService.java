@@ -18,6 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -31,13 +32,6 @@ public class StorePaymentService {
     private final PaymentService paymentService;
     private final ChatRoomManager chatRoomManager;
 
-    // 4시간마다 자동 삭제
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 4)
-    public void deleteExpiredStorePayments() {
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        List<StorePayment> expiredPayments = storePaymentRepository.findByDeletionTimeBefore(currentDateTime);
-        storePaymentRepository.deleteAll(expiredPayments);
-    }
 
     //유저 메뉴 확정
     public List<StorePaymentResponse> saveUsermMenu(StorePaymentRequest storePaymentRequest, String userNickName) {
@@ -248,4 +242,26 @@ public class StorePaymentService {
         }
         return resList;
     }
+
+    // 매 1시간마다 자동 구매확정
+    @Scheduled(fixedDelay = 1 * 60 * 60 * 1000)
+    public void confirmExpiredPayments() {
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime before12Hours = currentTime.minus(12, ChronoUnit.HOURS);
+        List<Payment> expiredPayments = paymentRepository.findByInsertTimeBeforeAndAgreementFalse(before12Hours);
+
+        for (Payment payment : expiredPayments) {
+            confirmUser(payment.getUserNickName(), payment.getChatroomId());
+        }
+    }
+
+    // 1시간마다 자동 삭제
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 1)
+    public void deleteExpiredStorePayments() {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        List<StorePayment> expiredPayments = storePaymentRepository.findByDeletionTimeBefore(currentDateTime);
+        storePaymentRepository.deleteAll(expiredPayments);
+    }
+
+
 }

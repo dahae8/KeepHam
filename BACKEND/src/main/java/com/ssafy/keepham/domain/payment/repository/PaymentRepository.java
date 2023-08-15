@@ -4,6 +4,7 @@ import com.ssafy.keepham.domain.payment.entity.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PaymentRepository extends JpaRepository<Payment,Long> {
@@ -29,4 +30,6 @@ public interface PaymentRepository extends JpaRepository<Payment,Long> {
 
 
     List<Payment> findAllByChatroomIdAndAgreement(Long chatroomId, boolean b);
+
+    List<Payment> findByInsertTimeBeforeAndAgreementFalse(LocalDateTime before12Hours);
 }
