@@ -1,12 +1,11 @@
-package com.ssafy.keepham.domain.storePayment.convert;
+package com.ssafy.keepham.domain.storepayment.convert;
 
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.payment.entity.Payment;
-import com.ssafy.keepham.domain.storePayment.dto.PaymentUserResponse;
-import com.ssafy.keepham.domain.storePayment.dto.StorePaymentRequest;
-import com.ssafy.keepham.domain.storePayment.dto.StorePaymentResponse;
-import com.ssafy.keepham.domain.storePayment.entity.StorePayment;
+import com.ssafy.keepham.domain.storepayment.dto.PaymentUserResponse;
+import com.ssafy.keepham.domain.storepayment.dto.StorePaymentResponse;
+import com.ssafy.keepham.domain.storepayment.entity.StorePayment;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;

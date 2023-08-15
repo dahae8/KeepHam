@@ -1,20 +1,15 @@
-package com.ssafy.keepham.domain.storePayment.controller;
+package com.ssafy.keepham.domain.storepayment.controller;
 
 import com.ssafy.keepham.common.api.Api;
-import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.error.StorePaymentError;
-import com.ssafy.keepham.common.exception.ApiException;
-import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
-import com.ssafy.keepham.domain.storePayment.dto.ConfirmSuperIdRequest;
-import com.ssafy.keepham.domain.storePayment.dto.StorePaymentRequest;
-import com.ssafy.keepham.domain.storePayment.service.StorePaymentService;
+import com.ssafy.keepham.domain.storepayment.dto.ConfirmSuperIdRequest;
+import com.ssafy.keepham.domain.storepayment.dto.StorePaymentRequest;
+import com.ssafy.keepham.domain.storepayment.service.StorePaymentService;
 import com.ssafy.keepham.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
