@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   FoodBank,
   Group,
@@ -85,36 +86,36 @@ function ChatRoom() {
   const [roomPassword, setRoomPw] = useState<number>(-1);
 
   const [storeMenu, setMenu] = useState<menuInfo[]>([]);
-  const [allowSelectMenu, setAllowSelectMenu] = useState(true);
+  const [open, setOpen] = useState<boolean>(false)
 
   const navigate = useNavigate();
 
   function getPassword(params: number) {
     setRoomPw(params);
   }
-  function allowMenu() {
-    setAllowSelectMenu(!allowSelectMenu);
-  }
+  
   function setCount(id: number, count: number): void {
     const tempMenu: menuInfo[] = storeMenu.map((menu) => {
-      if (menu.id == id) menu.count = menu.count + count;
+      if (menu.id == id) menu.count = count;
       return menu;
     });
 
     setMenu(tempMenu);
   }
 
-  const roomInfomation = useLoaderData() as roomInfoType;
-  const roomId = roomInfomation.roomId;
-
+  function openBox() {
+    setOpen(true);
+    console.log("test");
+    
+  }
 
   function navDisplay() {
     if (navIdx === 1) {
       return (
         <BoxSettings
           getPassword={getPassword}
-          allow={allowMenu}
           roomPw={roomPassword}
+          openBox={openBox}
         />
       );
     } else if (navIdx === 2) {
@@ -122,7 +123,8 @@ function ChatRoom() {
         <SelectMenus
           menuList={storeMenu}
           setCount={setCount}
-          selectable={allowSelectMenu}
+          roomId={roomInfo.roomId}
+          storeName={roomInfo.store}
         />
       );
     } else if (navIdx === 3) {
@@ -131,9 +133,9 @@ function ChatRoom() {
       return <></>;
     }
   }
+  const roomId = roomInfo.roomId;
 
-  const userId = sessionStorage.getItem("userId");
-  const superId = sessionStorage.getItem("superUser");
+  const superUser = sessionStorage.getItem("superUser");
   const boxId = Number(sessionStorage.getItem("enterBoxId"));
   const nname = sessionStorage.getItem("userNick")!.toString();
 
@@ -221,6 +223,27 @@ function ChatRoom() {
       setMsgText("");
     }
   }, [roomPassword]);
+
+  
+  // 함 개방시 실행
+  useEffect(() => {
+    if (client && open) {
+      const chatMessage: ChatMessage_timestamp = {
+        room_id: roomId,
+        box_id: boxId,
+        author: nname,
+        content: "",
+        type: "OPEN",
+      };
+
+      client.publish({
+        destination: `/app/sendMessage/${roomId}`, // 채팅 메시지를 처리하는 엔드포인트
+        body: JSON.stringify(chatMessage),
+      });
+      console.log("함 개방:", chatMessage);
+      setMsgText("");
+    }
+  }, [open]);
 
   //입장 실행
   useEffect(() => {
@@ -456,7 +479,7 @@ function ChatRoom() {
                 justifyContent: "end",
               }}
             >
-              {userId === superId && (
+              {nname === superUser && (
                 <Button
                   onClick={() => {
                     closeRoom();

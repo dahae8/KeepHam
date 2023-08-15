@@ -156,7 +156,7 @@ function Addroom() {
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   label="공개여부"
-                  value={roomMode}
+                  value={roomMode ? "비공개" : "공개"}
                 >
                   <MenuItem
                     value="비공개"

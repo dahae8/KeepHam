@@ -16,8 +16,6 @@ import {
   Typography,
 } from "@mui/material";
 import {
-  LoaderFunctionArgs,
-  useLoaderData,
   useNavigate,
 } from "react-router-dom";
 // import TableList from "@/Components/RoomList/TableList.tsx";
@@ -28,16 +26,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const drawerWidth = 300;
-
-export async function loader({ params }: LoaderFunctionArgs) {
-  const areaId = params.areaId;
-  // 서버정보 필요
-  const boxName = "다농 오피스텔";
-  const boxAddress = "광주 장덕동";
-  const boxStatus = "정상";
-
-  return { areaId, boxName, boxAddress, boxStatus };
-}
 
 export interface Boxes {
   address: string;
@@ -68,17 +56,14 @@ export interface Rooms {
   locked: boolean;
 }
 
-type boxInfoType = {
-  areaId: number;
-  boxName: string;
-  boxAddress: string;
-  boxStatus: string;
-};
+export interface exRooms extends Rooms {
+  address: string;
+  category: string;
+}
 
 export default function RoomList() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [albumMode, setAlbumMode] = React.useState(false);
-  const boxInfo = useLoaderData() as boxInfoType;
   const [address, setAddress] = React.useState(
     sessionStorage.getItem("userLocation")!
   );
@@ -188,10 +173,11 @@ export default function RoomList() {
     </Box>
   );
 
-  const [Rooms, setRooms] = useState<Rooms[]>([]);
+  const [Rooms, setRooms] = useState<exRooms[]>([]);
 
   useEffect(() => {
     const userZipCode = window.sessionStorage.getItem("userZipCode");
+
     const fetchRooms = async () => {
       try {
         const url =
@@ -200,13 +186,24 @@ export default function RoomList() {
           userZipCode +
           "?status=OPEN";
         const response = await axios.get(url);
-        setRooms(response.data.body);
+        // setRooms(response.data.body);
+
+        const result: exRooms[] = response.data.body;
+
+        result.forEach((res)=> {
+          res.address = res.box.address + res.box.detailed_address
+        })
+        
+        setRooms(result)
+
       } catch (error) {
         console.log(error);
       }
+      
     };
+
     fetchRooms();
-  }, []);
+  }, [address]);
 
   return (
     <>
@@ -218,25 +215,30 @@ export default function RoomList() {
         }}
       >
         {/* 상단바 */}
-        <div className="h-20 w-full flex items-center justify-start">
+        <div className="h-20 w-full flex items-center justify-between">
+          <Box sx={{ display: "flex", gap: 1}}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: "none" } }}
+            sx={{ mx: 1, display: { md: "none" } }}
           >
             <MenuIcon />
           </IconButton>
           <Typography variant="h5">채팅방 목록</Typography>
+            </Box>
           <Button
             variant="outlined"
             onClick={() => {
               navigate("/Home/CreateRoom");
             }}
-          >
+            sx={{
+              marginRight: 1,
+            }}
+            >
             방만들기
-          </Button>
+            </Button>
         </div>
         <Divider />
         <div className="relative w-full min-h-[540px]" id="drawer-container">
@@ -244,7 +246,10 @@ export default function RoomList() {
             {/* 네비바 */}
             <Box
               component="nav"
-              sx={{ width: { lg: drawerWidth }, flexShrink: { md: 0 } }}
+              sx={{
+                width: { md: drawerWidth },
+                flexShrink: { md: 0 }
+              }}
               aria-label="mailbox folders"
             >
               <Drawer
@@ -297,14 +302,14 @@ export default function RoomList() {
               sx={{
                 flexGrow: 1,
                 p: 3,
-                width: { md: `calc(100% - ${drawerWidth}px)` },
+                width: { md: `calc(100% - ${drawerWidth}px)`, xs: "100%" },
                 padding: 3,
               }}
             >
               {albumMode ? (
-                <AlbumList areaId={boxInfo.areaId} />
+                <AlbumList data={Rooms} />
               ) : (
-                <TableList areaId={boxInfo.areaId} data={Rooms} />
+                <TableList  data={Rooms} />
               )}
             </Box>
           </div>
