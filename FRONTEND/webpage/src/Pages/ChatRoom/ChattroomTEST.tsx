@@ -789,7 +789,7 @@ function ChatRoom() {
                 borderBottomLeftRadius: 8,
               }}
             >
-              <UserList roomId={roomId}/>
+              <UserList roomId={roomId} boxId={boxId}/>
             </Box>
           </Box>
         </Box>
