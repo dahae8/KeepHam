@@ -1,4 +1,4 @@
-package com.ssafy.keepham.domain.storepayment.service;
+package com.ssafy.keepham.domain.storePayment.service;
 
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
@@ -9,10 +9,10 @@ import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import com.ssafy.keepham.domain.payment.entity.Payment;
 import com.ssafy.keepham.domain.payment.repository.PaymentRepository;
 import com.ssafy.keepham.domain.payment.service.PaymentService;
-import com.ssafy.keepham.domain.storepayment.dto.*;
-import com.ssafy.keepham.domain.storepayment.repository.StorePaymentRepository;
-import com.ssafy.keepham.domain.storepayment.convert.StorePaymentConvert;
-import com.ssafy.keepham.domain.storepayment.entity.StorePayment;
+import com.ssafy.keepham.domain.storePayment.dto.*;
+import com.ssafy.keepham.domain.storePayment.repository.StorePaymentRepository;
+import com.ssafy.keepham.domain.storePayment.convert.StorePaymentConvert;
+import com.ssafy.keepham.domain.storePayment.entity.StorePayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,11 +1,11 @@
-package com.ssafy.keepham.domain.storepayment.controller;
+package com.ssafy.keepham.domain.storePayment.controller;
 
 import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.common.error.StorePaymentError;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
-import com.ssafy.keepham.domain.storepayment.dto.ConfirmSuperIdRequest;
-import com.ssafy.keepham.domain.storepayment.dto.StorePaymentRequest;
-import com.ssafy.keepham.domain.storepayment.service.StorePaymentService;
+import com.ssafy.keepham.domain.storePayment.dto.ConfirmSuperIdRequest;
+import com.ssafy.keepham.domain.storePayment.dto.StorePaymentRequest;
+import com.ssafy.keepham.domain.storePayment.service.StorePaymentService;
 import com.ssafy.keepham.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
-package com.ssafy.keepham.domain.storepayment.repository;
+package com.ssafy.keepham.domain.storePayment.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import com.ssafy.keepham.domain.storepayment.entity.StorePayment;
+import com.ssafy.keepham.domain.storePayment.entity.StorePayment;
 
 import java.util.List;
 

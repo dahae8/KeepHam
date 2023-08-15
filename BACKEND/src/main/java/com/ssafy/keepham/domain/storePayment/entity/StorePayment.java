@@ -1,4 +1,4 @@
-package com.ssafy.keepham.domain.storepayment.entity;
+package com.ssafy.keepham.domain.storePayment.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
