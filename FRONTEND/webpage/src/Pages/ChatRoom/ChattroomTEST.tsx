@@ -104,6 +104,10 @@ function ChatRoom() {
     setMenu(tempMenu);
   }
 
+  const roomInfomation = useLoaderData() as roomInfoType;
+  const roomId = roomInfomation.roomId;
+
+
   function navDisplay() {
     if (navIdx === 1) {
       return (
@@ -122,13 +126,11 @@ function ChatRoom() {
         />
       );
     } else if (navIdx === 3) {
-      return <UserSelect />;
+      return <UserSelect roomId={roomId} />;
     } else {
       return <></>;
     }
   }
-  const roomInfomation = useLoaderData() as roomInfoType;
-  const roomId = roomInfomation.roomId;
 
   const userId = sessionStorage.getItem("userId");
   const superId = sessionStorage.getItem("superUser");
@@ -787,7 +789,7 @@ function ChatRoom() {
                 borderBottomLeftRadius: 8,
               }}
             >
-              <UserList />
+              <UserList roomId={roomId}/>
             </Box>
           </Box>
         </Box>
