@@ -164,7 +164,7 @@ function SelectMenus(props: propsType) {
   const userNick = sessionStorage.getItem("userNick")!;
   const superUser = sessionStorage.getItem("superUser")!;
 
-  const tabHandler = (event: SyntheticEvent, newTabIdx: number) => {
+  const tabHandler = (_event: SyntheticEvent, newTabIdx: number) => {
     setTabIdx(newTabIdx);
   };
 
