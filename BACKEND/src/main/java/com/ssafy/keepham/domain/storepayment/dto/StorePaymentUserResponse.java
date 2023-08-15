@@ -2,28 +2,19 @@ package com.ssafy.keepham.domain.storepayment.dto;
 
 import lombok.*;
 
+import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StorePaymentResponse {
-
+public class StorePaymentUserResponse {
     private Long roomId;
     //체팅방 번호
 
     private String userNickName;
-    //유저 닉네임
-
-    private String store;
     //가게명
 
-    private String menu;
-    //메뉴명
-
-    private int count;
-    //개수
-
-    private int price;
-    //가격
+    private List<UserMenuPrice> menus;
+    //목록
 }

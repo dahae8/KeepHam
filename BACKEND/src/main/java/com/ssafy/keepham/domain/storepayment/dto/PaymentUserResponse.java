@@ -1,8 +1,6 @@
-package com.ssafy.keepham.domain.storePayment.dto;
+package com.ssafy.keepham.domain.storepayment.dto;
 
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
