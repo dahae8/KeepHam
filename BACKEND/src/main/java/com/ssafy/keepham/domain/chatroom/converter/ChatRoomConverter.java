@@ -4,6 +4,7 @@ import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
 import com.ssafy.keepham.domain.box.convert.BoxConvert;
 import com.ssafy.keepham.domain.box.repository.BoxRepository;
+import com.ssafy.keepham.domain.chatroom.dto.ChatRoomCategoryResponse;
 import com.ssafy.keepham.domain.chatroom.entity.ChatRoomEntity;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomRequest;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
@@ -59,6 +60,35 @@ public class ChatRoomConverter {
                             .createdAt(chatRoomEntity.getCreatedAt())
                             .updatedAt(chatRoomEntity.getUpdatedAt())
                             .closedAt(chatRoomEntity.getClosedAt())
+                            .build();
+
+                }).orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT));
+
+    }
+
+    public ChatRoomCategoryResponse toCategoryResponse(
+            ChatRoomEntity chatRoomEntity
+    ){
+
+        Store store = Optional.ofNullable(storeRepository.findFirstByStoreId(chatRoomEntity.getStoreId()))
+                .orElseThrow(()-> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않은 가게입니다."));
+        return Optional.ofNullable(chatRoomEntity)
+                .map(it -> {
+                    return ChatRoomCategoryResponse.builder()
+                            .id(chatRoomEntity.getId())
+                            .title(chatRoomEntity.getTitle())
+                            .status(chatRoomEntity.getStatus())
+                            .storeId(chatRoomEntity.getStoreId())
+                            .storeName(store.getName())
+                            .box(boxConvert.toResponse(chatRoomEntity.getBox()))
+                            .extensionNumber(chatRoomEntity.getExtensionNumber())
+                            .maxPeopleNumber(chatRoomEntity.getMaxPeopleNumber())
+                            .superUserId(chatRoomEntity.getSuperUserId())
+                            .locked(chatRoomEntity.isLocked())
+                            .createdAt(chatRoomEntity.getCreatedAt())
+                            .updatedAt(chatRoomEntity.getUpdatedAt())
+                            .closedAt(chatRoomEntity.getClosedAt())
+                            .category(store.getCategory())
                             .build();
 
                 }).orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT));

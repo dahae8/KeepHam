@@ -95,7 +95,7 @@ public class ChatRoomService {
         Page<ChatRoomEntity> chatRoomEntityPage = chatRoomRepository.findAllByStatusAndBoxIdsOrderByCreatedAtDesc("OPEN", box_ids, pageable);
         System.out.println(chatRoomEntityPage.getContent());
         List<ChatRoomEntity> chatRooms = chatRoomEntityPage.getContent();
-        return chatRooms.stream().map(chatRoomConverter::toResponse)
+        return chatRooms.stream().map(chatRoomConverter::toCategoryResponse)
                 .collect(Collectors.toList());
     }
 

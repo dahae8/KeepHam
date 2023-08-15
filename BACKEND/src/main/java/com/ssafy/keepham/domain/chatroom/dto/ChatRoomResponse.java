@@ -29,6 +29,4 @@ public class ChatRoomResponse extends BaseEntity{
     private boolean locked;
     private LocalDateTime closedAt;
 
-
-
 }
