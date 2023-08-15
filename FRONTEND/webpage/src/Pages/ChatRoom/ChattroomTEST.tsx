@@ -24,7 +24,7 @@ import BoxSettings from "@/Components/ChatRoom/BoxSettings.tsx";
 import ChatInterface, {
   messageType,
 } from "@/Components/ChatRoom/ChatInterface.tsx";
-import SelectItems from "@/Components/ChatRoom/SelectItems.tsx";
+import SelectMenus, { menuInfo } from "@/Components/ChatRoom/SelectMenus.tsx";
 import UserSelect from "@/Components/ChatRoom/UserSelect.tsx";
 import UserList from "@/Components/ChatRoom/UserList.tsx";
 import { Client, Message } from "@stomp/stompjs";
@@ -79,16 +79,29 @@ function ChatRoom() {
   const [messages, setMessages] = useState<messageType[]>([]);
 
   const [client, setClient] = useState<Client | null>(null);
-  const nname = window.sessionStorage.getItem("userNick")!.toString();
 
   // const [inputMessage, setInputMessage] = useState("");
   const [sockmessages, setsockMessages] = useState<ChatMessage[]>([]);
-  const [roomPassword, setRoomPw] = useState<number>();
+  const [roomPassword, setRoomPw] = useState<number>(-1);
+
+  const [storeMenu, setMenu] = useState<menuInfo[]>([]);
+  const [allowSelectMenu, setAllowSelectMenu] = useState(true);
 
   const navigate = useNavigate();
 
   function getPassword(params: number) {
     setRoomPw(params);
+  }
+  function allowMenu() {
+    setAllowSelectMenu(!allowSelectMenu);
+  }
+  function setCount(id: number, count: number): void {
+    const tempMenu: menuInfo[] = storeMenu.map((menu) => {
+      if (menu.id == id) menu.count = menu.count + count;
+      return menu;
+    });
+
+    setMenu(tempMenu);
   }
 
   const roomInfomation = useLoaderData() as roomInfoType;
@@ -97,9 +110,21 @@ function ChatRoom() {
 
   function navDisplay() {
     if (navIdx === 1) {
-      return <BoxSettings getPassword={getPassword} />;
+      return (
+        <BoxSettings
+          getPassword={getPassword}
+          allow={allowMenu}
+          roomPw={roomPassword}
+        />
+      );
     } else if (navIdx === 2) {
-      return <SelectItems />;
+      return (
+        <SelectMenus
+          menuList={storeMenu}
+          setCount={setCount}
+          selectable={allowSelectMenu}
+        />
+      );
     } else if (navIdx === 3) {
       return <UserSelect roomId={roomId} />;
     } else {
@@ -107,9 +132,10 @@ function ChatRoom() {
     }
   }
 
-  const userNick = sessionStorage.getItem("userNick");
-  const superNick = sessionStorage.getItem("superUser");
+  const userId = sessionStorage.getItem("userId");
+  const superId = sessionStorage.getItem("superUser");
   const boxId = Number(sessionStorage.getItem("enterBoxId"));
+  const nname = sessionStorage.getItem("userNick")!.toString();
 
   const sendHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -138,14 +164,19 @@ function ChatRoom() {
 
   function closeRoom() {
     const deleteRoom = async () => {
-      const key = localStorage.getItem("AccessToken");
+      const key = sessionStorage.getItem("AccessToken");
+      console.log(key);
       const url = import.meta.env.VITE_URL_ADDRESS + "/api/rooms/" + roomId;
       try {
-        const response = await axios.put(url, {
-          headers: {
-            Authorization: `Bearer ` + key,
-          },
-        });
+        const response = await axios.put(
+          url,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ` + key,
+            },
+          }
+        );
         console.log(response);
         navigate("/Home/RoomList");
       } catch (error) {
@@ -167,7 +198,6 @@ function ChatRoom() {
         destination: `/app/joinUser/${roomId}`,
         body: JSON.stringify(enterMessage),
       });
-      console.log("도망!!!");
     }
     navigate("/Home/RoomList");
   }
@@ -247,7 +277,49 @@ function ChatRoom() {
     newClient.activate();
     setClient(newClient);
 
+    //가게메뉴정보 불러오기
+    const addRoom = async () => {
+      // const key = sessionStorage.getItem('AccessToken');
+      const storeId = sessionStorage.getItem("selected StoreInfo");
+      const url = import.meta.env.VITE_URL_ADDRESS + "/api/store/" + storeId;
+      try {
+        const response = await axios.get(url);
+        const tempMenu: menuInfo[] = response.data.data;
+        const filteredMenu: menuInfo[] = [];
+        const idList: number[] = [];
+
+        tempMenu.forEach((menu) => {
+          if (!idList.includes(menu.id)) {
+            idList.push(menu.id);
+            menu.count = 0;
+            filteredMenu.push(menu);
+          }
+        });
+
+        setMenu(filteredMenu);
+        // console.log(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    addRoom();
+
     return () => {
+      if (client) {
+        const enterMessage: ChatMessage_timestamp = {
+          room_id: roomId,
+          box_id: boxId,
+          author: nname,
+          content: nname + " 님이 퇴장하셧습니다",
+          type: "EXIT",
+        };
+        client.publish({
+          destination: `/app/joinUser/${roomId}`,
+          body: JSON.stringify(enterMessage),
+        });
+        console.log("퇴장!!!");
+      }
+
       newClient.deactivate();
     };
   }, []);
@@ -270,6 +342,32 @@ function ChatRoom() {
     });
     setMessages(messageFormchange);
   }, [sockmessages]);
+
+  const [totalPoint, setTotalPoint] = useState([]);
+
+  useEffect(() => {
+    const AccessToken = sessionStorage.getItem("AccessToken");
+    console.log("AccessToken", AccessToken);
+
+    const fetchTotalPoint = async () => {
+      try {
+        const url = import.meta.env.VITE_URL_ADDRESS + "/api/payment/totalPoint";
+        const response = await axios.post(url,{},{
+          headers: {
+            Authorization: `Bearer ` + AccessToken,
+          },
+        });
+        // console.log("포인트조회:",response.data.body.totalPoint);
+
+        // console.log("포인트조회2:",response);
+        setTotalPoint(response.data.body.totalPoint);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchTotalPoint();
+    console.log("totalPoint:", totalPoint);
+  }, [totalPoint]);
 
   return (
     <>
@@ -358,8 +456,8 @@ function ChatRoom() {
                 justifyContent: "end",
               }}
             >
-              {superNick === userNick && (
-                <button
+              {userId === superId && (
+                <Button
                   onClick={() => {
                     closeRoom();
                   }}
@@ -367,7 +465,7 @@ function ChatRoom() {
                   <Typography variant="h6" noWrap>
                     채팅방 종료
                   </Typography>
-                </button>
+                </Button>
               )}
 
               <button
@@ -414,10 +512,16 @@ function ChatRoom() {
               width: "100%",
               backgroundColor: "#4A4E5A",
               display: "flex",
-              justifyContent: "end",
+              justifyContent: "space-between",
               alignItems: "center",
             }}
           >
+            <Box
+              sx={{
+                padding: "1px",
+                color:"white"
+              }}
+            ><Typography>보유 포인트:{totalPoint}원</Typography></Box>
             <IconButton
               sx={{
                 color: "white",

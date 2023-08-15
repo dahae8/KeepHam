@@ -6,6 +6,7 @@
 import { TextField, Button, Grid, Box } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function AddBox() {
   const [typeHelper, setTypeHelper] = useState(" ");
@@ -22,6 +23,12 @@ function AddBox() {
   const [latiValue, setLatiValue] = useState<number>(0);
   const [hardValue, setHardValue] = useState<number>(0);
 
+  const navigate = useNavigate();
+
+  //   35.1760933833769
+  // 126.798072894735
+  // 35.174343,
+  //    126.80091
   const attNames = [
     "type",
     "address",
@@ -73,6 +80,7 @@ function AddBox() {
     }
 
     const addBox = async () => {
+      const key = sessionStorage.getItem("AccessToken");
       const url = import.meta.env.VITE_URL_ADDRESS + "/api/admin/boxs";
       const data = {
         type: typeValue,
@@ -83,8 +91,13 @@ function AddBox() {
         hardness: hardValue,
       };
       try {
-        const response = await axios.post(url, data);
+        const response = await axios.post(url, data, {
+          headers: {
+            Authorization: `Bearer ` + key,
+          },
+        });
         console.log("추가여부:", response);
+        navigate("/Home/Admin");
       } catch (error) {
         console.log(error);
       }

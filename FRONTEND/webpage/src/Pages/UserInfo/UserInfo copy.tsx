@@ -134,21 +134,13 @@ function UserInfo() {
     <Grid container spacing={4}>
       <Grid item xs={8}>
         <TextField
+          disabled
           label="ID"
           variant="standard"
           name="id"
           error={idHelper !== " "}
           helperText={idHelper}
           value={idValue}
-          onClick={() => {
-            setIdHelper("아이디는 변경할 수 없습니다.");
-          }}
-          onChange={() => {
-            setIdHelper("아이디는 변경할 수 없습니다.");
-          }}
-          onMouseOut={() => {
-            setIdHelper(" ");
-          }}
         />
       </Grid>
       {editMode && (
@@ -176,6 +168,7 @@ function UserInfo() {
       {editMode && (
         <Grid item xs={6}>
           <TextField
+            type="password"
             label="비밀번호"
             variant="standard"
             name="pw"
@@ -194,6 +187,7 @@ function UserInfo() {
       {editMode && (
         <Grid item xs={6}>
           <TextField
+            type="password"
             label="비밀번호 확인"
             variant="standard"
             name="pw2"
@@ -211,25 +205,18 @@ function UserInfo() {
       )}
       <Grid item xs={6}>
         <TextField
+          disabled
           label="이름"
           variant="standard"
           name="name"
           error={nameHelper !== " "}
           helperText={nameHelper}
           value={nameValue}
-          onClick={() => {
-            setNameHelper("이름은 변경할 수 없습니다.");
-          }}
-          onChange={() => {
-            setNameHelper("이름은 변경할 수 없습니다.");
-          }}
-          onMouseOut={() => {
-            setNameHelper(" ");
-          }}
         />
       </Grid>
       <Grid item xs={8}>
         <TextField
+          disabled={!editMode}
           label="닉네임"
           variant="standard"
           name="nickName"
@@ -245,7 +232,7 @@ function UserInfo() {
         />
       </Grid>
       <Grid item xs={4}>
-        <Button
+        {editMode && <Button
           variant="outlined"
           className="text-xs"
           onClick={() => {
@@ -254,11 +241,11 @@ function UserInfo() {
           }}
         >
           중복 체크
-        </Button>
+        </Button>}
       </Grid>
-      <Grid item xs={4}></Grid>
       <Grid item xs={8}>
         <TextField
+          disabled
           label="전화번호"
           variant="standard"
           name="number"

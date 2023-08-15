@@ -3,8 +3,10 @@ package com.ssafy.keepham.domain.chatroom.service;
 import com.ssafy.keepham.common.error.ChatRoomError;
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
+import com.ssafy.keepham.domain.box.repository.BoxRepository;
 import com.ssafy.keepham.domain.chat.entity.Message;
 import com.ssafy.keepham.domain.chat.entity.MessageRepository;
+import com.ssafy.keepham.domain.chat.entity.enums.Type;
 import com.ssafy.keepham.domain.chatroom.converter.ChatRoomConverter;
 import com.ssafy.keepham.domain.chatroom.dto.ChatRoomResponse;
 import com.ssafy.keepham.domain.chatroom.dto.ExtendRequest;
@@ -45,6 +47,7 @@ public class ChatRoomManager {
     private final UserService userService;
     private final ChatRoomConverter chatRoomConverter;
     private final RoomUserRepository roomUserRepository;
+    private final BoxRepository boxRepository;
 
 
 
@@ -64,8 +67,13 @@ public class ChatRoomManager {
         Optional<RoomUserEntity> roomUser = roomUserRepository.findFirstByRoomIdAndUserNickName(roomId, userNickname);
 
         if (roomUser.isPresent()) {
-            if (roomUser.get().getUserNickName().equals(userNickname) && roomUser.get().getStatus().equals(RoomUserStatus.NORMAL)) {
-                throw new ApiException(ErrorCode.BAD_REQUEST, "이미 채팅방에 존재하는 유저입니다.");
+            if (roomUser.get().getUserNickName().equals(userNickname)) {
+                roomUser.get().setStatus(RoomUserStatus.NORMAL);
+                roomUserRepository.save(roomUser.get());
+                redisTemplate.opsForSet().add("roomId" + String.valueOf(roomId),userNickname);
+                redisTemplate.expire(String.valueOf("roomId" + String.valueOf(roomId)), 3600*3, TimeUnit.SECONDS);
+                return redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId));
+
             }
             if (roomUser.get()
                     .getStatus()
@@ -102,19 +110,39 @@ public class ChatRoomManager {
     }
     // 채팅방에서 user가 떠나면 해당 방 인원 감소
     @Transactional
-    public void userLeft(Long roomId, String userNickname, RoomUserStatus status){
+    public boolean userLeft(Long roomId, String userNickname, RoomUserStatus status){
         var entity = roomUserRepository.findFirstByRoomIdAndUserNickName(roomId, userNickname)
                 .orElseThrow(()-> new ApiException(ErrorCode.BAD_REQUEST,"이미 퇴장한 유저거나 채팅방에 존재하지 않는 유저입니다."));
         entity.setStatus(status);
+
+
         roomUserRepository.save(entity);
         log.info("퇴장유저 {}", redisTemplate.opsForSet().members("roomId" + String.valueOf(roomId)));
         redisTemplate.opsForSet().remove("roomId" + String.valueOf(roomId), userNickname);
 
         Long currentUserCount = getUserCountInChatRoom(roomId);
         int maxUserCount = getMaxUsersInChatRoom(roomId);
+        var room = chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN);
+
+        if (currentUserCount == 0){
+            room.setStatus(ChatRoomStatus.CLOSE);
+            var box = room.getBox();
+            box.setUsed(false);
+            boxRepository.save(box);
+            chatRoomRepository.save(room);
+            return false;
+        }
+
+        if (room.getSuperUserId().equals(userNickname)){
+            Set<String> randomUser = pickRandomUsers(getAllUser(roomId),1);
+            room.setSuperUserId(randomUser.iterator().next());
+            chatRoomRepository.save(room);
+        }
+
 
         log.info("퇴장후 현재 인원 {}", currentUserCount);
         log.info("채팅방 최대 {}", maxUserCount);
+        return true;
     }
 
     @Transactional
@@ -163,6 +191,9 @@ public class ChatRoomManager {
 
 
     public void sendMessageToRoom(@Payload Message message){
+        if (message.getType().equals(Type.INFO)) {
+            message.setAuthor("공지");
+        }
         message.setTimestamp(LocalDateTime.now());
         messageRepository.save(message);
         kafkaTemplate.send("kafka-chat", message);
@@ -175,6 +206,9 @@ public class ChatRoomManager {
 
         List<String> userList = new ArrayList<>(users);
         Set<String> result = new HashSet<>();
+        if (userList.size() == 0) {
+            return result;
+        }
 
         Random random = new Random();
         while (result.size() < count){
@@ -184,7 +218,6 @@ public class ChatRoomManager {
         return result;
     }
 
-    @Transactional
     public void setSuperUser(NewSuperUser newSuperUser) {
         var roomId = newSuperUser.getRoomId();
         var superUser = newSuperUser.getNewSuperUser();
@@ -197,6 +230,14 @@ public class ChatRoomManager {
             throw new ApiException(ErrorCode.BAD_REQUEST, "방장 위임을 요청한 유저가 방장이 아닙니다.");
         }
         room.setSuperUserId(superUser);
+        chatRoomRepository.save(room);
+        var message = Message.builder()
+                .author("공지")
+                .roomId(roomId)
+                .type(Type.INFO)
+                .content(superUser + "님이 새로운 방장이 되었습니다.")
+                .build();
+        sendMessageToRoom(message);
     }
 
     @Transactional
@@ -228,7 +269,13 @@ public class ChatRoomManager {
             throw new ApiException(ErrorCode.BAD_REQUEST, "자기 자신을 강퇴할 수 없습니다.");
         }
         userLeft(roomId, kickedUserNickName, RoomUserStatus.KICKED);
+        var message = Message.builder()
+                .author("공지")
+                .roomId(roomId)
+                .content(kickedUserNickName + "이 강퇴되었습니다.")
+                .type(Type.KICK)
+                .build();
 
+        sendMessageToRoom(message);
     }
-
 }

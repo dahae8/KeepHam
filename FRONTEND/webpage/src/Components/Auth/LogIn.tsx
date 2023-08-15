@@ -26,7 +26,7 @@ function LogIn() {
       const response = await axios.post(url, data);
       console.log("로그인 결과 : ", response.data.body);
       // 응답 데이터를 콘솔에 출력
-      localStorage.setItem("AccessToken", response.data.body.access_token);
+      sessionStorage.setItem("AccessToken", response.data.body.access_token);
       sessionStorage.setItem("userRole", response.data.body.user_role);
       sessionStorage.setItem("userNick", response.data.body.nick_name);
       return "성공";
@@ -130,6 +130,7 @@ function LogIn() {
                 }}
               >
                 <TextField
+                  type="password"
                   label="password"
                   variant="standard"
                   name="pw"

@@ -1,5 +1,7 @@
+#!/usr/bin/env python
+#-*- coding:utf-8 -*-
+from time import sleep, ctime, time
 import RPi.GPIO as GPIO
-from time import sleep
 import atexit
 import threading
 import setClcd
@@ -9,9 +11,24 @@ from kafka import KafkaConsumer
 import json
 import cv2
 import zbar
+import logging
 
-groupId = "box_1"
-boxId = 1
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter(u'%(asctime)s [%(levelname)8s] %(message)s')
+
+now = ctime(time())
+
+file_handler = logging.FileHandler('/home/pi/log/{}.log'.format(now))
+file_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+
+logger.debug("program started")
+
+groupId = "box_123"
+boxId = 123
 
 # GPIO
 UV = 16
@@ -21,6 +38,8 @@ Red = 15
 Button = 18
 magneticOut = 5
 magneticIn = 6
+
+logger.debug("initialize")
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup([Solenoid, magneticOut, Red], GPIO.OUT, initial=GPIO.HIGH)
@@ -32,6 +51,9 @@ setClcd.clear()
 setClcd.setLine1("Enter PW to Open")
 
 terminate = False
+
+
+logger.debug("run kafka_open")
 
 # 카프카
 password = "123456"
@@ -70,6 +92,9 @@ def subOpen():
 openThread = threading.Thread(target=subOpen)
 openThread.start()
 
+
+logger.debug("run kafka_pw")
+
 def subPw():
     global password
 
@@ -103,6 +128,8 @@ def subPw():
 
 pwThread = threading.Thread(target=subPw)
 pwThread.start()
+
+logger.debug("run keypad")
 
 # 키패드
 confirm = False
@@ -286,7 +313,7 @@ def buttonPressed(pin):
     if preventBtnEvt:
         return
     print("button pressed pin{}".format(pin))
-    boxArrive.send()
+    boxArrive.send(boxId)
 
 GPIO.add_event_detect(Button, GPIO.FALLING, callback=buttonPressed, bouncetime=500)
 

@@ -160,6 +160,7 @@ function SignUp() {
             </Grid>
             <Grid item xs={6}>
               <TextField
+                type="password"
                 label="비밀번호"
                 variant="standard"
                 name="pw"
@@ -176,6 +177,7 @@ function SignUp() {
             </Grid>
             <Grid item xs={6}>
               <TextField
+                type="password"
                 label="비밀번호 확인"
                 variant="standard"
                 name="pw2"
