@@ -69,7 +69,7 @@ public class StorePaymetController {
     }
 
     //유저 구매 확정
-    @Operation(summary = "유저 구메 확정")
+    @Operation(summary = "유저 구매 확정")
     @PostMapping("/user/{roomId}")
     public Api<Object> confirmUser(@PathVariable Long roomId){
 
@@ -79,6 +79,20 @@ public class StorePaymetController {
 
         return Api.OK(storePaymentService.confirmUser(userNickName,roomId));
 
+    }
+
+    //현재 메뉴 확정된 유저 목록
+    @Operation(summary = "현재 메뉴 확정된 유저 목록")
+    @GetMapping("/user/{roomId}")
+    public  Api<Object> confirmAllUser(@PathVariable Long roomId){
+        return Api.OK(storePaymentService.confirmAllUser(roomId));
+    }
+
+    //유저별 확정된 메뉴 목록
+    @Operation(summary = "유저별 확정된 메뉴 목록")
+    @GetMapping("/user/menu/{roomId}")
+    public  Api<Object> confirmUserMenu(@PathVariable Long roomId){
+        return Api.OK(storePaymentService.confirmUserMenu(roomId));
     }
 
 
