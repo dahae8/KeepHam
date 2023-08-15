@@ -341,32 +341,6 @@ function ChatRoom() {
     setMessages(messageFormchange);
   }, [sockmessages]);
 
-  const [totalPoint, setTotalPoint] = useState([]);
-
-  useEffect(() => {
-    const AccessToken = sessionStorage.getItem("AccessToken");
-    console.log("AccessToken", AccessToken);
-
-    const fetchTotalPoint = async () => {
-      try {
-        const url = import.meta.env.VITE_URL_ADDRESS + "/api/payment/totalPoint";
-        const response = await axios.post(url,{},{
-          headers: {
-            Authorization: `Bearer ` + AccessToken,
-          },
-        });
-        // console.log("포인트조회:",response.data.body.totalPoint);
-
-        // console.log("포인트조회2:",response);
-        setTotalPoint(response.data.body.totalPoint);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchTotalPoint();
-    console.log("totalPoint:", totalPoint);
-  }, [totalPoint]);
-
   return (
     <>
       <Box
@@ -510,16 +484,10 @@ function ChatRoom() {
               width: "100%",
               backgroundColor: "#4A4E5A",
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent: "end",
               alignItems: "center",
             }}
           >
-            <Box
-              sx={{
-                padding: "1px",
-                color:"white"
-              }}
-            ><Typography>보유 포인트:{totalPoint}원</Typography></Box>
             <IconButton
               sx={{
                 color: "white",
