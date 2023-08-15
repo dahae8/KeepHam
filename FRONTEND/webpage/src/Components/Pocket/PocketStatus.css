@@ -31,3 +31,11 @@
   flex-grow: 1;
   width: 50%;
 }
+
+.pocket__list-header2 {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 37px;
+}
