@@ -211,7 +211,7 @@ function ChatRoom() {
             },
           }
         );
-        // console.log(response);
+        console.log(response);
         navigate("/Home/RoomList");
       } catch (error) {
         console.log(error);
@@ -285,7 +285,7 @@ function ChatRoom() {
       brokerURL: "wss://i9c104.p.ssafy.io/api/my-chat", // WebSocket 서버 주소
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       debug: (str: string) => {
-        // console.log("디버그 : ", str);
+        console.log("디버그 : ", str);
       },
     });
 
