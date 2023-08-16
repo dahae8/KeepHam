@@ -72,19 +72,12 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
     }
 
-    public List<ChatRoomResponse> findRoomByBoxId(ChatRoomStatus status, int page, int pageSize, Long boxId){
-        Pageable pageable = PageRequest.of(page-1, pageSize);
-        Box box = boxRepository.findFirstById(boxId);
-        Page<ChatRoomEntity> chatRoomEntityPage = chatRoomRepository.findAllByStatusAndBoxOrderByCreatedAtDesc(status, box, pageable);
+    public ChatRoomResponse findRoomById(Long roomId, ChatRoomStatus status){
+        ChatRoomEntity chatRoomEntity = chatRoomRepository.findFirstByIdAndStatus(roomId,status);
+        var response = chatRoomConverter.toResponse(chatRoomEntity);
+        response.setCurrentPeopleNumber(chatRoomManager.getUserCountInChatRoom(response.getId()));
+        return response;
 
-        List<ChatRoomEntity> chatRooms = chatRoomEntityPage.getContent();
-        return chatRooms.stream().map(chatRoomConverter::toResponse)
-                .map(it -> {
-                    var currentNumber = chatRoomManager.getUserCountInChatRoom(it.getId());
-                    it.setCurrentPeopleNumber(currentNumber);
-                    return it;
-                })
-                .collect(Collectors.toList());
     }
 
     public List<ChatRoomResponse> findAllRoomByZipCode(ChatRoomStatus status, int page, int pageSize, String zipCode){
