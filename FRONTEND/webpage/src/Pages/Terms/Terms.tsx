@@ -3,6 +3,7 @@ import Wrapper from './styles.tsx';
 
 function Terms (){
   return (
+    <div className = "container">
     <Wrapper>
         <Grid container direction="column">
           <Grid item className="title">
@@ -73,7 +74,8 @@ function Terms (){
             </Grid>
           </Grid>
         </Grid>
-    </Wrapper>    
+    </Wrapper>
+    </div>    
   );
 }
 
