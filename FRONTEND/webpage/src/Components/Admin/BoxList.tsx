@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
-import { Boxes } from "@/Pages/RoomList/RoomList copy.tsx";
+import { Boxes } from "@/Pages/RoomList/RoomList.tsx";
 
 // 타입
 type propsType = {

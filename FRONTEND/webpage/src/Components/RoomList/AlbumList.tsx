@@ -1,4 +1,4 @@
-import { exRooms } from "@/Pages/RoomList/RoomList copy.tsx";
+import { exRooms } from "@/Pages/RoomList/RoomList.tsx";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 

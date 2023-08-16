@@ -7,7 +7,7 @@
 // }
 
 // export default UserSelect;
-import MiniGame from "../Chatt/MiniGame";
+import MiniGame from "@/Components/ChatRoom/MiniGame.tsx";
 
 interface MyComponentProps {
   roomId: number;

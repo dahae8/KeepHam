@@ -8,21 +8,19 @@ import { store } from "@/Store/store.ts";
 // Pages
 import App from "@/App/App.tsx";
 import Landing from "@/Pages/Landing/Landing.tsx";
-import ChatList from "@/Components/Landing/ChatList.tsx";
 import Auth from "@/Pages/Auth/Auth.tsx";
 // import UserInfo from "@/Pages/UserInfo/UserInfo.tsx";
-import UserInfo from "@/Pages/UserInfo/UserInfo copy.tsx";
+import UserInfo from "@/Pages/UserInfo/UserInfo.tsx";
 // import Main from "@/Pages/Main/Landing.tsx";
 // import User from "./Pages/User/User.tsx";
-import RoomList from "./Pages/RoomList/RoomList copy.tsx";
-import CreateRoom from "./Pages/ChatRoom/CreateRoom.tsx";
+import RoomList from "./Pages/RoomList/RoomList.tsx";
+import CreateRoom from "./Pages/CreateRoom/CreateRoom.tsx";
 import ChatRoom, {
   loader as chatRoomLoader,
-} from "./Pages/ChatRoom/ChattroomTEST.tsx";
+} from "./Pages/ChatRoom/Chatroom.tsx";
 import Terms from "./Pages/Terms/Terms.tsx";
 import AboutMe from "./Pages/AboutMe/AboutMe.tsx";
 import ContactUs from "./Pages/ContactUs/ContactUs.tsx";
-import ServiceArea from "./Pages/ServiceArea/ServiceArea.tsx";
 import Admin from "./Pages/Admin/Admin.tsx";
 import AddBox from "./Pages/Admin/AddBox.tsx";
 import Payment from "./Pages/Payment/Payment.tsx";
@@ -42,14 +40,6 @@ const router = createBrowserRouter([
     path: "/Home",
     element: <App />,
     children: [
-      {
-        path: "/Home/ServiceArea",
-        element: <ServiceArea />,
-      },
-      {
-        path: "/Home/ChatList/:boxId",
-        element: <ChatList />,
-      },
       {
         path: "/Home/RoomList",
         element: <RoomList />,
@@ -143,7 +133,7 @@ const theme = createTheme({
       main: "#4A4E5A",
       light: "#5B616E",
       dark: "#40434C",
-    }
+    },
   },
 });
 

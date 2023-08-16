@@ -3,9 +3,9 @@
 // - 비밀번호 : 유효성검사(8~16자리, 특수문자, 대문자, 숫자 포함필수)
 // - 닉네임 : 3~8 글자, 영어,한글,숫자만 가능
 
-import { useNavigate } from "react-router-dom";
-import { TextField, Button, Grid, Box, Typography } from "@mui/material";
-import { useState } from "react";
+import { TextField, Button, Grid, Box } from "@mui/material";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function UserInfo() {
   const [editMode, setEditMode] = useState(false);
@@ -14,17 +14,26 @@ function UserInfo() {
   const [pwHelper, setPwHelper] = useState(" ");
   const [pw2Helper, setPw2Helper] = useState(" ");
   const [nameHelper, setNameHelper] = useState(" ");
-  const [ageHelper, setAgeHelper] = useState(" ");
   const [nickNameHelper, setNickNameHelper] = useState(" ");
   const [numberHelper, setNumberHelper] = useState(" ");
 
-  const attNames = ["id", "pw", "pw2", "name", "age", "nickName", "number"];
+  const [idValue, setIdValue] = useState("");
+  const [pwValue, setPwValue] = useState("");
+  const [pw2Value, setPw2Value] = useState("");
+  const [nameValue, setNameValue] = useState("");
+  const [nickNameValue, setNickNameValue] = useState("");
+  const [numberValue, setNumberValue] = useState("");
+
+  const [pwConfirm, setpwConfirm] = useState<boolean | null>(null);
+  const [NickConfirm, setNickConfirm] = useState<boolean | null>(null);
+  console.log(NickConfirm);
+
+  const attNames = ["id", "pw", "pw2", "name", "nickName", "number"];
   const setter = [
     setIdHelper,
     setPwHelper,
     setPw2Helper,
     setNameHelper,
-    setAgeHelper,
     setNickNameHelper,
     setNumberHelper,
   ];
@@ -34,12 +43,9 @@ function UserInfo() {
     "패스워드의 길이는 8자리 이상이어야 합니다",
     "패스워드 확인란을 입력해주세요",
     "이름을 입력해주세요",
-    "나이를 선택해주세요",
     "채팅방에서 사용할 닉네임을 입력해주세요",
     "전화번호를 입력해주세요",
   ];
-
-  const navigate = useNavigate();
 
   const signUpHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,37 +65,82 @@ function UserInfo() {
       }
     });
 
-    if (retErr) {
+    if (retErr || pwConfirm) {
       return;
     }
-
-    navigate("/Home");
+    const changeUserInfo = async () => {
+      const url = import.meta.env.VITE_URL_ADDRESS + "/api/user/" + idValue;
+      const data = {
+        password: "string",
+        new_password: "string",
+        email: "string",
+        tel: "string",
+      };
+      try {
+        const response = await axios.put(url, data);
+        console.log("가입여부:", response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    changeUserInfo();
   };
-
-  function ages() {
-    const arr = [];
-    for (let i = 0; i < 120; i++) {
-      arr.push(
-        <option key={i} value={i}>
-          {i}
-        </option>
-      );
+  useEffect(() => {
+    const UserId = sessionStorage.getItem("userId");
+    const fetchUserInfo = async () => {
+      try {
+        const url = import.meta.env.VITE_URL_ADDRESS + "/api/user/" + UserId;
+        const response = await axios.get(url);
+        const data = response.data.body;
+        console.log(data);
+        setIdValue(data.user_id);
+        setNameValue(data.name);
+        setNickNameValue(data.nick_name);
+        setNumberValue(data.tel);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUserInfo();
+  }, []);
+  useEffect(() => {
+    if (pw2Value !== pwValue) {
+      setpwConfirm(false);
+      setPw2Helper("비밀번호가 다릅니다");
+    } else {
+      setpwConfirm(true);
+      setPw2Helper(" ");
     }
-    return arr;
+  }, [pw2Value]);
+
+  async function checkNickinServer() {
+    const url =
+      import.meta.env.VITE_URL_ADDRESS +
+      "/api/validation/nickname?nickName=" +
+      nickNameValue;
+    try {
+      const response = await axios.get(url);
+      console.log("확인 결과 : ", response.data.body);
+      setNickConfirm(response.data.body);
+      if (response.data.body === false) {
+        setNickNameHelper("중복된 닉네임입니다");
+      } else setNickNameHelper("사용 가능한 닉네임입니다");
+    } catch (error) {
+      console.error("에러메시지 :", error);
+    }
   }
 
   const items = (
     <Grid container spacing={4}>
       <Grid item xs={8}>
         <TextField
+          disabled
           label="ID"
           variant="standard"
           name="id"
           error={idHelper !== " "}
           helperText={idHelper}
-          InputProps={{
-            readOnly: !editMode,
-          }}
+          value={idValue}
         />
       </Grid>
       {editMode && (
@@ -101,87 +152,114 @@ function UserInfo() {
               alignItems: "end",
             }}
           >
-            <Typography variant="body2">회원탈퇴</Typography>
+            <Button
+              variant="outlined"
+              className="text-xs"
+              color="error"
+              onClick={() => {
+                setEditMode(true);
+              }}
+            >
+              회원 탈퇴
+            </Button>
           </Box>
+        </Grid>
+      )}
+      {editMode && (
+        <Grid item xs={6}>
+          <TextField
+            type="password"
+            label="비밀번호"
+            variant="standard"
+            name="pw"
+            error={pwHelper !== " "}
+            helperText={pwHelper}
+            value={pwValue}
+            onChange={(e) => {
+              if (editMode) setPwValue(e.target.value);
+            }}
+            onClick={() => {
+              setPwHelper(" ");
+            }}
+          />
+        </Grid>
+      )}
+      {editMode && (
+        <Grid item xs={6}>
+          <TextField
+            type="password"
+            label="비밀번호 확인"
+            variant="standard"
+            name="pw2"
+            error={pw2Helper !== " "}
+            helperText={pw2Helper}
+            value={pw2Value}
+            onChange={(e) => {
+              setPw2Value(e.target.value);
+            }}
+            onClick={() => {
+              if (pwValue === pw2Value) setPw2Helper(" ");
+            }}
+          />
         </Grid>
       )}
       <Grid item xs={6}>
         <TextField
-          label="비밀번호"
-          variant="standard"
-          name="pw"
-          error={pwHelper !== " "}
-          helperText={pwHelper}
-          InputProps={{
-            readOnly: !editMode,
-          }}
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <TextField
-          label="비밀번호 확인"
-          variant="standard"
-          name="pw2"
-          error={pw2Helper !== " "}
-          helperText={pw2Helper}
-          InputProps={{
-            readOnly: !editMode,
-          }}
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <TextField
+          disabled
           label="이름"
           variant="standard"
           name="name"
           error={nameHelper !== " "}
           helperText={nameHelper}
-          InputProps={{
-            readOnly: !editMode,
-          }}
+          value={nameValue}
         />
-      </Grid>
-      <Grid item xs={3}>
-        <TextField
-          select={editMode}
-          label="나이"
-          variant="standard"
-          name="age"
-          error={ageHelper !== " "}
-          helperText={ageHelper}
-          InputProps={{
-            readOnly: !editMode,
-          }}
-          SelectProps={{
-            readOnly: !editMode,
-            native: true,
-          }}
-        >
-          {ages()}
-        </TextField>
       </Grid>
       <Grid item xs={8}>
         <TextField
+          disabled={!editMode}
           label="닉네임"
           variant="standard"
           name="nickName"
           error={nickNameHelper !== " "}
           helperText={nickNameHelper}
-          InputProps={{
-            readOnly: !editMode,
+          value={nickNameValue}
+          onChange={(e) => {
+            setNickNameValue(e.target.value);
+          }}
+          onClick={() => {
+            setNickNameHelper(" ");
           }}
         />
       </Grid>
-      <Grid item xs={4}></Grid>
+      <Grid item xs={4}>
+        {editMode && <Button
+          variant="outlined"
+          className="text-xs"
+          onClick={() => {
+            if (idValue !== "") checkNickinServer();
+            else setIdHelper("닉네임을 입력하세요");
+          }}
+        >
+          중복 체크
+        </Button>}
+      </Grid>
       <Grid item xs={8}>
         <TextField
+          disabled
           label="전화번호"
           variant="standard"
           name="number"
           error={numberHelper !== " "}
           helperText={numberHelper}
-          InputProps={{
-            readOnly: !editMode,
+          value={numberValue}
+          onClick={() => {
+            setNumberHelper("번호는 변경할 수 없습니다.");
+          }}
+          onChange={() => {
+            setNumberHelper("번호는 변경할 수 없습니다.");
+          }}
+          onMouseOut={() => {
+            setNumberHelper(" ");
           }}
         />
       </Grid>
@@ -218,6 +296,9 @@ function UserInfo() {
                 className="text-xs"
                 onClick={() => {
                   setEditMode(false);
+                  setter.forEach((e) => {
+                    e(" ");
+                  });
                 }}
               >
                 취소

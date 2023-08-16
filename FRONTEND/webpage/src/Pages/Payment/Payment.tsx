@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import PocketContainer from "../../Components/Pocket/PocketContainer";
+import PocketContainer from "@/Components/Pocket/PocketContainer.tsx";
 import "../../Styles/font.css";
 import "../../Styles/button.css";
 import axios from "axios";

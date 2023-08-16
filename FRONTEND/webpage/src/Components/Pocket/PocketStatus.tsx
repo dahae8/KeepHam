@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { addComma } from "../../Utils/numberUtils";
+import { addComma } from "@/Utils/numberUtils.tsx";
 import "./PocketStatus.css";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -44,41 +44,47 @@ const PocketStatus: React.FC<PocketStatusProps> = (props) => {
     // setTotalExpense(total.expense);
   }, [props.items]);
 
+  const AccessToken = sessionStorage.getItem("AccessToken");
+  console.log("AccessToken", AccessToken);
 
-    const AccessToken = sessionStorage.getItem("AccessToken");
-    console.log("AccessToken", AccessToken);
-
-    const fetchRefund = async () => {
-      try {
-        const url = import.meta.env.VITE_URL_ADDRESS + "/api/payment/refund";
-        const response = await axios.post(url, {}, {
+  const fetchRefund = async () => {
+    try {
+      const url = import.meta.env.VITE_URL_ADDRESS + "/api/payment/refund";
+      const response = await axios.post(
+        url,
+        {},
+        {
           headers: {
             Authorization: `Bearer ` + AccessToken,
           },
-        });
-        console.log(response.data.body);
-        console.log(response);
-        alert("환불되었습니다.")
-        location.reload();
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
+        }
+      );
+      console.log(response.data.body);
+      console.log(response);
+      alert("환불되었습니다.");
+      location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="pocket__status">
-      <div className = "pocket__list-header2">
-      <div className="pocket__status-title">
-        <h1 className="fs-normal fw-light">포인트 현황</h1>
-        <strong className="fs-title">
-          {addComma(totalBalance.toString())}원
-        </strong>
-      </div>
-      <div>
-      <Button variant="outlined" onClick={()=>navigate("/Home/Point")}>포인트 충전</Button>
-      <Button variant="contained" onClick={fetchRefund}>환불</Button>
-      </div>
+      <div className="pocket__list-header2">
+        <div className="pocket__status-title">
+          <h1 className="fs-normal fw-light">포인트 현황</h1>
+          <strong className="fs-title">
+            {addComma(totalBalance.toString())}원
+          </strong>
+        </div>
+        <div>
+          <Button variant="outlined" onClick={() => navigate("/Home/Point")}>
+            포인트 충전
+          </Button>
+          <Button variant="contained" onClick={fetchRefund}>
+            환불
+          </Button>
+        </div>
       </div>
 
       {/* <div className="pocket__status-detail">

@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
-import { exRooms } from "@/Pages/RoomList/RoomList copy.tsx";
+import { exRooms } from "@/Pages/RoomList/RoomList.tsx";
 import axios from "axios";
 
 // 타입

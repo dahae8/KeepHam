@@ -1,6 +1,6 @@
-import Grid from '@mui/material/Grid'
-import Wrapper from './styles.tsx';
-function ContactUs (){
+import Grid from "@mui/material/Grid";
+import Wrapper from "@/Pages/ContactUs/styles.tsx";
+function ContactUs() {
   return (
     <div className="container">
       <Wrapper>

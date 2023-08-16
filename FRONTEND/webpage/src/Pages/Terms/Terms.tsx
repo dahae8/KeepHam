@@ -1,10 +1,10 @@
-import Grid from '@mui/material/Grid'
-import Wrapper from './styles.tsx';
+import Grid from "@mui/material/Grid";
+import Wrapper from "@/Pages/Terms/styles.tsx";
 
-function Terms (){
+function Terms() {
   return (
-    <div className = "container">
-    <Wrapper>
+    <div className="container">
+      <Wrapper>
         <Grid container direction="column">
           <Grid item className="title">
             Privacy Policy
@@ -74,8 +74,8 @@ function Terms (){
             </Grid>
           </Grid>
         </Grid>
-    </Wrapper>
-    </div>    
+      </Wrapper>
+    </div>
   );
 }
 
