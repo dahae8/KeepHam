@@ -1,4 +1,4 @@
-package com.ssafy.keepham.domain.storepayment.service;
+package com.ssafy.keepham.domain.storePayment.service;
 
 import com.ssafy.keepham.common.error.ErrorCode;
 import com.ssafy.keepham.common.exception.ApiException;
@@ -9,10 +9,10 @@ import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
 import com.ssafy.keepham.domain.payment.entity.Payment;
 import com.ssafy.keepham.domain.payment.repository.PaymentRepository;
 import com.ssafy.keepham.domain.payment.service.PaymentService;
-import com.ssafy.keepham.domain.storepayment.dto.*;
-import com.ssafy.keepham.domain.storepayment.repository.StorePaymentRepository;
-import com.ssafy.keepham.domain.storepayment.convert.StorePaymentConvert;
-import com.ssafy.keepham.domain.storepayment.entity.StorePayment;
+import com.ssafy.keepham.domain.storePayment.dto.*;
+import com.ssafy.keepham.domain.storePayment.repository.StorePaymentRepository;
+import com.ssafy.keepham.domain.storePayment.convert.StorePaymentConvert;
+import com.ssafy.keepham.domain.storePayment.entity.StorePayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -37,8 +37,14 @@ public class StorePaymentService {
     public List<StorePaymentResponse> saveUsermMenu(StorePaymentRequest storePaymentRequest, String userNickName) {
 
         StorePayment checkStorePaymentDB = storePaymentRepository.findFirstByUserNickName(userNickName);
-        if(checkStorePaymentDB != null ){
-            throw new ApiException(ErrorCode.BAD_REQUEST,"이미 메뉴확정 되었습니다.");
+         if(checkStorePaymentDB != null ){
+             if(checkStorePaymentDB.getRoomId() !=  storePaymentRequest.getRoomId()){
+                 storePaymentRepository.deleteByUserNickName(userNickName);
+             }
+             else{
+                 throw new ApiException(ErrorCode.BAD_REQUEST,"이미 메뉴확정 되었습니다.");
+             }
+
         }
 
         List<StorePaymentResponse> resList = new ArrayList<>();
@@ -204,12 +210,12 @@ public class StorePaymentService {
         Set<String> uniqueUserNickNames = new HashSet<>();
 
         for (StorePayment storePayment : storePayments) {
-            System.out.println(storePayment.getUserNickName());
             uniqueUserNickNames.add(storePayment.getUserNickName());
         }
         return uniqueUserNickNames;
     }
 
+    //유저별 확정된 메뉴 목록 조회
     public List<StorePaymentUserResponse> confirmUserMenu(Long roomId) {
 
         var room = Optional.ofNullable(chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN))
@@ -219,12 +225,17 @@ public class StorePaymentService {
 
         //체팅방 유저 목록
         Set<String> ids = chatRoomManager.getAllUser(roomId);
+
         for (String id : ids) {
 
             StorePaymentUserResponse res = new StorePaymentUserResponse();
 
             List<UserMenuPrice> userMenuPriceList = new ArrayList<>();
             List<StorePayment> storePaymentList = storePaymentRepository.findByUserNickName(id);
+
+            if(storePaymentList.size()==0){
+                continue;
+            }
 
             for (StorePayment sp : storePaymentList) {
                 UserMenuPrice userMenuPrice = new UserMenuPrice();
@@ -243,9 +254,37 @@ public class StorePaymentService {
         return resList;
     }
 
-    // 매 1시간마다 자동 구매확정
+    //방에 없는 유저 메뉴 목록 삭제
+    public void deleteStorePaymentUser(Long roomId) {
+
+        Set<String> ids = chatRoomManager.getAllUser(roomId);
+
+        List<StorePayment> storePayments = storePaymentRepository.findByRoomId(roomId);
+        Set<String> uniqueUserNickNames = new HashSet<>();
+
+        for (StorePayment storePayment : storePayments) {
+            uniqueUserNickNames.add(storePayment.getUserNickName());
+        }
+
+        for (String userNickName : uniqueUserNickNames) {
+            int checkid =0;
+            for (String id : ids) {
+                if(userNickName.equals(id)){
+                    checkid=1;
+                    break;
+                }
+            }
+            if(checkid==0){
+                storePaymentRepository.deleteByUserNickName(userNickName);
+            }
+        }
+    }
+
+    // 매 1시간마다 실행
     @Scheduled(fixedDelay = 1 * 60 * 60 * 1000)
     public void confirmExpiredPayments() {
+
+        // 매 1시간마다 자동 구매확정
         LocalDateTime currentTime = LocalDateTime.now();
         LocalDateTime before12Hours = currentTime.minus(12, ChronoUnit.HOURS);
         List<Payment> expiredPayments = paymentRepository.findByInsertTimeBeforeAndAgreementFalse(before12Hours);
@@ -253,14 +292,19 @@ public class StorePaymentService {
         for (Payment payment : expiredPayments) {
             confirmUser(payment.getUserNickName(), payment.getChatroomId());
         }
-    }
 
-    // 1시간마다 자동 삭제
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 1)
-    public void deleteExpiredStorePayments() {
+        // 1시간마다 구매내역 자동 삭제
+
         LocalDateTime currentDateTime = LocalDateTime.now();
-        List<StorePayment> expiredPayments = storePaymentRepository.findByDeletionTimeBefore(currentDateTime);
-        storePaymentRepository.deleteAll(expiredPayments);
+        System.out.println(currentDateTime);
+
+        List<StorePayment> expiredStorePayments = storePaymentRepository.findByDeletionTimeBefore(currentDateTime);
+        for (StorePayment storePayment:  expiredStorePayments){
+            System.out.println("~~~~~~~~~~~");
+            System.out.println(storePayment.toString());
+        }
+
+        storePaymentRepository.deleteAll(expiredStorePayments);
     }
 
 
