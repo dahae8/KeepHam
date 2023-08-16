@@ -30,7 +30,7 @@ function Footer() {
                   window.scrollTo(0, 0);
                 }}
               >
-                Developer Introduction
+                Keep함이란
               </span>
             </li>
             <li>
@@ -45,18 +45,18 @@ function Footer() {
             </li>
           </ul>
           <ul className="info">
-            <li>Samsung Multi Campus | CEO : Young Sang Kim</li>
+            <li>Gwangju SSAFY Campus | CEO : Lee Sung Yeon</li>
             <li>
-              212 Tehran-Ro, Gangnam-Gu, Seoul (Yeoksam-Dong 718-5 Address)
+            광주광역시 광산구 하남산단 6번로 107
             </li>
-            <li>Tel 02-2222-5566 | Fax 02-2233-6655</li>
+            <li>Tel 02-0000-0000 | Fax 02-0000-0000</li>
           </ul>
           <p>Copyright by Multicampus Co., Ltd. All rights reserved.</p>
         </Grid>
         <Grid item sm={12} md={4} className="right-box">
           <Grid className="text-box">
             <h2>For Help</h2>
-            <h3>help@samsungsupport.com</h3>
+            <h3>KeepHam@gmail.com</h3>
             <h4>Contact Out Customer Support Team</h4>
           </Grid>
         </Grid>
