@@ -31,6 +31,7 @@ import UserList from "@/Components/ChatRoom/UserList.tsx";
 import { Client, Message } from "@stomp/stompjs";
 import axios from "axios";
 
+
 type roomInfoType = {
   roomId: number;
   roomTitle: string;
@@ -391,6 +392,33 @@ function ChatRoom() {
     fetchTotalPoint();
     console.log("totalPoint:", totalPoint);
   }, [totalPoint]);
+
+
+  // 창 종료 시 퇴장처리
+  const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+    event.preventDefault();
+    event.returnValue = "떠나지마"
+    goingOutRoom();
+  }
+
+  useEffect(() => {
+    window.onpopstate = function(event) {
+      if (event) {
+        goingOutRoom()
+      }
+    }
+  })
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+
+    }
+  }, [handleBeforeUnload])
+
+
 
   return (
     <>
