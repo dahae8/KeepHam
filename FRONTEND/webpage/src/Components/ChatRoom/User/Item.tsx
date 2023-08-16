@@ -6,6 +6,8 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import axios from "axios";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import StarIcon from "@mui/icons-material/Star";
 
 type ItemProps = {
   id: number;
@@ -133,6 +135,11 @@ function Item(props: ItemProps) {
         ) : (
           <ListItem>
             <ListItemText primary={itemTitle} />
+            {itemTitle === superNick ? (
+              <ListItemIcon>
+                <StarIcon />
+              </ListItemIcon>
+            ) : null}
           </ListItem>
         )}
         <Divider />
