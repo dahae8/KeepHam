@@ -92,6 +92,14 @@ public class ChatRoomApiController {
         return Api.OK(true);
     }
 
+    @Operation(summary = "방 step 변경")
+    @PutMapping("/rooms/{roomId}/{step}")
+    public Api<ChatRoomResponse> changeStep(@PathVariable Long roomId, @PathVariable int step){
+        var response = chatRoomService.changeStep(roomId, step);
+        return Api.OK(response);
+    }
+
+
     @Operation(summary = "해당 채팅방에 현재 유저 전부 삭제")
     @GetMapping("rooms/{roomId}/clear")
     public Api<String> clearRoom(@PathVariable Long roomId){
@@ -133,6 +141,5 @@ public class ChatRoomApiController {
         chatRoomManager.kickUser(request);
         return Api.OK(true);
     }
-
 
 }

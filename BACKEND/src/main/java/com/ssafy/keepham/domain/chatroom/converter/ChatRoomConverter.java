@@ -60,6 +60,7 @@ public class ChatRoomConverter {
                             .createdAt(chatRoomEntity.getCreatedAt())
                             .updatedAt(chatRoomEntity.getUpdatedAt())
                             .closedAt(chatRoomEntity.getClosedAt())
+                            .step(chatRoomEntity.getStep())
                             .build();
 
                 }).orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT));
