@@ -45,16 +45,14 @@ public class ChatRoomApiController {
         return Api.OK(chatRoomService.openedRoom(status, page, pageSize));
     }
 
-    @Operation(summary = "boxId로 채팅방 조회")
-    @GetMapping("/rooms/{boxId}")
-    private Api<List<ChatRoomResponse>> findRoomByBoxId(
-            @PathVariable Long boxId,
-            @RequestParam ChatRoomStatus status,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "6") int pageSize
+    @Operation(summary = "roomId로 채팅방 조회")
+    @GetMapping("/rooms/{roomId}")
+    private Api<ChatRoomResponse> findRoomByBoxId(
+            @PathVariable Long roomId,
+            @RequestParam ChatRoomStatus status
     ){
 
-        return Api.OK(chatRoomService.findRoomByBoxId(status, page, pageSize, boxId));
+        return Api.OK(chatRoomService.findRoomById(roomId, status));
     }
 
     @Operation(summary = "zipCode로 채팅방 조회")
@@ -93,6 +91,14 @@ public class ChatRoomApiController {
         chatRoomService.closeRoom(roomId);
         return Api.OK(true);
     }
+
+    @Operation(summary = "방 step 변경")
+    @PutMapping("/rooms/{roomId}/{step}")
+    public Api<ChatRoomResponse> changeStep(@PathVariable Long roomId, @PathVariable int step){
+        var response = chatRoomService.changeStep(roomId, step);
+        return Api.OK(response);
+    }
+
 
     @Operation(summary = "해당 채팅방에 현재 유저 전부 삭제")
     @GetMapping("rooms/{roomId}/clear")
@@ -135,6 +141,5 @@ public class ChatRoomApiController {
         chatRoomManager.kickUser(request);
         return Api.OK(true);
     }
-
 
 }
