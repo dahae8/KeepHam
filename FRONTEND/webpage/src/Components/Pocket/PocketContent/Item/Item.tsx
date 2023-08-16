@@ -18,7 +18,7 @@ const Item: React.FC<ItemProps> = (props) => {
   const itemTitle = props.title;
   let itemAmount = "-" + addComma(props.amount.toString());
 
-  if (props.amountType === "충전") {
+  if (props.amount >0) {
     fontStyleByAmountType = fontStyleByAmountType.replace("red", "green");
     itemAmount = itemAmount.replace("-", "+");
   }

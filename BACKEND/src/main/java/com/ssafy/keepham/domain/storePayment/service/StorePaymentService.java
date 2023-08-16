@@ -74,9 +74,9 @@ public class StorePaymentService {
     public HashMap<String, Object> deleteByUserNickName(String userNickName) {
         HashMap<String, Object> res = new HashMap<>();
 
-        StorePayment storePayment = storePaymentRepository.findFirstByUserNickName(userNickName);
+        List<StorePayment> storePayments = storePaymentRepository.findByUserNickName(userNickName);
 
-        if (storePayment != null) {
+        if (storePayments.size()>0) {
             storePaymentRepository.deleteByUserNickName(userNickName);
             res.put("result", String.format("[%s]의 메뉴확정내역이 삭제되었습니다.", userNickName));
         } else {
