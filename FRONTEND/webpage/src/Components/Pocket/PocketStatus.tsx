@@ -18,8 +18,8 @@ interface PocketStatusProps {
 
 const PocketStatus: React.FC<PocketStatusProps> = (props) => {
   const [totalBalance, setTotalBalance] = useState<number>(0);
-  const [totalIncome, setTotalIncome] = useState<number>(0);
-  const [totalExpense, setTotalExpense] = useState<number>(0);
+  // const [totalIncome, setTotalIncome] = useState<number>(0);
+  // const [totalExpense, setTotalExpense] = useState<number>(0);
 
   const navigate = useNavigate();
 
@@ -40,8 +40,8 @@ const PocketStatus: React.FC<PocketStatusProps> = (props) => {
     }
 
     setTotalBalance(total.balance);
-    setTotalIncome(total.income);
-    setTotalExpense(total.expense);
+    // setTotalIncome(total.income);
+    // setTotalExpense(total.expense);
   }, [props.items]);
 
 
@@ -81,7 +81,7 @@ const PocketStatus: React.FC<PocketStatusProps> = (props) => {
       </div>
       </div>
 
-      <div className="pocket__status-detail">
+      {/* <div className="pocket__status-detail">
         <div className="pocket__status-detail--desc">
           <span className="fs-normal fw-light">수입</span>
           <strong className="fs-emphasis fc-green">
@@ -94,7 +94,7 @@ const PocketStatus: React.FC<PocketStatusProps> = (props) => {
             {addComma(totalExpense.toString())}원
           </strong>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
