@@ -71,6 +71,8 @@ type propsType = {
   setCount: (id: number, count: number) => void;
   roomId: number;
   storeName: string;
+  superUser: string;
+  step: number;
 };
 
 function menuListItems(
@@ -162,7 +164,7 @@ function SelectMenus(props: propsType) {
   const [selectedCnt, setSelectedCnt] = useState(0);
 
   const userNick = sessionStorage.getItem("userNick")!;
-  const superUser = sessionStorage.getItem("superUser")!;
+  const superUser = props.superUser;
 
   const tabHandler = (_event: SyntheticEvent, newTabIdx: number) => {
     setTabIdx(newTabIdx);
@@ -187,7 +189,6 @@ function SelectMenus(props: propsType) {
 
     // 유저목록 불러오기
     const loadState = async () => {
-      // const key = sessionStorage.getItem('AccessToken');
       const roomId = props.roomId;
       const url =
         import.meta.env.VITE_URL_ADDRESS + "/api/rooms/" + roomId + "/users";
@@ -217,7 +218,6 @@ function SelectMenus(props: propsType) {
 
       if (selectedUsers.includes(userNick)) {
         setSelected(true);
-        
       }
 
       setSelectedCnt(selectedUsers.length);
@@ -346,38 +346,73 @@ function SelectMenus(props: propsType) {
             {!selected ? "선택 확인" : "다시 선택"}
           </Button>
         </Box>
-        <Box
-          sx={{
-            width: "60%",
-            display: userNick === superUser ? "flex" : "none",
-            justifyContent: "space-between",
-            alignItems: "start",
-            gap: 1,
-          }}
-        >
+        {userNick === superUser ? (
           <Box
             sx={{
               width: "60%",
-              overflow: "hidden",
               display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
+              justifyContent: "space-between",
+              alignItems: "start",
+              gap: 1,
             }}
           >
-            <Typography variant="body1">선택완료 / 전체인원</Typography>
-            <Typography variant="body1">
-              {selectedCnt} / {userCnt}
-            </Typography>
+            <Box
+              sx={{
+                width: "60%",
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Typography variant="body1">선택완료 / 전체인원</Typography>
+              <Typography variant="body1">
+                {selectedCnt} / {userCnt}
+              </Typography>
+            </Box>
+            <Button
+              variant="contained"
+              disabled={selectedCnt !== userCnt}
+              onClick={switchSelectButton}
+            >
+              주문 확정
+            </Button>
           </Box>
-          <Button
-            variant="contained"
-            disabled={selectedCnt !== userCnt}
-            onClick={switchSelectButton}
+        ) : (
+          <Box
+            sx={{
+              width: "60%",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "start",
+              gap: 1,
+            }}
           >
-            구매 확정
-          </Button>
-        </Box>
+            <Box
+              sx={{
+                width: "60%",
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Typography variant="body1">선택완료 / 전체인원</Typography>
+              <Typography variant="body1">
+                {selectedCnt} / {userCnt}
+              </Typography>
+            </Box>
+            <Button
+              variant="contained"
+              disabled={selectedCnt !== userCnt}
+              onClick={switchSelectButton}
+            >
+              구매 확정
+            </Button>
+          </Box>
+        )}
       </Box>
     </>
   );

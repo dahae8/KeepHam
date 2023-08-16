@@ -10,7 +10,7 @@ interface MyComponentProps {
 }
 
 const UserList: React.FC<MyComponentProps> = (props) => {
-  console.log("방번호", props.roomId);
+  // console.log("방번호", props.roomId);
   // const [userNick, setUserNick] = useState(sessionStorage.getItem("userNick"));
   const [superNick, setSuperNick] = useState(
     sessionStorage.getItem("superUser")
@@ -63,7 +63,7 @@ const UserList: React.FC<MyComponentProps> = (props) => {
         const url =
           import.meta.env.VITE_URL_ADDRESS +
           "/api/rooms/" +
-          props.boxId +
+          props.roomId +
           "?status=OPEN&page=1&pageSize=1";
         const response = await axios.get(url);
         // console.log("결과:", response.data.body[0].super_user_id);

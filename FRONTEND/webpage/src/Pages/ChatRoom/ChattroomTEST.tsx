@@ -20,6 +20,7 @@ import {
   LoaderFunctionArgs,
   useNavigate,
   useLoaderData,
+  redirect,
 } from "react-router-dom";
 import BoxSettings from "@/Components/ChatRoom/BoxSettings.tsx";
 import ChatInterface, {
@@ -32,25 +33,56 @@ import { Client, Message } from "@stomp/stompjs";
 import axios from "axios";
 
 type roomInfoType = {
+  boxId: number;
   roomId: number;
+  storeId: number;
   roomTitle: string;
   store: string;
   step: number;
   remainTime: string;
+  superNick: string;
+  address: string;
+  maxPeople: number;
 };
 
-export async function loader({ params }: LoaderFunctionArgs) {
-  const roomTitle = sessionStorage.getItem("roomTitle");
-  const storeTitle = sessionStorage.getItem("storeName");
-  const info: roomInfoType = {
-    roomId: Number(params.roomId),
-    roomTitle: roomTitle!,
-    store: storeTitle!,
-    step: 1,
-    remainTime: "15:00",
-  };
+const key = "Bearer " + sessionStorage.getItem("AccessToken");
 
-  return info;
+export async function loader({ params }: LoaderFunctionArgs) {
+  const url =
+    import.meta.env.VITE_URL_ADDRESS +
+    "/api/rooms/" +
+    params.roomId +
+    "?status=OPEN";
+  try {
+    const response = await axios({
+      method: "get",
+      url: url,
+      headers: {
+        Authorization: key,
+      },
+    });
+
+    console.log(response);
+
+    const info: roomInfoType = {
+      boxId: response.data.body.box.box_id,
+      roomId: Number(params.roomId),
+      storeId: response.data.body.store_id,
+      roomTitle: response.data.body.title,
+      store: response.data.body.store_name,
+      step: response.data.body.step,
+      remainTime: response.data.body.closed_at,
+      superNick: response.data.body.super_user_id,
+      address: response.data.body.box.detailed_address,
+      maxPeople: response.data.body.max_people_number,
+    };
+
+    return info;
+  } catch (error) {
+    console.log(error);
+    alert("방 정보를 조회할 수 없습니다! ");
+    return redirect("/Home/RoomList");
+  }
 }
 
 interface ChatMessage {
@@ -75,8 +107,6 @@ function ChatRoom() {
   const [showUsers, setShowUsers] = useState(false);
   const [msgText, setMsgText] = useState("");
 
-  const roomInfo = useLoaderData() as roomInfoType;
-
   const [messages, setMessages] = useState<messageType[]>([]);
 
   const [client, setClient] = useState<Client | null>(null);
@@ -86,14 +116,22 @@ function ChatRoom() {
   const [roomPassword, setRoomPw] = useState<number>(-1);
 
   const [storeMenu, setMenu] = useState<menuInfo[]>([]);
-  const [open, setOpen] = useState<boolean>(false)
+  const [open, setOpen] = useState<boolean>(false);
+
+  const roomInfo = useLoaderData() as roomInfoType;
+
+  const roomId = roomInfo.roomId;
+  const superUser = roomInfo.superNick;
+  const boxId = roomInfo.boxId;
+  const storeId = roomInfo.storeId;
+  const nname = sessionStorage.getItem("userNick")!.toString();
 
   const navigate = useNavigate();
 
   function getPassword(params: number) {
     setRoomPw(params);
   }
-  
+
   function setCount(id: number, count: number): void {
     const tempMenu: menuInfo[] = storeMenu.map((menu) => {
       if (menu.id == id) menu.count = count;
@@ -105,8 +143,6 @@ function ChatRoom() {
 
   function openBox() {
     setOpen(true);
-    console.log("test");
-    
   }
 
   function navDisplay() {
@@ -125,6 +161,8 @@ function ChatRoom() {
           setCount={setCount}
           roomId={roomInfo.roomId}
           storeName={roomInfo.store}
+          superUser={roomInfo.superNick}
+          step={roomInfo.step}
         />
       );
     } else if (navIdx === 3) {
@@ -133,11 +171,6 @@ function ChatRoom() {
       return <></>;
     }
   }
-  const roomId = roomInfo.roomId;
-
-  const superUser = sessionStorage.getItem("superUser");
-  const boxId = Number(sessionStorage.getItem("enterBoxId"));
-  const nname = sessionStorage.getItem("userNick")!.toString();
 
   const sendHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -166,20 +199,19 @@ function ChatRoom() {
 
   function closeRoom() {
     const deleteRoom = async () => {
-      const key = sessionStorage.getItem("AccessToken");
-      console.log(key);
       const url = import.meta.env.VITE_URL_ADDRESS + "/api/rooms/" + roomId;
       try {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const response = await axios.put(
           url,
           {},
           {
             headers: {
-              Authorization: `Bearer ` + key,
+              Authorization: key,
             },
           }
         );
-        console.log(response);
+        // console.log(response);
         navigate("/Home/RoomList");
       } catch (error) {
         console.log(error);
@@ -219,12 +251,11 @@ function ChatRoom() {
         destination: `/app/sendMessage/${roomId}`, // 채팅 메시지를 처리하는 엔드포인트
         body: JSON.stringify(chatMessage),
       });
-      console.log("비밀번호:", chatMessage);
+      // console.log("비밀번호:", chatMessage);
       setMsgText("");
     }
   }, [roomPassword]);
 
-  
   // 함 개방시 실행
   useEffect(() => {
     if (client && open) {
@@ -240,7 +271,7 @@ function ChatRoom() {
         destination: `/app/sendMessage/${roomId}`, // 채팅 메시지를 처리하는 엔드포인트
         body: JSON.stringify(chatMessage),
       });
-      console.log("함 개방:", chatMessage);
+      // console.log("함 개방:", chatMessage);
       setMsgText("");
     }
   }, [open]);
@@ -252,8 +283,9 @@ function ChatRoom() {
     // WebSocket 연결 설정
     const newClient = new Client({
       brokerURL: "wss://i9c104.p.ssafy.io/api/my-chat", // WebSocket 서버 주소
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       debug: (str: string) => {
-        console.log("디버그 : ", str);
+        // console.log("디버그 : ", str);
       },
     });
 
@@ -263,7 +295,7 @@ function ChatRoom() {
         `/subscribe/message/${roomId}`,
         (message: Message) => {
           const chatMessage: ChatMessage = JSON.parse(message.body);
-          console.log("받은 메시지 : ", chatMessage);
+          // console.log("받은 메시지 : ", chatMessage);
           setsockMessages((prevMessages) => [...prevMessages, chatMessage]);
         }
       );
@@ -302,8 +334,6 @@ function ChatRoom() {
 
     //가게메뉴정보 불러오기
     const addRoom = async () => {
-      // const key = sessionStorage.getItem('AccessToken');
-      const storeId = sessionStorage.getItem("selected StoreInfo");
       const url = import.meta.env.VITE_URL_ADDRESS + "/api/store/" + storeId;
       try {
         const response = await axios.get(url);
@@ -340,16 +370,12 @@ function ChatRoom() {
           destination: `/app/joinUser/${roomId}`,
           body: JSON.stringify(enterMessage),
         });
-        console.log("퇴장!!!");
+        // console.log("퇴장!!!");
       }
 
       newClient.deactivate();
     };
   }, []);
-
-  useEffect(() => {
-    console.log("ddd");
-  }, [client]);
 
   useEffect(() => {
     // const userId = sessionStorage.getItem("userId");
@@ -374,12 +400,17 @@ function ChatRoom() {
 
     const fetchTotalPoint = async () => {
       try {
-        const url = import.meta.env.VITE_URL_ADDRESS + "/api/payment/totalPoint";
-        const response = await axios.post(url,{},{
-          headers: {
-            Authorization: `Bearer ` + AccessToken,
-          },
-        });
+        const url =
+          import.meta.env.VITE_URL_ADDRESS + "/api/payment/totalPoint";
+        const response = await axios.post(
+          url,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ` + AccessToken,
+            },
+          }
+        );
         // console.log("포인트조회:",response.data.body.totalPoint);
 
         // console.log("포인트조회2:",response);
@@ -389,7 +420,7 @@ function ChatRoom() {
       }
     };
     fetchTotalPoint();
-    console.log("totalPoint:", totalPoint);
+    // console.log("totalPoint:", totalPoint);
   }, [totalPoint]);
 
   return (
@@ -542,9 +573,11 @@ function ChatRoom() {
             <Box
               sx={{
                 padding: "1px",
-                color:"white"
+                color: "white",
               }}
-            ><Typography>보유 포인트:{totalPoint}원</Typography></Box>
+            >
+              <Typography>보유 포인트:{totalPoint}원</Typography>
+            </Box>
             <IconButton
               sx={{
                 color: "white",
@@ -812,7 +845,7 @@ function ChatRoom() {
                 borderBottomLeftRadius: 8,
               }}
             >
-              <UserList roomId={roomId} boxId={boxId}/>
+              <UserList roomId={roomId} boxId={boxId} />
             </Box>
           </Box>
         </Box>
