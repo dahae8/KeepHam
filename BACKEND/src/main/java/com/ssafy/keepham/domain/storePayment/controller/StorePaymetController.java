@@ -1,11 +1,11 @@
-package com.ssafy.keepham.domain.storepayment.controller;
+package com.ssafy.keepham.domain.storePayment.controller;
 
 import com.ssafy.keepham.common.api.Api;
 import com.ssafy.keepham.common.error.StorePaymentError;
 import com.ssafy.keepham.domain.chatroom.service.ChatRoomManager;
-import com.ssafy.keepham.domain.storepayment.dto.ConfirmSuperIdRequest;
-import com.ssafy.keepham.domain.storepayment.dto.StorePaymentRequest;
-import com.ssafy.keepham.domain.storepayment.service.StorePaymentService;
+import com.ssafy.keepham.domain.storePayment.dto.ConfirmSuperIdRequest;
+import com.ssafy.keepham.domain.storePayment.dto.StorePaymentRequest;
+import com.ssafy.keepham.domain.storePayment.service.StorePaymentService;
 import com.ssafy.keepham.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +49,7 @@ public class StorePaymetController {
     public Api<Object> confirmAllMenu(@RequestBody ConfirmSuperIdRequest confirmSuperIdRequest){
 
         Long roomId = confirmSuperIdRequest.getRoomId();
+        storePaymentService.deleteStorePaymentUser(roomId);
 
         //방장확인
         var userInfo = userService.getLoginUserInfo();
@@ -81,17 +82,19 @@ public class StorePaymetController {
 
     }
 
-    //현재 메뉴 확정된 유저 목록
-    @Operation(summary = "현재 메뉴 확정된 유저 목록")
+    //현재 메뉴 확정된 유저 목록 조회
+    @Operation(summary = "현재 메뉴 확정된 유저 목록 조회")
     @GetMapping("/user/{roomId}")
     public  Api<Object> confirmAllUser(@PathVariable Long roomId){
+        storePaymentService.deleteStorePaymentUser(roomId);
         return Api.OK(storePaymentService.confirmAllUser(roomId));
     }
 
-    //유저별 확정된 메뉴 목록
-    @Operation(summary = "유저별 확정된 메뉴 목록")
+    //유저별 확정된 메뉴 목록 조회
+    @Operation(summary = "유저별 확정된 메뉴 목록 조회")
     @GetMapping("/user/menu/{roomId}")
     public  Api<Object> confirmUserMenu(@PathVariable Long roomId){
+        storePaymentService.deleteStorePaymentUser(roomId);
         return Api.OK(storePaymentService.confirmUserMenu(roomId));
     }
 

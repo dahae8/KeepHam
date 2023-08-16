@@ -1,4 +1,4 @@
-package com.ssafy.keepham.domain.storepayment.entity;
+package com.ssafy.keepham.domain.storePayment.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -39,5 +39,7 @@ public class StorePayment {
     private int price;
 
     private LocalDateTime deletionTime; // 삭제 시간 필드 추가
+
+
 
 }
