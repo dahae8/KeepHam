@@ -16,16 +16,6 @@ function Footer() {
             <li>
               <span
                 onClick={() => {
-                  navigate('/Home/Terms');
-                  window.scrollTo(0, 0);
-                }}
-              >
-                Privacy Policy
-              </span>
-            </li>
-            <li>
-              <span
-                onClick={() => {
                   navigate('/Home/AboutMe');
                   window.scrollTo(0, 0);
                 }}
