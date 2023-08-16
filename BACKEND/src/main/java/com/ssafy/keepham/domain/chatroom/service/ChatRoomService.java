@@ -13,6 +13,8 @@ import com.ssafy.keepham.domain.chatroom.repository.ChatRoomRepository;
 import com.ssafy.keepham.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -73,7 +75,8 @@ public class ChatRoomService {
     }
 
     public ChatRoomResponse findRoomById(Long roomId, ChatRoomStatus status){
-        ChatRoomEntity chatRoomEntity = chatRoomRepository.findFirstByIdAndStatus(roomId,status);
+        ChatRoomEntity chatRoomEntity = Optional.ofNullable(chatRoomRepository.findFirstByIdAndStatus(roomId,status))
+                .orElseThrow(()->new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 방입니다."));
         var response = chatRoomConverter.toResponse(chatRoomEntity);
         response.setCurrentPeopleNumber(chatRoomManager.getUserCountInChatRoom(response.getId()));
         return response;
@@ -106,6 +109,10 @@ public class ChatRoomService {
     }
 
 
-
-
+    public ChatRoomResponse changeStep(Long roomId, int step) {
+        var entity = chatRoomRepository.findFirstByIdAndStatus(roomId, ChatRoomStatus.OPEN);
+        entity.setStep(step);
+        var newEntity = chatRoomRepository.save(entity);
+        return chatRoomConverter.toResponse(newEntity);
+    }
 }

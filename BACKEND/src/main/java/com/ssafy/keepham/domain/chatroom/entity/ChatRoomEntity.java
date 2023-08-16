@@ -42,5 +42,6 @@ public class ChatRoomEntity extends BaseEntity {
     @Column(length = 255, nullable = false)
     private String password;
     private LocalDateTime closedAt;
+    private int step;
 
 }
