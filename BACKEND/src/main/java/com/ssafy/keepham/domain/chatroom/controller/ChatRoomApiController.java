@@ -45,16 +45,14 @@ public class ChatRoomApiController {
         return Api.OK(chatRoomService.openedRoom(status, page, pageSize));
     }
 
-    @Operation(summary = "boxId로 채팅방 조회")
-    @GetMapping("/rooms/{boxId}")
-    private Api<List<ChatRoomResponse>> findRoomByBoxId(
-            @PathVariable Long boxId,
-            @RequestParam ChatRoomStatus status,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "6") int pageSize
+    @Operation(summary = "roomId로 채팅방 조회")
+    @GetMapping("/rooms/{roomId}")
+    private Api<ChatRoomResponse> findRoomByBoxId(
+            @PathVariable Long roomId,
+            @RequestParam ChatRoomStatus status
     ){
 
-        return Api.OK(chatRoomService.findRoomByBoxId(status, page, pageSize, boxId));
+        return Api.OK(chatRoomService.findRoomById(roomId, status));
     }
 
     @Operation(summary = "zipCode로 채팅방 조회")
