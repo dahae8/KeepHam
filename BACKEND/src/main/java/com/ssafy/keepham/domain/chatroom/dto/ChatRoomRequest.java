@@ -28,5 +28,6 @@ public class ChatRoomRequest {
     private String superUserId;
     private boolean locked;
     private String password;
+    private int step;
 
 }

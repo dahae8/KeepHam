@@ -111,7 +111,7 @@ public class TokenProvider {
                         .setExpiration(Date.from(Instant.now().plus(refreshExpirationHours, ChronoUnit.HOURS)))
                         .compact();
                 //TODO: 키값 조회 값 수정
-                redisTemplate.opsForValue().set("1234",refreshToken,refreshExpirationMillis, TimeUnit.MILLISECONDS);
+                redisTemplate.opsForValue().set(String.valueOf(Jwts.builder().setIssuer(issuer)),refreshToken,refreshExpirationMillis, TimeUnit.MILLISECONDS);
                 return refreshToken;
         }
         @Transactional

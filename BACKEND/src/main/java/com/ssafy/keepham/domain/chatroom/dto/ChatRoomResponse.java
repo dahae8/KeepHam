@@ -28,5 +28,6 @@ public class ChatRoomResponse extends BaseEntity{
     private String superUserId;
     private boolean locked;
     private LocalDateTime closedAt;
+    private int step;
 
 }
