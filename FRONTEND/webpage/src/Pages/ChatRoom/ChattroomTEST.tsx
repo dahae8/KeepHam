@@ -62,7 +62,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
       },
     });
 
-    console.log(response);
+    // console.log(response);
 
     const info: roomInfoType = {
       boxId: response.data.body.box.box_id,
