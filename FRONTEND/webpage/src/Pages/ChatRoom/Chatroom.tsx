@@ -215,6 +215,19 @@ function ChatRoom() {
           }
         );
         console.log(response);
+        if (client) {
+          const enterMessage: ChatMessage_timestamp = {
+            room_id: roomId,
+            box_id: boxId,
+            author: nname,
+            content: roomId + "방이 종료됐습니다.",
+            type: "CLOSE",
+          };
+          client.publish({
+            destination: `/app/joinUser/${roomId}`,
+            body: JSON.stringify(enterMessage),
+          });
+        }
         navigate("/Home/RoomList");
       } catch (error) {
         console.log(error);
@@ -285,7 +298,7 @@ function ChatRoom() {
 
     // WebSocket 연결 설정
     const newClient = new Client({
-      brokerURL: "wss://i9c104.p.ssafy.io/api/my-chat", // WebSocket 서버 주소
+      brokerURL: "ws://localhost:8080/api/my-chat", // WebSocket 서버 주소
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       debug: (str: string) => {
         console.log("디버그 : ", str);
@@ -301,6 +314,9 @@ function ChatRoom() {
           // console.log("받은 메시지 : ", chatMessage);
           setUserSet(chatMessage.users);
           setsockMessages((prevMessages) => [...prevMessages, chatMessage]);
+          if (chatMessage.type === "CLOSE") {
+            navigate("/Home/RoomList");
+          }
         }
       );
 

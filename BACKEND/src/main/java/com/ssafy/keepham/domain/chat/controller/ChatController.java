@@ -75,5 +75,4 @@ public class ChatController {
         log.info("message : {}", message);
         return message;
     }
-
 }
