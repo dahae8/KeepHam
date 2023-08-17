@@ -9,12 +9,17 @@ import com.ssafy.keepham.domain.storePayment.service.StorePaymentService;
 import com.ssafy.keepham.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(originPatterns = "*")
 @RequestMapping("/api/payment/storeMenu")
+@Slf4j
 public class StorePaymetController {
 
     private final UserService userService;
@@ -91,6 +96,7 @@ public class StorePaymetController {
     }
 
     //유저별 확정된 메뉴 목록 조회
+
     @Operation(summary = "유저별 확정된 메뉴 목록 조회")
     @GetMapping("/user/menu/{roomId}")
     public  Api<Object> confirmUserMenu(@PathVariable Long roomId){
@@ -98,5 +104,14 @@ public class StorePaymetController {
         return Api.OK(storePaymentService.confirmUserMenu(roomId));
     }
 
-
+    @MessageMapping("/users/{roomId}")
+    @SendTo("/subscribe/users/{roomId}")
+    public int confirmUserCount(@DestinationVariable Long roomId) {
+        storePaymentService.deleteStorePaymentUser(roomId);
+        var users = storePaymentService.confirmUserMenu(roomId);
+        var count = users.size();
+        log.info("{}", users.toString());
+        log.info("count : {}", count);
+        return count;
+    }
 }
