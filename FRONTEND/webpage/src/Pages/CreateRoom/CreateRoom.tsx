@@ -185,7 +185,12 @@ export default function Admin() {
     {
       field: "name",
       headerName: "가게이름",
-      width: 380,
+      width: 300,
+    },
+    {
+      field: "category",
+      headerName: "카테고리",
+      width: 120,
     },
     {
       field: "min_order_amount",
