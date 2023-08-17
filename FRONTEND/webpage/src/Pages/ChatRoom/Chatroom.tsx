@@ -32,6 +32,7 @@ import UserList from "@/Components/ChatRoom/UserList.tsx";
 import { Client, Message } from "@stomp/stompjs";
 import axios from "axios";
 
+
 type roomInfoType = {
   boxId: number;
   roomId: number;
@@ -91,6 +92,7 @@ interface ChatMessage {
   content: string;
   type: string;
   timestamp: string;
+  users: Set<string>
 }
 interface ChatMessage_timestamp {
   room_id: number;
@@ -114,6 +116,7 @@ function ChatRoom() {
   // const [inputMessage, setInputMessage] = useState("");
   const [sockmessages, setsockMessages] = useState<ChatMessage[]>([]);
   const [roomPassword, setRoomPw] = useState<number>(-1);
+  const [userSet, setUserSet] = useState<Set<string>>(new Set());
 
   const [storeMenu, setMenu] = useState<menuInfo[]>([]);
   const [open, setOpen] = useState<boolean>(false);
@@ -302,6 +305,7 @@ function ChatRoom() {
         (message: Message) => {
           const chatMessage: ChatMessage = JSON.parse(message.body);
           // console.log("받은 메시지 : ", chatMessage);
+          setUserSet(chatMessage.users);
           setsockMessages((prevMessages) => [...prevMessages, chatMessage]);
         }
       );
@@ -427,35 +431,39 @@ function ChatRoom() {
     // console.log("totalPoint:", totalPoint);
   }, [totalPoint]);
 
+
   // 창 종료 시 퇴장처리
   const handleBeforeUnload = (event: BeforeUnloadEvent) => {
     event.preventDefault();
-    event.returnValue = "떠나지마";
+    event.returnValue = "떠나지마"
     goingOutRoom();
-  };
+  }
 
   useEffect(() => {
-    window.onpopstate = function (event) {
+    window.onpopstate = function(event) {
       if (event) {
-        goingOutRoom();
+        goingOutRoom()
       }
-    };
-  });
+    }
+  })
 
   useEffect(() => {
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [handleBeforeUnload]);
+
+    }
+  }, [handleBeforeUnload])
+
+
 
   return (
     <>
       <Box
         sx={{
           padding: { xs: 0, md: 4 },
-          minHeight: 720,
+          minHeight: 650,
           height: "calc(100vh - 320px)",
         }}
       >
@@ -570,15 +578,7 @@ function ChatRoom() {
               }}
             >
               <Typography variant="h6" noWrap>
-                🕙
-                {roomInfo.remainTime.substring(5, 7) +
-                  "월 " +
-                  roomInfo.remainTime.substring(8, 10) +
-                  "일 " +
-                  roomInfo.remainTime.substring(11, 13) +
-                  "시 " +
-                  roomInfo.remainTime.substring(14, 16) +
-                  "분"}
+                🕙{roomInfo.remainTime}
               </Typography>
               <Button variant="outlined" size="small" color="gray">
                 연장
@@ -880,7 +880,7 @@ function ChatRoom() {
                 borderBottomLeftRadius: 8,
               }}
             >
-              <UserList roomId={roomId} boxId={boxId} superUser={superUser} />
+              <UserList roomId={roomId} boxId={boxId} userSet={userSet}/>
             </Box>
           </Box>
         </Box>

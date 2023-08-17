@@ -25,7 +25,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -278,4 +281,12 @@ public class ChatRoomManager {
 
         sendMessageToRoom(message);
     }
+
+    @MessageMapping("/users/{roomId}")
+    @SendTo("/subscribe/users/{roomId}")
+    public Set<String> users(@Payload String message, @DestinationVariable Long roomId) {
+        log.info("유저 메세지 {}",message);
+        return getAllUser(roomId);
+    }
+
 }

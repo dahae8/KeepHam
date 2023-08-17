@@ -63,6 +63,7 @@ public class ChatController {
     @SendTo("/subscribe/message/{roomId}")
     public Message joinUser(@Payload Message message, @DestinationVariable Long roomId) {
         log.info("joinUser/{roomId}로 발송된 메세지 : {}", message);
+        var users = chatRoomManager.getAllUser(roomId);
         if (message.getType() == Type.ENTER) {
             log.info("User '{}' joined chat room {}", message.getAuthor(), roomId);
         } else if (message.getType() == Type.EXIT) {
@@ -70,6 +71,8 @@ public class ChatController {
             chatRoomManager.userLeft(roomId, message.getAuthor(), RoomUserStatus.EXIT);
         }
         message.setAuthor("공지 : ");
+        message.setUsers(users);
+        log.info("message : {}", message);
         return message;
     }
 
