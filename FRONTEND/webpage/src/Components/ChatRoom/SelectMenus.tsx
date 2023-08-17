@@ -1,6 +1,6 @@
 import SelectStep1 from "@/Components/ChatRoom/selectStep_1.tsx";
 import SelectStep2 from "@/Components/ChatRoom/selectStep_2.tsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface menuInfo {
   item: number;
@@ -38,10 +38,14 @@ function SelectMenus(props: propsType) {
   function updateStep(step: number) {
     setCurrentStep(step);
   }
+  useEffect(() => {
+    console.log(currentStep)
+  })
+
 
   return (
     <>
-      {props.step == 0 && (
+      {currentStep == 0 && (
         <SelectStep1
           menuList={props.menuList}
           setCount={props.setCount}
@@ -53,7 +57,7 @@ function SelectMenus(props: propsType) {
           setStep={updateStep}
         />
       )}
-      {props.step == 1 && (
+      {currentStep == 1 && (
         <SelectStep2
           menuList={props.menuList}
           setCount={props.setCount}

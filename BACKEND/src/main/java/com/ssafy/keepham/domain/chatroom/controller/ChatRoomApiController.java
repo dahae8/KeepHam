@@ -10,6 +10,9 @@ import com.ssafy.keepham.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -142,6 +145,13 @@ public class ChatRoomApiController {
     public Api<Boolean> kickUser(@RequestBody KickRequest request){
         chatRoomManager.kickUser(request);
         return Api.OK(true);
+    }
+
+    @MessageMapping("/step/{roomId}")
+    @SendTo("/subscribe/step/{roomId}")
+    public int confirmUserCount(@DestinationVariable Long roomId) {
+        var response = chatRoomService.changeStep(roomId, 1);
+        return 1;
     }
 
 }
