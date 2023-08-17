@@ -1,58 +1,33 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, ReactNode, SyntheticEvent, useState } from "react";
+import { useEffect, useState } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
-import { Box, Button, IconButton, Tab, Tabs } from "@mui/material";
+import { Box, Button, IconButton } from "@mui/material";
 import { AddBox, IndeterminateCheckBox } from "@mui/icons-material";
 import axios from "axios";
 import { menuInfo, propsType } from "@/Components/ChatRoom/SelectMenus.tsx";
 
-interface TabPanelProps {
-  children?: ReactNode;
-  index: number;
-  value: number;
+interface simpleMenuInfo {
+  menu: string;
+  count: number;
+  price: number;
 }
 
-function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box>
-          <Typography component={"div"}>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
+interface menuSelection {
+  room_id: number;
+  user_nick_name: string;
+  menus: simpleMenuInfo[];
 }
 
-// interface simpleMenuInfo {
-//   menu: string;
-//   count: number;
-//   price: number;
-// }
+interface menuInfoByUsers {
+  user: string;
+  menuInfo: menuInfo[];
+}
 
-// interface menuSelection {
-//   room_id: number;
-//   store_name: string;
-//   menus: simpleMenuInfo[];
-// }
-
-function menuListItems(
-  menuArray: menuInfo[],
-  selectable: boolean,
-  setCount: (id: number, count: number) => void
-) {
+function menuListItems(menuArray: menuInfo[]) {
   return menuArray.map((menu) => {
     return (
       <Box key={menu.id}>
@@ -94,12 +69,7 @@ function menuListItems(
                 alignItems: "center",
               }}
             >
-              <IconButton
-                disabled={!selectable}
-                onClick={() => {
-                  setCount(menu.id, menu.count + 1);
-                }}
-              >
+              <IconButton>
                 <AddBox />
               </IconButton>
               <Typography
@@ -111,12 +81,7 @@ function menuListItems(
                 {menu.count}
               </Typography>
 
-              <IconButton
-                disabled={!selectable || menu.count == 0}
-                onClick={() => {
-                  setCount(menu.id, menu.count - 1);
-                }}
-              >
+              <IconButton>
                 <IndeterminateCheckBox />
               </IconButton>
             </Box>
@@ -128,100 +93,123 @@ function menuListItems(
   });
 }
 
-function SelectStep2(props: propsType) {
-  const [isInitial, setIsInitial] = useState(true);
-  const [tabIdx, setTabIdx] = useState(0);
-  const [selected, setSelected] = useState(false);
+function usersMenuListItems(usersMenuInfo: menuInfoByUsers[]) {
+  return usersMenuInfo.map((usersMenu, idx) => {
+    return (
+      <Box key={idx}>
+        <Typography>{usersMenu.user}</Typography>
+        {menuListItems(usersMenu.menuInfo)}
+        <Divider />
+      </Box>
+    );
+  });
+}
 
-  const [userCnt, setUserCnt] = useState(0);
-  const [selectedCnt, setSelectedCnt] = useState(0);
+function SelectStep2(props: propsType) {
+  const [detailMenuList, setDetailMenuList] = useState<menuInfoByUsers[]>([]);
+  const [confirm, setConfirm] = useState(false);
+  const roomId = props.roomId;
 
   const userNick = sessionStorage.getItem("userNick")!;
-  const superUser = props.superUser;
-
-  const tabHandler = (_event: SyntheticEvent, newTabIdx: number) => {
-    setTabIdx(newTabIdx);
-  };
-
-  const selectedMenuList: menuInfo[] = props.menuList.filter(
-    (menu) => menu.count > 0
-  );
-
-  const totalPrice = selectedMenuList.reduce((prev, cur) => {
-    return prev + cur.price * cur.count;
-  }, 0);
-
-  function switchSelectButton() {
-    if (isInitial) setIsInitial(false);
-    setSelected(!selected);
-  }
 
   useEffect(() => {
-    let users: string[] = [];
-    let selectedUsers: string[] = [];
-
-    // 유저목록 불러오기
-    const loadState = async () => {
-      const roomId = props.roomId;
+    // 선택메뉴 불러오기
+    const loadSelections = async () => {
+      // 선택 유저 목록 불러오기
       const url =
-        import.meta.env.VITE_URL_ADDRESS + "/api/rooms/" + roomId + "/users";
+        import.meta.env.VITE_URL_ADDRESS +
+        "/api/payment/storeMenu/user/menu/" +
+        roomId;
       try {
         const response = await axios.get(url);
-        users = response.data.body;
+        const simpleMenuList: menuSelection[] = response.data.body;
+
+        const tempDetailMenuList: menuInfoByUsers[] = simpleMenuList.map(
+          (simpleMenu) => {
+            const menuNameList = simpleMenu.menus.map((menu) => menu.menu);
+
+            const filteredDetailMenuList = props.menuList.filter((menu) =>
+              menuNameList.includes(menu.name)
+            );
+
+            const tempMenuInfo: menuInfo[] = filteredDetailMenuList.map(
+              (menu) => {
+                const userCount = simpleMenu.menus.filter(
+                  (smenu) => menu.name == smenu.menu
+                )[0].count;
+
+                const bufMenu: menuInfo = {
+                  item: menu.item,
+                  store_id: menu.store_id,
+                  original_image: menu.original_image,
+                  review_count: menu.review_count,
+                  subtitle: menu.subtitle,
+                  description: menu.description,
+                  price: menu.price,
+                  slug: menu.slug,
+                  image: menu.image,
+                  section: menu.section,
+                  top_displayed_item_order: menu.top_displayed_item_order,
+                  reorder_rate_message: "",
+                  menu_set_id: menu.menu_set_id,
+                  id: menu.id,
+                  name: menu.name,
+                  count: userCount,
+                };
+
+                return bufMenu;
+              }
+            );
+
+            return {
+              user: simpleMenu.user_nick_name,
+              menuInfo: tempMenuInfo,
+            };
+          }
+        );
+
+        setDetailMenuList(tempDetailMenuList);
       } catch (error) {
         console.log(error);
       }
+    };
+    loadSelections();
+  }, []);
 
-      setUserCnt(users.length);
-
-      // 선택 유저 목록 불러오기
-      const url2 =
+  useEffect(() => {
+    const confirmMenus = async () => {
+      const url =
         import.meta.env.VITE_URL_ADDRESS +
         "/api/payment/storeMenu/user/" +
         roomId;
       try {
-        const response = await axios.get(url2);
-        selectedUsers = response.data.body;
+        const response = await axios.get(url);
+
+        console.log(response);
       } catch (error) {
         console.log(error);
       }
-
-      console.log(users);
-      console.log(selectedUsers);
-
-      if (selectedUsers.includes(userNick)) {
-        setSelected(true);
-      }
-
-      setSelectedCnt(selectedUsers.length);
     };
-    loadState();
-  }, []);
+    if (confirm) confirmMenus();
+  }, [confirm]);
 
   return (
     <>
       <Box
         sx={{
           width: "100%",
-          height: "calc(100% - 160px)",
+          height: userNick === props.superUser ? "100%" : "calc(100% - 80px)",
           overflow: "auto",
           backgroundColor: "#D8DADF",
         }}
       >
-        <List sx={{ width: "100%" }}>
-          <CustomTabPanel value={tabIdx} index={0}>
-            {menuListItems(props.menuList, !selected, props.setCount)}
-          </CustomTabPanel>
-          <CustomTabPanel value={tabIdx} index={1}>
-            {menuListItems(selectedMenuList, !selected, props.setCount)}
-          </CustomTabPanel>
-        </List>
+        <List sx={{ width: "100%" }}>{usersMenuListItems(detailMenuList)}</List>
       </Box>
 
       <Box
         sx={{
           width: "100%",
-          height: 160,
+          height: 80,
           backgroundColor: "#B6BAC3",
           padding: 1,
           display: "flex",
@@ -231,100 +219,19 @@ function SelectStep2(props: propsType) {
           gap: 1,
         }}
       >
-        <Tabs value={tabIdx} onChange={tabHandler}>
-          <Tab label="전체 메뉴" id="0" />
-          <Tab label="선택한 메뉴" id="1" />
-        </Tabs>
-        <Box
-          sx={{
-            width: "60%",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "start",
-            gap: 1,
-          }}
-        >
-          <Box
-            sx={{
-              width: "60%",
-              overflow: "hidden",
-            }}
-          >
-            <Typography variant="body1">총 금액 : {totalPrice}원</Typography>
-          </Box>
-          <Button
-            variant={!selected ? "contained" : "outlined"}
-            onClick={switchSelectButton}
-          >
-            {!selected ? "선택 확인" : "다시 선택"}
-          </Button>
-        </Box>
-        {userNick === superUser ? (
-          <Box
-            sx={{
-              width: "60%",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "start",
-              gap: 1,
-            }}
-          >
-            <Box
-              sx={{
-                width: "60%",
-                overflow: "hidden",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="body1">선택완료 / 전체인원</Typography>
-              <Typography variant="body1">
-                {selectedCnt} / {userCnt}
-              </Typography>
-            </Box>
-            <Button
-              variant="contained"
-              disabled={selectedCnt !== userCnt}
-              onClick={switchSelectButton}
-            >
-              주문 확정
-            </Button>
-          </Box>
+        {userNick === props.superUser ? (
+          <Typography variant="h6">
+            모든 인원이 구매확정을 하면 포인트가 지급됩니다
+          </Typography>
         ) : (
-          <Box
-            sx={{
-              width: "60%",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "start",
-              gap: 1,
+          <Button
+            variant="contained"
+            onClick={() => {
+              setConfirm(true);
             }}
           >
-            <Box
-              sx={{
-                width: "60%",
-                overflow: "hidden",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="body1">선택완료 / 전체인원</Typography>
-              <Typography variant="body1">
-                {selectedCnt} / {userCnt}
-              </Typography>
-            </Box>
-            <Button
-              variant="contained"
-              disabled={selectedCnt !== userCnt}
-              onClick={switchSelectButton}
-            >
-              구매 확정
-            </Button>
-          </Box>
+            구매확정
+          </Button>
         )}
       </Box>
     </>
