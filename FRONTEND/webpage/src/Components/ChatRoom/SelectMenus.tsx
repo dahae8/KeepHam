@@ -1,6 +1,6 @@
 import SelectStep1 from "@/Components/ChatRoom/selectStep_1.tsx";
 import SelectStep2 from "@/Components/ChatRoom/selectStep_2.tsx";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export interface menuInfo {
   item: number;
