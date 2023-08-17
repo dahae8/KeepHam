@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(originPatterns = "*")
 @RequestMapping("/api/payment/storeMenu")
 @Slf4j
 public class StorePaymetController {
@@ -81,6 +82,7 @@ public class StorePaymetController {
         var userInfo = userService.getLoginUserInfo();
         String userNickName = userInfo.getNickName();
 
+
         return Api.OK(storePaymentService.confirmUser(userNickName,roomId));
 
     }
@@ -108,7 +110,6 @@ public class StorePaymetController {
         storePaymentService.deleteStorePaymentUser(roomId);
         var users = storePaymentService.confirmUserMenu(roomId);
         var count = users.size();
-        log.info("count- ----------------------------------");
         log.info("{}", users.toString());
         log.info("count : {}", count);
         return count;
