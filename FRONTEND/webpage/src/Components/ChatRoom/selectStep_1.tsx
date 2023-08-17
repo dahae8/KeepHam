@@ -50,6 +50,7 @@ interface menuSelection {
 
 function menuListItems(
   menuArray: menuInfo[],
+  userPoint: number,
   selectable: boolean,
   setCount: (id: number, count: number) => void
 ) {
@@ -97,7 +98,7 @@ function menuListItems(
               <IconButton
                 disabled={!selectable}
                 onClick={() => {
-                  setCount(menu.id, menu.count + 1);
+                  if (userPoint > menu.price) setCount(menu.id, menu.count + 1);
                 }}
               >
                 <AddBox />
@@ -274,7 +275,7 @@ function SelectStep1(props: propsType) {
       };
 
       const url =
-        import.meta.env.VITE_URL_ADDRESS + "/api/payment/storeMenu/manager";
+        import.meta.env.VITE_URL_ADDRESS + "/api/payment/storeMenu/manger";
       try {
         const response = await axios({
           method: "post",
@@ -291,7 +292,33 @@ function SelectStep1(props: propsType) {
       }
     };
 
-    if (confirmed) confirmAll();
+    const nextStep = async () => {
+      const url =
+        import.meta.env.VITE_URL_ADDRESS +
+        "/api/rooms/" +
+        props.roomId.toString() +
+        "/1";
+      try {
+        const response = await axios({
+          method: "put",
+          url: url,
+          headers: {
+            Authorization: key,
+          },
+        });
+
+        console.log(response);
+
+        props.setStep(1);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (confirmed) {
+      confirmAll();
+      nextStep();
+    }
   }, [confirmed]);
 
   return (
@@ -306,10 +333,20 @@ function SelectStep1(props: propsType) {
       >
         <List sx={{ width: "100%" }}>
           <CustomTabPanel value={tabIdx} index={0}>
-            {menuListItems(props.menuList, !selected, props.setCount)}
+            {menuListItems(
+              props.menuList,
+              props.totalPoint,
+              !selected,
+              props.setCount
+            )}
           </CustomTabPanel>
           <CustomTabPanel value={tabIdx} index={1}>
-            {menuListItems(selectedMenuList, !selected, props.setCount)}
+            {menuListItems(
+              selectedMenuList,
+              props.totalPoint,
+              !selected,
+              props.setCount
+            )}
           </CustomTabPanel>
         </List>
       </Box>

@@ -118,7 +118,11 @@ function ChatRoom() {
   const [storeMenu, setMenu] = useState<menuInfo[]>([]);
   const [open, setOpen] = useState<boolean>(false);
 
+  const [totalPoint, setTotalPoint] = useState(0);
+
   const roomInfo = useLoaderData() as roomInfoType;
+
+  console.log(roomInfo);
 
   const roomId = roomInfo.roomId;
   const superUser = roomInfo.superNick;
@@ -163,6 +167,8 @@ function ChatRoom() {
           storeName={roomInfo.store}
           superUser={roomInfo.superNick}
           step={roomInfo.step}
+          totalPoint={totalPoint}
+          setStep={() => {}}
         />
       );
     } else if (navIdx === 3) {
@@ -391,8 +397,6 @@ function ChatRoom() {
     });
     setMessages(messageFormchange);
   }, [sockmessages]);
-
-  const [totalPoint, setTotalPoint] = useState([]);
 
   useEffect(() => {
     const AccessToken = sessionStorage.getItem("AccessToken");
