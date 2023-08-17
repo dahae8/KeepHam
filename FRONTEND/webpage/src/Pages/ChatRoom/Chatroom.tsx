@@ -105,6 +105,7 @@ interface ChatMessage_timestamp {
 function ChatRoom() {
   const theme = useTheme();
   const bigSize = useMediaQuery(theme.breakpoints.up("xl"));
+  const [update, setUpdate] = useState(false);
   const [navIdx, setNavIdx] = useState(0);
   const [showUsers, setShowUsers] = useState(false);
   const [msgText, setMsgText] = useState("");
@@ -122,13 +123,13 @@ function ChatRoom() {
   const [open, setOpen] = useState<boolean>(false);
 
   const [totalPoint, setTotalPoint] = useState(0);
+  const [extendTime, setExtendTime] = useState(false);
 
-  const roomInfo = useLoaderData() as roomInfoType;
+  const [roomInfo, setRoomInfo] = useState<roomInfoType>(useLoaderData() as roomInfoType)
 
 
   const [currentStep, setCurrentStep] = useState<number>(roomInfo.step);
-
-  console.log(roomInfo);
+  const [remainTime, setRemainTime] = useState<string>(roomInfo.remainTime);
 
   // console.log(roomInfo);
 
@@ -136,7 +137,6 @@ function ChatRoom() {
   const superUser = roomInfo.superNick;
   const boxId = roomInfo.boxId;
   const storeId = roomInfo.storeId;
-  const remainTime = roomInfo.remainTime;
   const nname = sessionStorage.getItem("userNick")!.toString();
 
   const navigate = useNavigate();
@@ -423,7 +423,14 @@ function ChatRoom() {
         console.log(error);
       }
     };
+    
     addRoom();
+
+    window.onpopstate = function(event) {
+      if (event) {
+        goingOutRoom()
+      }
+    }
 
     return () => {
       if (client) {
@@ -490,14 +497,83 @@ function ChatRoom() {
     // console.log("totalPoint:", totalPoint);
   }, [totalPoint]);
 
-  // 뒤로가기
+  // 시간연장
   useEffect(() => {
-    window.onpopstate = function(event) {
-      if (event) {
-        goingOutRoom()
+    const extend = async () => {
+      try {
+        const url =
+          import.meta.env.VITE_URL_ADDRESS + "/api/rooms/extend";
+        const response = await axios(
+          {
+            method: "put",
+            url: url,
+            headers: {
+              Authorization: key,
+            },
+            data: {
+              room_id: roomId,
+              hour: 2,
+            }
+          }
+        );
+        console.log(response);
+        setUpdate(true)
+        
+      } catch (error) {
+        console.log(error);
       }
+    };
+    if(extendTime) 
+    {
+      extend();
+      setExtendTime(false)
     }
-  })
+    // console.log("totalPoint:", totalPoint);
+  }, [extendTime]);
+
+  // 방정보 업데이트
+  useEffect(() => {
+    const updateRoomInfo = async () => {
+      const url =
+      import.meta.env.VITE_URL_ADDRESS +
+      "/api/rooms/" +
+      roomId +
+      "?status=OPEN";
+    try {
+      const response = await axios({
+        method: "get",
+        url: url,
+        headers: {
+          Authorization: key,
+        },
+      });
+  
+      // console.log(response);
+  
+      const info: roomInfoType = {
+        boxId: response.data.body.box.box_id,
+        roomId: roomId,
+        storeId: response.data.body.store_id,
+        roomTitle: response.data.body.title,
+        store: response.data.body.store_name,
+        step: response.data.body.step,
+        remainTime: response.data.body.closed_at,
+        superNick: response.data.body.super_user_id,
+        address: response.data.body.box.detailed_address,
+        maxPeople: response.data.body.max_people_number,
+      };
+  
+      setRoomInfo(info)
+      setRemainTime(info.remainTime)
+    }catch (error) {
+      console.log(error);
+    }
+  }
+  if(update) {
+    updateRoomInfo();
+    setUpdate(false);
+  }
+  }, [update])
 
   return (
     <>
@@ -621,9 +697,12 @@ function ChatRoom() {
               <Typography variant="h6" noWrap>
                 🕙{remainTime.substring(5, 7) + "월 " + remainTime.substring(8, 10) + "일 " + remainTime.substring(11, 13) + "시 " + remainTime.substring(14, 16) + "분"}
               </Typography>
-              <Button variant="outlined" size="small" color="gray">
+              {nname === superUser && <Button variant="outlined" size="small" color="gray" onClick={() => {
+                setExtendTime(true)
+
+              }}>
                 연장
-              </Button>
+              </Button>}
             </Box>
           </Box>
         </Box>
