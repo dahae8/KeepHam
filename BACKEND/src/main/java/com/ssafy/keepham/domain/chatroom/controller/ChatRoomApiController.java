@@ -65,7 +65,7 @@ public class ChatRoomApiController {
             @PathVariable String zipCode,
             @RequestParam ChatRoomStatus status,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "6") int pageSize
+            @RequestParam(defaultValue = "10") int pageSize
     ){
         return Api.OK(chatRoomService.findAllRoomByZipCode(status, page, pageSize, zipCode));
     }
