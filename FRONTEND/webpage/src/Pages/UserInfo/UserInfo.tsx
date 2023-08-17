@@ -92,6 +92,7 @@ function UserInfo() {
         const url = import.meta.env.VITE_URL_ADDRESS + "/api/user/" + UserId;
         const response = await axios.get(url);
         const data = response.data.body;
+        console.log(data);
         setIdValue(data.user_id);
         setNameValue(data.name);
         setNickNameValue(data.nick_name);
@@ -119,6 +120,7 @@ function UserInfo() {
       nickNameValue;
     try {
       const response = await axios.get(url);
+      console.log("확인 결과 : ", response.data.body);
       setNickConfirm(response.data.body);
       if (response.data.body === false) {
         setNickNameHelper("중복된 닉네임입니다");

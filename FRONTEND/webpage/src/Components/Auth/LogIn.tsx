@@ -20,9 +20,11 @@ function LogIn() {
       user_id: id,
       password: pw,
     };
+    console.log("함수실행");
     try {
       // 서버로 POST 요청 보내기
       const response = await axios.post(url, data);
+      console.log("로그인 결과 : ", response.data.body);
       // 응답 데이터를 콘솔에 출력
       sessionStorage.setItem("AccessToken", response.data.body.access_token);
       sessionStorage.setItem("userRole", response.data.body.user_role);
@@ -64,6 +66,8 @@ function LogIn() {
     const userId = formData.get("id")!.toString();
     const userPw = formData.get("pw")!.toString();
 
+    console.log(userId);
+    console.log(userPw);
 
     const rt = await validate(userId, userPw);
     if (rt === "성공") {
@@ -74,7 +78,9 @@ function LogIn() {
       sessionStorage.setItem("userId", userId);
 
       navigate("/Home/RoomList");
+      console.log("로그인 성공");
     } else {
+      console.log("로그인 실패");
       setidValue("");
       setpwValue("");
       setIdHelper("ID를 확인해주세요");

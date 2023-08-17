@@ -6,31 +6,26 @@ import { useEffect, useState } from "react";
 interface MyComponentProps {
   roomId: number;
   boxId: number;
-  userSet: Set<string>
-  
+  userSet: Set<string>;
+  superUser: string;
+  userNick: string;
+  updateInfo: () => void;
   // 다른 프로퍼티들도 정의할 수 있습니다.
 }
 
 const UserList: React.FC<MyComponentProps> = (props) => {
-  const [superNick, setSuperNick] = useState(
-    sessionStorage.getItem("superUser")
-  );
-  const userNick = sessionStorage.getItem("userNick");
+  // console.log("방번호", props.roomId);
+  const userNick = props.userNick;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const superNick = props.superUser;
 
+  // console.log('userNick: ',userNick)
+  // console.log('superNick: ',superNick)
 
   const [users, setUsers] = useState([]);
+  const [updateUsers, setUpdateUsers] = useState(true)
 
-
-  const [reload, setReload] = useState(false);
-
-
-  const reloadUsers = () => {
-    console.log("change reload");
-    console.log(reload);
-
-    setReload(!reload);
-    console.log(reload);
-  };
+  // const users = ['사용자1', '사용자2', '사용자3']
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -41,8 +36,11 @@ const UserList: React.FC<MyComponentProps> = (props) => {
           props.roomId +
           "/users";
         const response = await axios.get(url);
+        // console.log("결과:", response.data.body);
 
+        // console.log("결과2:",response);
         setUsers(response.data.body);
+        // sessionStorage.setItem("superUser", )
       } catch (error) {
         console.log(error);
       }
@@ -50,27 +48,12 @@ const UserList: React.FC<MyComponentProps> = (props) => {
 
     fetchUser();
     
-  }, [reload, props.roomId, props.userSet]);
+  }, [updateUsers]);
 
-
-  useEffect(() => {
-    const fetchSuperUser = async () => {
-      try {
-        const url =
-          import.meta.env.VITE_URL_ADDRESS +
-          "/api/rooms/" +
-          props.roomId +
-          "?status=OPEN&page=1&pageSize=1";
-        const response = await axios.get(url);
-
-        setSuperNick(response.data.body[0].super_user_id);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchSuperUser();
-    console.log("SuperNick", superNick);
-  }, [reload]);
+  function updateUsersInfo() {
+    setUpdateUsers(true)
+    props.updateInfo()
+  }
 
   return (
     <Box
@@ -89,7 +72,7 @@ const UserList: React.FC<MyComponentProps> = (props) => {
           roomId={props.roomId}
           userNick={userNick}
           superNick={superNick}
-          reloadUsers={reloadUsers}
+          updateInfo={updateUsersInfo}
         />
       ))}
     </Box>

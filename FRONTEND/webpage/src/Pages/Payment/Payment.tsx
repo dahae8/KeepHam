@@ -51,6 +51,7 @@ const Payment: React.FC = () => {
             Authorization: `Bearer ` + AccessToken,
           },
         });
+        console.log(response.data.body);
 
         console.log(response);
         setItems(response.data.body);
@@ -59,6 +60,7 @@ const Payment: React.FC = () => {
       }
     };
     fetchPayment();
+    console.log("items", items);
   }, []);
 
   // useEffect(() => {
