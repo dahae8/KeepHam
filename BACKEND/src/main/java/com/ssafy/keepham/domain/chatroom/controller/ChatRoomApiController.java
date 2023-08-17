@@ -10,6 +10,7 @@ import com.ssafy.keepham.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class ChatRoomApiController {
     private final ChatRoomService chatRoomService;
     private final ChatRoomManager chatRoomManager;
     private final UserService userService;
-
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Operation(summary = "방생성")
     @PostMapping("/rooms")
@@ -110,7 +111,8 @@ public class ChatRoomApiController {
     @Operation(summary = "해당 채팅방의 모든 유저 닉네임 조회")
     @GetMapping("rooms/{roomId}/users")
     public Api<Set<String>> getAllUser(@PathVariable Long roomId){
-        return Api.OK(chatRoomManager.getAllUser(roomId));
+        Set<String> users = chatRoomManager.getAllUser(roomId);
+        return Api.OK(users);
     }
 
     @Operation(summary = "해팅방 인원 중 랜덤으로 사람 뽑기")
