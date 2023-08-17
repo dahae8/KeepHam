@@ -87,8 +87,6 @@ function Addroom() {
           },
         });
         const roomId = response.data.body.id;
-        sessionStorage.setItem("roomTitle", titleValue);
-        sessionStorage.setItem("superUser", userId!.toString());
         console.log(response.data.body);
         navigate("/Home/Chatroom/" + roomId);
       } catch (error) {

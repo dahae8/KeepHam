@@ -36,17 +36,17 @@ function CustomTabPanel(props: TabPanelProps) {
   );
 }
 
-interface simpleMenuInfo {
-  menu: string;
-  count: number;
-  price: number;
-}
+// interface simpleMenuInfo {
+//   menu: string;
+//   count: number;
+//   price: number;
+// }
 
-interface menuSelection {
-  room_id: number;
-  store_name: string;
-  menus: simpleMenuInfo[];
-}
+// interface menuSelection {
+//   room_id: number;
+//   store_name: string;
+//   menus: simpleMenuInfo[];
+// }
 
 function menuListItems(
   menuArray: menuInfo[],
@@ -197,66 +197,6 @@ function SelectStep2(props: propsType) {
     };
     loadState();
   }, []);
-
-  useEffect(() => {
-    // 메뉴 선택 완료
-    const key = "Bearer " + sessionStorage.getItem("AccessToken");
-
-    const confirmSelected = async () => {
-      const simpleMenuList: simpleMenuInfo[] = selectedMenuList.map((menu) => {
-        return {
-          menu: menu.name,
-          count: menu.count,
-          price: menu.price,
-        };
-      });
-      const userSelection: menuSelection = {
-        room_id: props.roomId,
-        store_name: props.storeName,
-        menus: simpleMenuList,
-      };
-
-      const url =
-        import.meta.env.VITE_URL_ADDRESS + "/api/payment/storeMenu/user";
-      try {
-        const response = await axios({
-          method: "post",
-          url: url,
-          data: userSelection,
-          headers: {
-            Authorization: key,
-          },
-        });
-
-        console.log(response);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    // 메뉴 선택 취소
-    const revertSelected = async () => {
-      const url =
-        import.meta.env.VITE_URL_ADDRESS + "/api/payment/storeMenu/user";
-      try {
-        const response = await axios({
-          method: "delete",
-          url: url,
-          headers: {
-            Authorization: key,
-          },
-        });
-
-        console.log(response);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    if (isInitial) return;
-    if (selected) confirmSelected();
-    else revertSelected();
-  }, [isInitial, selected]);
 
   return (
     <>

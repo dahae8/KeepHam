@@ -22,14 +22,12 @@ function Item(props: ItemProps) {
   // let itemStyleByAmountType = "item " + props.amountType;
   // let fontStyleByAmountType = "fs-emphasis fc-red";
 
-  // console.log("item에서 찍히는 userNick:", props.userNick);
-  // console.log("item에서 찍히는 superNick:", props.superNick);
-
   const roomId = props.roomId;
   const itemTitle = props.name;
   const userNick = props.userNick;
   const superNick = props.superNick;
   const AccessToken = sessionStorage.getItem("AccessToken");
+
   // let itemAmount = "-" + addComma(props.amount.toString());
 
   // if (props.amountType === "충전") {
@@ -111,6 +109,7 @@ function Item(props: ItemProps) {
           <ListItem
             secondaryAction={
               <div>
+                123
                 <Button
                   variant="contained"
                   onClick={() => {

@@ -132,6 +132,7 @@ function SelectStep1(props: propsType) {
   const [isInitial, setIsInitial] = useState(true);
   const [tabIdx, setTabIdx] = useState(0);
   const [selected, setSelected] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
 
   const [userCnt, setUserCnt] = useState(0);
   const [selectedCnt, setSelectedCnt] = useState(0);
@@ -154,6 +155,10 @@ function SelectStep1(props: propsType) {
   function switchSelectButton() {
     if (isInitial) setIsInitial(false);
     setSelected(!selected);
+  }
+
+  function confirmMenuSelection() {
+    setConfirmed(true);
   }
 
   useEffect(() => {
@@ -258,6 +263,37 @@ function SelectStep1(props: propsType) {
     else revertSelected();
   }, [isInitial, selected]);
 
+  useEffect(() => {
+    // 전체 인원 메뉴 확정
+    const key = "Bearer " + sessionStorage.getItem("AccessToken");
+
+    const confirmAll = async () => {
+      const roomData = {
+        roomId: props.roomId,
+        dividedDeliveryfee: 0,
+      };
+
+      const url =
+        import.meta.env.VITE_URL_ADDRESS + "/api/payment/storeMenu/manager";
+      try {
+        const response = await axios({
+          method: "post",
+          url: url,
+          data: roomData,
+          headers: {
+            Authorization: key,
+          },
+        });
+
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (confirmed) confirmAll();
+  }, [confirmed]);
+
   return (
     <>
       <Box
@@ -319,73 +355,66 @@ function SelectStep1(props: propsType) {
             {!selected ? "선택 확인" : "다시 선택"}
           </Button>
         </Box>
-        {userNick === superUser ? (
+
+        <Box
+          sx={{
+            width: "60%",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "start",
+            gap: 1,
+          }}
+        >
           <Box
             sx={{
               width: "60%",
+              overflow: "hidden",
               display: "flex",
-              justifyContent: "space-between",
-              alignItems: "start",
-              gap: 1,
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <Box
-              sx={{
-                width: "60%",
-                overflow: "hidden",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="body1">선택완료 / 전체인원</Typography>
-              <Typography variant="body1">
-                {selectedCnt} / {userCnt}
-              </Typography>
-            </Box>
-            <Button
-              variant="contained"
-              disabled={selectedCnt !== userCnt}
-              onClick={switchSelectButton}
-            >
-              주문 확정
-            </Button>
+            <Typography variant="body1">선택완료 / 전체인원</Typography>
+            <Typography variant="body1">
+              {selectedCnt} / {userCnt}
+            </Typography>
           </Box>
-        ) : (
           <Box
             sx={{
-              width: "60%",
               display: "flex",
-              justifyContent: "space-between",
-              alignItems: "start",
-              gap: 1,
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <Box
-              sx={{
-                width: "60%",
-                overflow: "hidden",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="body1">선택완료 / 전체인원</Typography>
-              <Typography variant="body1">
-                {selectedCnt} / {userCnt}
-              </Typography>
-            </Box>
-            <Button
-              variant="contained"
-              disabled={selectedCnt !== userCnt}
-              onClick={switchSelectButton}
-            >
-              구매 확정
-            </Button>
+            {userNick === superUser ? (
+              <Button
+                variant="contained"
+                disabled={selectedCnt !== userCnt}
+                onClick={confirmMenuSelection}
+              >
+                주문 확정
+              </Button>
+            ) : (
+              <Box
+                sx={{
+                  width: 84,
+                  height: 40,
+                  backgroundColor: "#D8DADF",
+                  borderRadius: 1,
+                  boxShadow: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Typography>주문 확정 전</Typography>
+              </Box>
+            )}
           </Box>
-        )}
+        </Box>
       </Box>
     </>
   );

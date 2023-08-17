@@ -5,7 +5,7 @@ import { MyLocation } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import CreateRoomInfo from "@/Components/ChatRoom/CreateRoomInfo.tsx";
+import CreateRoomInfo from "@/Components/CreateRoom/CreateRoomInfo.tsx";
 
 export interface Boxes {
   address: string;
@@ -210,7 +210,7 @@ export default function Admin() {
         sx={{
           padding: { xs: 0, md: 4 },
           minHeight: 650,
-          height: "calc(100vh - 320px)",
+          // height: "calc(100vh - 320px)",
         }}
       >
         {/* 상단바 */}
