@@ -27,6 +27,7 @@ function SignUp() {
 
   const [idConfirm, setidConfirm] = useState(null);
   const [pwConfirm, setpwConfirm] = useState<boolean | null>(null);
+  const [nickConfirm, setNickConfirm] = useState(null);
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -42,11 +43,10 @@ function SignUp() {
   ];
 
   const blankMsg = [
-    "ID의 길이는 5자리 이상이어야 합니다",
-    "패스워드의 길이는 8자리 이상이어야 합니다",
+    "ID를 입력해주세요",
+    "패스워드를 설정해주세요",
     "패스워드 확인란을 입력해주세요",
     "이름을 입력해주세요",
-    "나이를 선택해주세요",
     "채팅방에서 사용할 닉네임을 입력해주세요",
     "전화번호를 입력해주세요",
   ];
@@ -105,6 +105,7 @@ function SignUp() {
       const response = await axios.get(url);
       console.log("확인 결과 : ", response.data.body);
       setidConfirm(response.data.body);
+      setIdHelper("사용가능한 아이디 입니다");
       console.log(idConfirm);
       return "성공";
     } catch (error) {
@@ -124,6 +125,29 @@ function SignUp() {
   useEffect(() => {
     if (!idConfirm && idValue !== "") setIdHelper("중복된 아이디입니다");
   }, [idConfirm]);
+
+  //닉네임 중복체크
+  async function checkNikcinServer() {
+    const url =
+      import.meta.env.VITE_URL_ADDRESS +
+      "/api/validation/nickname?nickName=" +
+      nickNameValue;
+    try {
+      const response = await axios.get(url);
+      console.log("확인 결과 : ", response.data.body);
+      setNickConfirm(response.data.body);
+      setNickNameHelper("사용가능한 닉네임 입니다");
+      console.log(nickConfirm);
+      return "성공";
+    } catch (error) {
+      console.error("에러메시지 :", error);
+      return "실패";
+    }
+  }
+  useEffect(() => {
+    if (!nickConfirm && nickNameValue !== "")
+      setNickNameHelper("중복된 닉네임입니다");
+  }, [nickConfirm]);
 
   return (
     <>
@@ -224,7 +248,18 @@ function SignUp() {
                 }}
               />
             </Grid>
-            <Grid item xs={4}></Grid>
+            <Grid item xs={4}>
+              <Button
+                variant="outlined"
+                className="text-xs"
+                onClick={() => {
+                  if (nickNameValue !== "") checkNikcinServer();
+                  else setNickNameHelper("닉네임을 입력하세요");
+                }}
+              >
+                중복 체크
+              </Button>
+            </Grid>
             <Grid item xs={8}>
               <TextField
                 label="전화번호"

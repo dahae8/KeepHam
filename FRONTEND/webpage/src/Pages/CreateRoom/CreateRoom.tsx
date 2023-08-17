@@ -236,7 +236,7 @@ export default function Admin() {
         <div className="relative w-full min-h-[540px]" id="drawer-container">
           <div className="flex">
             {selectMode === 0 && (
-              <Box sx={{ height: 600, width: "100%" }}>
+              <Box sx={{ height: 470, width: "100%" }}>
                 <DataGrid
                   rows={Boxes}
                   getRowId={(row) => row.box_id}
@@ -244,11 +244,11 @@ export default function Admin() {
                   initialState={{
                     pagination: {
                       paginationModel: {
-                        pageSize: 20,
+                        pageSize: 15,
                       },
                     },
                   }}
-                  pageSizeOptions={[20]}
+                  pageSizeOptions={[15]}
                   onRowSelectionModelChange={(selectedRow) => {
                     const selectedIdx: number = Number(selectedRow[0]);
                     const boxId = selectedRow[0].toString();
@@ -273,7 +273,7 @@ export default function Admin() {
               </Box>
             )}
             {selectMode === 1 && (
-              <Box sx={{ height: 600, width: "100%" }}>
+              <Box sx={{ height: 500, width: "100%" }}>
                 <DataGrid
                   rows={Stores}
                   getRowId={(row) => row.id}
