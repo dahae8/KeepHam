@@ -48,7 +48,7 @@ const UserList: React.FC<MyComponentProps> = (props) => {
 
     fetchUser();
     
-  }, [updateUsers]);
+  }, [updateUsers, props.roomId, props.userSet]);
 
   function updateUsersInfo() {
     setUpdateUsers(true)
