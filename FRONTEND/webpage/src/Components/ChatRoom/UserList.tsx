@@ -39,7 +39,7 @@ const UserList: React.FC<MyComponentProps> = (props) => {
   };
 
   useEffect(() => {
-    console.log(props.userSet)
+    console.log("유스이펙트 : ",props.userSet)
   })
 
   useEffect(() => {

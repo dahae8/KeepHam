@@ -304,7 +304,7 @@ function ChatRoom() {
 
     // WebSocket 연결 설정
     const newClient = new Client({
-      brokerURL: "wss://i9c104.p.ssafy.io/api/my-chat", // WebSocket 서버 주소
+      brokerURL: "ws://localhost:8080/api/my-chat", // WebSocket 서버 주소
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       debug: (str: string) => {
         console.log("디버그 : ", str);
@@ -448,12 +448,7 @@ function ChatRoom() {
   }, [totalPoint]);
 
 
-  // 창 종료 시 퇴장처리
-  const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-    event.preventDefault();
-    event.returnValue = "떠나지마"
-    goingOutRoom();
-  }
+
 
   useEffect(() => {
     window.onpopstate = function(event) {
@@ -463,14 +458,6 @@ function ChatRoom() {
     }
   })
 
-  useEffect(() => {
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-
-    }
-  }, [handleBeforeUnload])
 
 
 
