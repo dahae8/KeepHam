@@ -63,7 +63,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
       },
     });
 
-    // console.log(response);
+
 
     const info: roomInfoType = {
       boxId: response.data.body.box.box_id,
@@ -132,7 +132,7 @@ function ChatRoom() {
   const [currentStep, setCurrentStep] = useState<number>(roomInfo.step);
   const [remainTime, setRemainTime] = useState<string>(roomInfo.remainTime);
 
-  // console.log(roomInfo);
+
 
   const roomId = roomInfo.roomId;
   const superUser = roomInfo.superNick;
@@ -250,7 +250,6 @@ function ChatRoom() {
         destination: `/app/sendMessage/${roomId}`, // 채팅 메시지를 처리하는 엔드포인트
         body: JSON.stringify(chatMessage),
       });
-      console.log("보낸메시지:", chatMessage);
       setMsgText("");
     }
   };
@@ -365,7 +364,6 @@ function ChatRoom() {
         `/subscribe/message/${roomId}`,
         (message: Message) => {
           const chatMessage: ChatMessage = JSON.parse(message.body);
-          // console.log("받은 메시지 : ", chatMessage);
           setUserSet(chatMessage.users);
           setsockMessages((prevMessages) => [...prevMessages, chatMessage]);
           if (chatMessage.type === "CLOSE") {
@@ -424,7 +422,6 @@ function ChatRoom() {
         });
 
         setMenu(filteredMenu);
-        // console.log(response.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -451,7 +448,6 @@ function ChatRoom() {
           destination: `/app/joinUser/${roomId}`,
           body: JSON.stringify(enterMessage),
         });
-        // console.log("퇴장!!!");
       }
 
       newClient.deactivate();
@@ -489,9 +485,7 @@ function ChatRoom() {
             },
           }
         );
-        // console.log("포인트조회:",response.data.body.totalPoint);
 
-        // console.log("포인트조회2:",response);
         setTotalPoint(response.data.body.totalPoint);
       } catch (error) {
         console.log(error);
@@ -502,7 +496,6 @@ function ChatRoom() {
       fetchTotalPoint();
       setUpdateTotalPoint(false);
     }
-    // console.log("totalPoint:", totalPoint);
   }, [updateTotalPoint]);
 
   // 시간연장
@@ -536,7 +529,6 @@ function ChatRoom() {
       extend();
       setExtendTime(false)
     }
-    // console.log("totalPoint:", totalPoint);
   }, [extendTime]);
 
   // 방정보 업데이트
@@ -556,7 +548,6 @@ function ChatRoom() {
         },
       });
   
-      // console.log(response);
   
       const info: roomInfoType = {
         boxId: response.data.body.box.box_id,

@@ -40,7 +40,6 @@ function Item(props: ItemProps) {
 
   useEffect(() => {
     const exitUser = async () => {
-      console.log("Access Token", AccessToken);
       try {
         const url = import.meta.env.VITE_URL_ADDRESS + "/api/rooms/kick";
         const response = await axios.put(
@@ -55,7 +54,6 @@ function Item(props: ItemProps) {
             },
           }
         );
-        console.log(response.data.body);
 
         console.log(response);
       } catch (error) {
@@ -64,7 +62,6 @@ function Item(props: ItemProps) {
     };
 
     if (exitUserSwitch) {
-      console.log("test");
       exitUser();
       props.reloadUsers();
       setExitUserSwitch(true);
@@ -87,7 +84,6 @@ function Item(props: ItemProps) {
             },
           }
         );
-        console.log(response.data.body);
 
         console.log(response);
       } catch (error) {
