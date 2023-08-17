@@ -16,6 +16,7 @@ import com.ssafy.keepham.domain.storePayment.entity.StorePayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -231,7 +232,7 @@ public class StorePaymentService {
             StorePaymentUserResponse res = new StorePaymentUserResponse();
 
             List<UserMenuPrice> userMenuPriceList = new ArrayList<>();
-            List<StorePayment> storePaymentList = storePaymentRepository.findByUserNickName(id);
+            List<StorePayment> storePaymentList = storePaymentRepository.findByUserNickNameAndRoomId(id, roomId);
 
             if(storePaymentList.size()==0){
                 continue;
@@ -250,6 +251,7 @@ public class StorePaymentService {
             res.setMenus(userMenuPriceList);
 
             resList.add(res);
+            System.out.println(res);
         }
         return resList;
     }

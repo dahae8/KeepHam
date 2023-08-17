@@ -17,5 +17,7 @@ public interface StorePaymentRepository extends MongoRepository<StorePayment, St
 
     List<StorePayment> findByUserNickName(String userNickName);
 
+    List<StorePayment> findByUserNickNameAndRoomId(String userNickName, Long roomId);
+
     List<StorePayment> findByDeletionTimeBefore(LocalDateTime currentDateTime);
 }
