@@ -20,13 +20,12 @@ const style = {
 
 interface MyComponentProps {
   roomId: number;
+  setRandom: (result: string) => void;
   // 다른 프로퍼티들도 정의할 수 있습니다.
 }
 
 const MiniGame: React.FC<MyComponentProps> = (props) => {
-  console.log("방번호2", props.roomId);
-
-  const [users, setUsers] = useState([]);
+  const [user, setUser] = useState("");
 
   // const users = ['사용자1', '사용자2', '사용자3']
 
@@ -39,10 +38,10 @@ const MiniGame: React.FC<MyComponentProps> = (props) => {
           props.roomId +
           "/users";
         const response = await axios.get(url);
-        // console.log("결과:", response.data.body);
 
-        // console.log("결과2:",response);
-        setUsers(response.data.body);
+        const users = response.data.body;
+
+        setUser(users[parseInt((Math.random() * users.length).toString())]);
       } catch (error) {
         console.log(error);
       }
@@ -51,9 +50,9 @@ const MiniGame: React.FC<MyComponentProps> = (props) => {
     // console.log('users', users)
   }, []);
 
-  const getRandomIndex = function (length: number) {
-    return parseInt((Math.random() * length).toString());
-  };
+  useEffect(() => {
+    if (user !== "") props.setRandom(user);
+  }, [user]);
 
   return (
     <div>
@@ -62,7 +61,7 @@ const MiniGame: React.FC<MyComponentProps> = (props) => {
           #추첨게임
         </Typography>
         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          {users[getRandomIndex(users.length)]} 님이 당첨입니다!
+          {user} 님이 당첨입니다!
         </Typography>
       </Box>
     </div>
