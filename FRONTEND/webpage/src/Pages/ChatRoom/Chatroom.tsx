@@ -320,7 +320,7 @@ function ChatRoom() {
 
     // WebSocket 연결 설정
     const newClient = new Client({
-      brokerURL: "ws://i9c104.p.ssafy.io:48080/api/my-chat", // WebSocket 서버 주소
+      brokerURL: "wss://i9c104.p.ssafy.io/api/my-chat", // WebSocket 서버 주소
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       debug: (str: string) => {
         console.log("디버그 : ", str);
