@@ -44,7 +44,7 @@ public class ChatRoomApiController {
     private Api<List<ChatRoomResponse>> findAllOpenedRoom(
             @RequestParam ChatRoomStatus status,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "6") int pageSize
+            @RequestParam(defaultValue = "10") int pageSize
     ){
         return Api.OK(chatRoomService.openedRoom(status, page, pageSize));
     }
