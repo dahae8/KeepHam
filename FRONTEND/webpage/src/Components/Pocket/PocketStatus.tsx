@@ -48,7 +48,6 @@ const PocketStatus: React.FC<PocketStatusProps> = (props) => {
           },
         }
       );
-      console.log(response.data.body);
       console.log(response);
       alert("환불되었습니다.");
       location.reload();
