@@ -32,6 +32,7 @@ import { Client, Message } from "@stomp/stompjs";
 import axios from "axios";
 import MiniGame from "@/Components/ChatRoom/MiniGame.tsx";
 
+
 type roomInfoType = {
   boxId: number;
   roomId: number;
@@ -91,6 +92,7 @@ interface ChatMessage {
   content: string;
   type: string;
   timestamp: string;
+  users: Set<string>
 }
 interface ChatMessage_timestamp {
   room_id: number;
@@ -114,6 +116,7 @@ function ChatRoom() {
   // const [inputMessage, setInputMessage] = useState("");
   const [sockmessages, setsockMessages] = useState<ChatMessage[]>([]);
   const [roomPassword, setRoomPw] = useState<number>(-1);
+  const [userSet, setUserSet] = useState<Set<string>>(new Set());
 
   const [storeMenu, setMenu] = useState<menuInfo[]>([]);
   const [open, setOpen] = useState<boolean>(false);
@@ -234,6 +237,19 @@ function ChatRoom() {
           }
         );
         console.log(response);
+        if (client) {
+          const enterMessage: ChatMessage_timestamp = {
+            room_id: roomId,
+            box_id: boxId,
+            author: nname,
+            content: roomId + "방이 종료됐습니다.",
+            type: "CLOSE",
+          };
+          client.publish({
+            destination: `/app/joinUser/${roomId}`,
+            body: JSON.stringify(enterMessage),
+          });
+        }
         navigate("/Home/RoomList");
       } catch (error) {
         console.log(error);
@@ -318,7 +334,11 @@ function ChatRoom() {
         (message: Message) => {
           const chatMessage: ChatMessage = JSON.parse(message.body);
           // console.log("받은 메시지 : ", chatMessage);
+          setUserSet(chatMessage.users);
           setsockMessages((prevMessages) => [...prevMessages, chatMessage]);
+          if (chatMessage.type === "CLOSE") {
+            navigate("/Home/RoomList");
+          }
         }
       );
 
@@ -471,7 +491,7 @@ function ChatRoom() {
       <Box
         sx={{
           padding: { xs: 0, md: 4 },
-          minHeight: 720,
+          minHeight: 650,
           height: "calc(100vh - 320px)",
         }}
       >
@@ -586,15 +606,7 @@ function ChatRoom() {
               }}
             >
               <Typography variant="h6" noWrap>
-                🕙
-                {roomInfo.remainTime.substring(5, 7) +
-                  "월 " +
-                  roomInfo.remainTime.substring(8, 10) +
-                  "일 " +
-                  roomInfo.remainTime.substring(11, 13) +
-                  "시 " +
-                  roomInfo.remainTime.substring(14, 16) +
-                  "분"}
+                🕙{roomInfo.remainTime}
               </Typography>
               <Button variant="outlined" size="small" color="gray">
                 연장
@@ -896,7 +908,7 @@ function ChatRoom() {
                 borderBottomLeftRadius: 8,
               }}
             >
-              <UserList roomId={roomId} boxId={boxId} superUser={superUser} />
+              <UserList roomId={roomId} boxId={boxId} userSet={userSet}/>
             </Box>
           </Box>
         </Box>

@@ -159,7 +159,7 @@ export default function Admin() {
   };
 
   const boxsColumn: GridColDef[] = [
-    { field: "box_id", headerName: "함번호", width: 50 },
+    { field: "box_id", headerName: "함번호", width: 100 },
     {
       field: "address",
       headerName: "기본 주소",
@@ -168,12 +168,12 @@ export default function Admin() {
     {
       field: "detailed_address",
       headerName: "상세주소",
-      width: 250,
+      width: 400,
     },
     {
       field: "zip_code",
       headerName: "우편번호",
-      width: 100,
+      width: 150,
     },
     {
       field: "used",
@@ -185,22 +185,22 @@ export default function Admin() {
     {
       field: "name",
       headerName: "가게이름",
-      width: 300,
+      width: 380,
     },
     {
       field: "min_order_amount",
       headerName: "배달료",
-      width: 150,
+      width: 200,
     },
     {
       field: "delivery_fee_to_display",
       headerName: "최소주문금액",
-      width: 100,
+      width: 200,
     },
     {
       field: "estimated_delivery_time",
       headerName: "배달예상시간",
-      width: 100,
+      width: 200,
     },
   ];
 

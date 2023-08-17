@@ -1,6 +1,7 @@
 package com.ssafy.keepham.domain.chat.entity;
 
 import com.ssafy.keepham.domain.chat.entity.enums.Type;
+import com.ssafy.keepham.domain.chatroom.entity.enums.ChatRoomStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
@@ -8,6 +9,8 @@ import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 
 @Data
@@ -27,5 +30,7 @@ public class Message {
     private LocalDateTime timestamp;
     @Enumerated(value = EnumType.STRING)
     private Type type;
+    private Set<String> users;
+    private ChatRoomStatus status;
 
 }
