@@ -39,10 +39,6 @@ const UserList: React.FC<MyComponentProps> = (props) => {
   };
 
   useEffect(() => {
-    console.log("유스이펙트 : ",props.userSet)
-  })
-
-  useEffect(() => {
     const fetchUser = async () => {
       try {
         const url =

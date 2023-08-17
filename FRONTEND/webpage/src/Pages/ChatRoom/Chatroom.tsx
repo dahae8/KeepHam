@@ -131,6 +131,7 @@ function ChatRoom() {
   const superUser = roomInfo.superNick;
   const boxId = roomInfo.boxId;
   const storeId = roomInfo.storeId;
+  const remainTime = roomInfo.remainTime;
   const nname = sessionStorage.getItem("userNick")!.toString();
 
   const navigate = useNavigate();
@@ -168,6 +169,7 @@ function ChatRoom() {
     }
   }
 
+  // 네비게이션 바
   function navDisplay() {
     if (navIdx === 1) {
       return (
@@ -257,6 +259,7 @@ function ChatRoom() {
     };
     deleteRoom();
   }
+
   function goingOutRoom() {
     if (client) {
       const enterMessage: ChatMessage_timestamp = {
@@ -274,7 +277,7 @@ function ChatRoom() {
     navigate("/Home/RoomList");
   }
 
-  // 함 비밀번호 설정시 실행
+  // 함 비밀번호 설정
   useEffect(() => {
     if (client && roomPassword) {
       const chatMessage: ChatMessage_timestamp = {
@@ -289,12 +292,10 @@ function ChatRoom() {
         destination: `/app/sendMessage/${roomId}`, // 채팅 메시지를 처리하는 엔드포인트
         body: JSON.stringify(chatMessage),
       });
-      // console.log("비밀번호:", chatMessage);
-      setMsgText("");
     }
   }, [roomPassword]);
 
-  // 함 개방시 실행
+  // 함 개방
   useEffect(() => {
     if (client && open) {
       const chatMessage: ChatMessage_timestamp = {
@@ -309,9 +310,9 @@ function ChatRoom() {
         destination: `/app/sendMessage/${roomId}`, // 채팅 메시지를 처리하는 엔드포인트
         body: JSON.stringify(chatMessage),
       });
-      // console.log("함 개방:", chatMessage);
-      setMsgText("");
     }
+
+    setOpen(false)
   }, [open]);
 
   //입장 실행
@@ -419,8 +420,8 @@ function ChatRoom() {
     };
   }, []);
 
+  // 메시지 업데이트
   useEffect(() => {
-    // const userId = sessionStorage.getItem("userId");
     const messageFormchange: messageType[] = sockmessages.map((e) => {
       let byMee = true;
       if (e.author !== nname) byMee = false;
@@ -434,6 +435,7 @@ function ChatRoom() {
     setMessages(messageFormchange);
   }, [sockmessages]);
 
+  // 포인트
   useEffect(() => {
     const AccessToken = sessionStorage.getItem("AccessToken");
     console.log("AccessToken", AccessToken);
@@ -463,9 +465,7 @@ function ChatRoom() {
     // console.log("totalPoint:", totalPoint);
   }, [totalPoint]);
 
-
-
-
+  // 뒤로가기
   useEffect(() => {
     window.onpopstate = function(event) {
       if (event) {
@@ -473,9 +473,6 @@ function ChatRoom() {
       }
     }
   })
-
-
-
 
   return (
     <>
@@ -597,7 +594,7 @@ function ChatRoom() {
               }}
             >
               <Typography variant="h6" noWrap>
-                🕙{roomInfo.remainTime}
+                🕙{remainTime.substring(5, 7) + "월 " + remainTime.substring(8, 10) + "일 " + remainTime.substring(11, 13) + "시 " + remainTime.substring(14, 16) + "분"}
               </Typography>
               <Button variant="outlined" size="small" color="gray">
                 연장
