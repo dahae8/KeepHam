@@ -158,7 +158,7 @@ function SelectStep1(props: propsType) {
 
   useEffect(() => {
     const newStompClient = new Client({
-      brokerURL: "ws://localhost:8080/api/my-chat"
+      brokerURL: "wss://i9c104.p.ssafy.io/api/my-chat"
     });
 
     newStompClient.activate();
