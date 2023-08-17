@@ -9,6 +9,7 @@ import { Box, Button, IconButton, Tab, Tabs } from "@mui/material";
 import { AddBox, IndeterminateCheckBox } from "@mui/icons-material";
 import axios from "axios";
 import { menuInfo, propsType } from "@/Components/ChatRoom/SelectMenus.tsx";
+import { Client } from "@stomp/stompjs";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -141,6 +142,8 @@ function SelectStep1(props: propsType) {
   const userNick = sessionStorage.getItem("userNick")!;
   const superUser = props.superUser;
 
+  const [stompClient, setStompClient] = useState<Client | null>(null);
+
   const tabHandler = (_event: SyntheticEvent, newTabIdx: number) => {
     setTabIdx(newTabIdx);
   };
@@ -153,10 +156,44 @@ function SelectStep1(props: propsType) {
     return prev + cur.price * cur.count;
   }, 0);
 
+  useEffect(() => {
+    const newStompClient = new Client({
+      brokerURL: "wss://i9c104.p.ssafy.io/api/my-chat"
+    });
+
+    newStompClient.activate();
+    console.log("client 연결")
+    newStompClient.onConnect = () => {
+      newStompClient.subscribe(`/subscribe/users/${props.roomId}`, (message) => {
+        setSelectedCnt(Number(message.body))
+      })
+    }
+    console.log("구독완료")
+    setStompClient(newStompClient);
+
+    return () => {
+      newStompClient.deactivate();
+    }
+  }, [])
+
   function switchSelectButton() {
     if (isInitial) setIsInitial(false);
-    setSelected(!selected);
+    // setSelected(!selected);
+    setSelected(prevSelected => !prevSelected);
   }
+
+  useEffect(() => {
+    if (selected) {
+      const roomId = props.roomId;
+      if (stompClient) {
+        stompClient.publish({
+          destination: `/app/users/${roomId}`,
+          body: JSON.stringify({ roomId }),
+        });
+      }
+    }
+  }, [selected, stompClient, props.roomId]);
+
 
   function confirmMenuSelection() {
     setConfirmed(true);
