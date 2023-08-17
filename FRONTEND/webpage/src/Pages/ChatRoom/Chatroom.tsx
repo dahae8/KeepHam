@@ -177,6 +177,22 @@ function ChatRoom() {
     }
   }
 
+  function selectionNotice() {
+    if (client) {
+      const resultMessage: ChatMessage_timestamp = {
+        room_id: roomId,
+        box_id: boxId,
+        author: nname,
+        content: nname + " 님이 구매를 확정하였습니다",
+        type: "INFO",
+      };
+      client.publish({
+        destination: `/app/joinUser/${roomId}`,
+        body: JSON.stringify(resultMessage),
+      });
+    }
+  }
+
   // 네비게이션 바
   function navDisplay() {
     if (navIdx === 1) {
@@ -198,6 +214,7 @@ function ChatRoom() {
           step={currentStep}
           totalPoint={totalPoint}
           setStep={updateStep}
+          selectionNotice={selectionNotice}
         />
       );
     } else if (navIdx === 3) {
