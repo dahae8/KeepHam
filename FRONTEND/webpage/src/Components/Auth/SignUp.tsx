@@ -71,6 +71,7 @@ function SignUp() {
     if (retErr) {
       return;
     }
+    console.log(pwConfirm, idConfirm);
 
     if (pwConfirm && idConfirm) {
       const addUser = async () => {
@@ -102,8 +103,10 @@ function SignUp() {
       import.meta.env.VITE_URL_ADDRESS + "/api/validation?userId=" + idValue;
     try {
       const response = await axios.get(url);
+      console.log("확인 결과 : ", response.data.body);
       setidConfirm(response.data.body);
       setIdHelper("사용가능한 아이디 입니다");
+      console.log(idConfirm);
       return "성공";
     } catch (error) {
       console.error("에러메시지 :", error);
@@ -131,8 +134,10 @@ function SignUp() {
       nickNameValue;
     try {
       const response = await axios.get(url);
+      console.log("확인 결과 : ", response.data.body);
       setNickConfirm(response.data.body);
       setNickNameHelper("사용가능한 닉네임 입니다");
+      console.log(nickConfirm);
       return "성공";
     } catch (error) {
       console.error("에러메시지 :", error);

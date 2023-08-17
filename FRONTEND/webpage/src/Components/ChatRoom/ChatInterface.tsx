@@ -243,6 +243,7 @@ function ChatInterface(props: propsType) {
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollIntoView(false);
+      // console.log(chatRef.current.scrollTop);
     }
   }, [messageList]);
 

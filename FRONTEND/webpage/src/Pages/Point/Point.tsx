@@ -26,6 +26,7 @@ function Point() {
       });
 
       const AccessToken = sessionStorage.getItem("AccessToken");
+      console.log("AccessToken", AccessToken);
 
       const fetchPayment = async () => {
         try {
@@ -42,6 +43,7 @@ function Point() {
               },
             }
           );
+          console.log("response2.date.body", response2.data.body);
 
           console.log("response2", response2);
         } catch (error) {
@@ -54,6 +56,7 @@ function Point() {
           // 가상계좌 입금 완료 처리
           break;
         case "done":
+          console.log(response);
           fetchPayment();
 
           alert("결제가 완료되었습니다.");

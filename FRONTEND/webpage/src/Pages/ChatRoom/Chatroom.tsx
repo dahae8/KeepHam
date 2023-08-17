@@ -63,7 +63,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
       },
     });
 
-
+    // console.log(response);
 
     const info: roomInfoType = {
       boxId: response.data.body.box.box_id,
@@ -131,11 +131,11 @@ function ChatRoom() {
 
   const [currentStep, setCurrentStep] = useState<number>(roomInfo.step);
   const [remainTime, setRemainTime] = useState<string>(roomInfo.remainTime);
+  const [superUser, setSuperUser] = useState<string>(roomInfo.superNick);
 
-
+  // console.log(roomInfo);
 
   const roomId = roomInfo.roomId;
-  const superUser = roomInfo.superNick;
   const boxId = roomInfo.boxId;
   const storeId = roomInfo.storeId;
   const nname = sessionStorage.getItem("userNick")!.toString();
@@ -250,6 +250,7 @@ function ChatRoom() {
         destination: `/app/sendMessage/${roomId}`, // 채팅 메시지를 처리하는 엔드포인트
         body: JSON.stringify(chatMessage),
       });
+      console.log("보낸메시지:", chatMessage);
       setMsgText("");
     }
   };
@@ -364,10 +365,14 @@ function ChatRoom() {
         `/subscribe/message/${roomId}`,
         (message: Message) => {
           const chatMessage: ChatMessage = JSON.parse(message.body);
+          // console.log("받은 메시지 : ", chatMessage);
           setUserSet(chatMessage.users);
           setsockMessages((prevMessages) => [...prevMessages, chatMessage]);
           if (chatMessage.type === "CLOSE") {
             navigate("/Home/RoomList");
+          }
+          if (chatMessage.type === "ENTER") {
+            setUpdate(true)
           }
         }
       );
@@ -422,6 +427,7 @@ function ChatRoom() {
         });
 
         setMenu(filteredMenu);
+        // console.log(response.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -448,6 +454,7 @@ function ChatRoom() {
           destination: `/app/joinUser/${roomId}`,
           body: JSON.stringify(enterMessage),
         });
+        // console.log("퇴장!!!");
       }
 
       newClient.deactivate();
@@ -485,7 +492,9 @@ function ChatRoom() {
             },
           }
         );
+        // console.log("포인트조회:",response.data.body.totalPoint);
 
+        // console.log("포인트조회2:",response);
         setTotalPoint(response.data.body.totalPoint);
       } catch (error) {
         console.log(error);
@@ -496,6 +505,7 @@ function ChatRoom() {
       fetchTotalPoint();
       setUpdateTotalPoint(false);
     }
+    // console.log("totalPoint:", totalPoint);
   }, [updateTotalPoint]);
 
   // 시간연장
@@ -529,7 +539,12 @@ function ChatRoom() {
       extend();
       setExtendTime(false)
     }
+    // console.log("totalPoint:", totalPoint);
   }, [extendTime]);
+
+  const updateInfo = () => {
+    setUpdate(true)
+  }
 
   // 방정보 업데이트
   useEffect(() => {
@@ -548,6 +563,7 @@ function ChatRoom() {
         },
       });
   
+      // console.log(response);
   
       const info: roomInfoType = {
         boxId: response.data.body.box.box_id,
@@ -564,6 +580,9 @@ function ChatRoom() {
   
       setRoomInfo(info)
       setRemainTime(info.remainTime)
+      setSuperUser(info.superNick)
+      console.log("업데이트");
+      
     }catch (error) {
       console.log(error);
     }
@@ -999,7 +1018,8 @@ function ChatRoom() {
                 borderBottomLeftRadius: 8,
               }}
             >
-              <UserList roomId={roomId} boxId={boxId} userSet={userSet}/>
+              <UserList roomId={roomId} boxId={boxId} userSet={userSet} superUser={superUser} userNick={nname} updateInfo={ updateInfo }
+            />
             </Box>
           </Box>
         </Box>

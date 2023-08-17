@@ -162,6 +162,7 @@ function SelectStep1(props: propsType) {
     });
 
     newStompClient.activate();
+    console.log("client 연결")
     newStompClient.onConnect = () => {
       newStompClient.subscribe(`/subscribe/users/${props.roomId}`, (message) => {
         setSelectedCnt(Number(message.body))
@@ -172,6 +173,7 @@ function SelectStep1(props: propsType) {
         console.log(message);
       })
     }
+    console.log("구독완료")
     setStompClient(newStompClient);
 
     return () => {
@@ -232,6 +234,8 @@ function SelectStep1(props: propsType) {
         console.log(error);
       }
 
+      console.log(users);
+      console.log(selectedUsers);
 
       if (selectedUsers.includes(userNick)) {
         setSelected(true);
@@ -273,13 +277,14 @@ function SelectStep1(props: propsType) {
         });
         const roomId = props.roomId;
         if (stompClient) {
+          console.log("선택완료 메세지ㅣㅣㅣ")
           stompClient.publish({
             destination: `/app/users/${roomId}`,
             body: JSON.stringify({ roomId }),
           });
         }
-        console.log(response)
 
+        console.log(response);
       } catch (error) {
         console.log(error);
       }
@@ -299,12 +304,14 @@ function SelectStep1(props: propsType) {
         });
         const roomId = props.roomId;
         if (stompClient) {
+          console.log("선택취소 메세지ㅣㅣㅣ")
           stompClient.publish({
             destination: `/app/users/${roomId}`,
             body: JSON.stringify({ roomId }),
           });
         }
-        console.log(response)
+
+        console.log(response);
       } catch (error) {
         console.log(error);
       }
@@ -359,12 +366,14 @@ function SelectStep1(props: propsType) {
         });
         const roomId = props.roomId;
         if (stompClient) {
+          console.log("주문확정 메세지ㅣㅣㅣ")
           stompClient.publish({
             destination: `/app/step/${roomId}`,
             body: JSON.stringify({ roomId }),
           });
         }        
-        console.log(response)
+
+        console.log(response);
         props.setStep(1);
       } catch (error) {
         console.log(error);

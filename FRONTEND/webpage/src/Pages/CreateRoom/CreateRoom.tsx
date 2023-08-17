@@ -129,6 +129,7 @@ export default function Admin() {
         const url = import.meta.env.VITE_URL_ADDRESS + "/api/boxs/" + zipCode;
         const response = await axios.get(url);
         setBoxes(response.data.body);
+        // console.log("ddd" ,response.data.body);
       } catch (error) {
         console.log(error);
       }
@@ -140,6 +141,7 @@ export default function Admin() {
     const addRess = a.toString();
     const latitude = b.toString();
     const hardness = c.toString();
+    console.log("dfdd", addRess, latitude, hardness);
     const queryParams = {
       address: addRess,
       lat: latitude,
@@ -148,6 +150,7 @@ export default function Admin() {
     axios
       .get("https://i9c104.p.ssafy.io/api/stores", { params: queryParams })
       .then((res) => {
+        console.log("https", res);
         setStores(res.data.data);
       })
       .catch((err) => {
@@ -291,6 +294,7 @@ export default function Admin() {
                   onRowSelectionModelChange={(selectedRow) => {
                     const selectedIdx: number = Number(selectedRow[0]);
                     // const storeId = selectedRow[0].toString();
+                    console.log("선택가게번호", selectedIdx);
                     if (userState === "isLoggedIn") {
                       for (let i = 0; i < Number(Stores.length); i++) {
                         if (Stores[i].id === selectedIdx) {
