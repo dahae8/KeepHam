@@ -168,6 +168,7 @@ function SelectStep1(props: propsType) {
         setSelectedCnt(Number(message.body))
       })
       newStompClient.subscribe(`/subscribe/step/${props.roomId}` , (message) => {
+        props.updatePoint()
         props.setStep(1);
         console.log(message);
       })

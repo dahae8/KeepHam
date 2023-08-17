@@ -31,6 +31,7 @@ export type propsType = {
   totalPoint: number;
   setStep: (step: number) => void;
   selectionNotice: () => void;
+  updatePoint: () => void;
 };
 
 function SelectMenus(props: propsType) {
@@ -53,6 +54,7 @@ function SelectMenus(props: propsType) {
           totalPoint={props.totalPoint}
           setStep={props.setStep}
           selectionNotice={props.selectionNotice}
+          updatePoint={props.updatePoint}
         />
       )}
       {props.step == 1 && (
@@ -66,6 +68,7 @@ function SelectMenus(props: propsType) {
           totalPoint={props.totalPoint}
           setStep={props.setStep}
           selectionNotice={props.selectionNotice}
+          updatePoint={props.updatePoint}
         />
       )}
     </>

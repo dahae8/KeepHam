@@ -123,6 +123,7 @@ function ChatRoom() {
   const [open, setOpen] = useState<boolean>(false);
 
   const [totalPoint, setTotalPoint] = useState(0);
+  const [updateTotalPoint, setUpdateTotalPoint] = useState(true);
   const [extendTime, setExtendTime] = useState(false);
 
   const [roomInfo, setRoomInfo] = useState<roomInfoType>(useLoaderData() as roomInfoType)
@@ -193,6 +194,10 @@ function ChatRoom() {
     }
   }
 
+  function updatePoint() {
+    setUpdateTotalPoint(true);
+  }
+
   // 네비게이션 바
   function navDisplay() {
     if (navIdx === 1) {
@@ -215,6 +220,7 @@ function ChatRoom() {
           totalPoint={totalPoint}
           setStep={updateStep}
           selectionNotice={selectionNotice}
+          updatePoint={updatePoint}
         />
       );
     } else if (navIdx === 3) {
@@ -469,8 +475,6 @@ function ChatRoom() {
 
   // 포인트
   useEffect(() => {
-    const AccessToken = sessionStorage.getItem("AccessToken");
-    console.log("AccessToken", AccessToken);
 
     const fetchTotalPoint = async () => {
       try {
@@ -481,7 +485,7 @@ function ChatRoom() {
           {},
           {
             headers: {
-              Authorization: `Bearer ` + AccessToken,
+              Authorization: key,
             },
           }
         );
@@ -493,9 +497,13 @@ function ChatRoom() {
         console.log(error);
       }
     };
-    fetchTotalPoint();
+
+    if(updateTotalPoint) {
+      fetchTotalPoint();
+      setUpdateTotalPoint(false);
+    }
     // console.log("totalPoint:", totalPoint);
-  }, [totalPoint]);
+  }, [updateTotalPoint]);
 
   // 시간연장
   useEffect(() => {
