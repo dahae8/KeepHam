@@ -40,7 +40,7 @@ const UserList: React.FC<MyComponentProps> = (props) => {
 
   useEffect(() => {
     console.log("유스이펙트 : ",props.userSet)
-  })
+  }, [props.userSet])
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -63,7 +63,7 @@ const UserList: React.FC<MyComponentProps> = (props) => {
 
     fetchUser();
     
-  }, [reload, props.roomId]);
+  }, [reload, props.roomId, props.userSet]);
 
 
   useEffect(() => {
