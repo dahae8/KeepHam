@@ -59,7 +59,7 @@ const UserList: React.FC<MyComponentProps> = (props) => {
 
     fetchUser();
     
-  }, [reload, props.roomId]);
+  }, [reload, props.roomId, props.userSet]);
 
 
   useEffect(() => {

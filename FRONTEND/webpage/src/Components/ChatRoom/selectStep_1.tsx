@@ -167,6 +167,10 @@ function SelectStep1(props: propsType) {
       newStompClient.subscribe(`/subscribe/users/${props.roomId}`, (message) => {
         setSelectedCnt(Number(message.body))
       })
+      newStompClient.subscribe(`/subscribe/step/${props.roomId}` , (message) => {
+        props.setStep(1);
+        console.log(message);
+      })
     }
     console.log("구독완료")
     setStompClient(newStompClient);
@@ -174,7 +178,7 @@ function SelectStep1(props: propsType) {
     return () => {
       newStompClient.deactivate();
     }
-  }, [])
+  }, [selectedCnt])
 
   function switchSelectButton() {
     if (isInitial) setIsInitial(false);
@@ -182,17 +186,17 @@ function SelectStep1(props: propsType) {
     setSelected(prevSelected => !prevSelected);
   }
 
-  useEffect(() => {
-    if (selected) {
-      const roomId = props.roomId;
-      if (stompClient) {
-        stompClient.publish({
-          destination: `/app/users/${roomId}`,
-          body: JSON.stringify({ roomId }),
-        });
-      }
-    }
-  }, [selected, stompClient, props.roomId]);
+  // useEffect(() => {
+  //   if (selected) {
+  //     const roomId = props.roomId;
+  //     if (stompClient) {
+  //       stompClient.publish({
+  //         destination: `/app/users/${roomId}`,
+  //         body: JSON.stringify({ roomId }),
+  //       });
+  //     }
+  //   }
+  // }, [selected, stompClient, props.roomId]);
 
 
   function confirmMenuSelection() {
@@ -270,6 +274,14 @@ function SelectStep1(props: propsType) {
             Authorization: key,
           },
         });
+        const roomId = props.roomId;
+        if (stompClient) {
+          console.log("선택완료 메세지ㅣㅣㅣ")
+          stompClient.publish({
+            destination: `/app/users/${roomId}`,
+            body: JSON.stringify({ roomId }),
+          });
+        }
 
         console.log(response);
       } catch (error) {
@@ -289,6 +301,14 @@ function SelectStep1(props: propsType) {
             Authorization: key,
           },
         });
+        const roomId = props.roomId;
+        if (stompClient) {
+          console.log("선택취소 메세지ㅣㅣㅣ")
+          stompClient.publish({
+            destination: `/app/users/${roomId}`,
+            body: JSON.stringify({ roomId }),
+          });
+        }
 
         console.log(response);
       } catch (error) {
@@ -343,9 +363,16 @@ function SelectStep1(props: propsType) {
             Authorization: key,
           },
         });
+        const roomId = props.roomId;
+        if (stompClient) {
+          console.log("주문확정 메세지ㅣㅣㅣ")
+          stompClient.publish({
+            destination: `/app/step/${roomId}`,
+            body: JSON.stringify({ roomId }),
+          });
+        }        
 
         console.log(response);
-
         props.setStep(1);
       } catch (error) {
         console.log(error);
