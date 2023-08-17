@@ -109,7 +109,6 @@ function Item(props: ItemProps) {
           <ListItem
             secondaryAction={
               <div>
-                123
                 <Button
                   variant="contained"
                   onClick={() => {
