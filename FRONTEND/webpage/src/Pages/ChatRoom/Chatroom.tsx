@@ -125,6 +125,11 @@ function ChatRoom() {
 
   const roomInfo = useLoaderData() as roomInfoType;
 
+
+  const [currentStep, setCurrentStep] = useState<number>(roomInfo.step);
+
+  console.log(roomInfo);
+
   // console.log(roomInfo);
 
   const roomId = roomInfo.roomId;
@@ -152,6 +157,9 @@ function ChatRoom() {
     setOpen(true);
   }
 
+  function updateStep(step: number) {
+    setCurrentStep(step);
+  }
   function gameResult(result: string) {
     if (client) {
       const resultMessage: ChatMessage_timestamp = {
@@ -185,9 +193,9 @@ function ChatRoom() {
           roomId={roomInfo.roomId}
           storeName={roomInfo.store}
           superUser={roomInfo.superNick}
-          step={roomInfo.step}
+          step={currentStep}
           totalPoint={totalPoint}
-          setStep={() => {}}
+          setStep={updateStep}
         />
       );
     } else if (navIdx === 3) {
