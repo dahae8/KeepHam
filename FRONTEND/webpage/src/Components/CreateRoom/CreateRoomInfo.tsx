@@ -87,7 +87,6 @@ function Addroom() {
           },
         });
         const roomId = response.data.body.id;
-        console.log(response.data.body);
         navigate("/Home/Chatroom/" + roomId);
       } catch (error) {
         console.log(error);

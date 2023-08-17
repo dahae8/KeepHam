@@ -25,23 +25,12 @@ const PocketStatus: React.FC<PocketStatusProps> = (props) => {
 
   useEffect(() => {
     const total = { balance: 0, income: 0, expense: 0 };
-
+  
     if (props.items.length > 0) {
-      // 자산, 수입, 지출 합계 계산
-      props.items.forEach((item) => {
-        if (item.info === "충전") {
-          total.balance += +item.price;
-          total.income += +item.price;
-        } else {
-          total.balance += +item.price;
-          total.expense += +item.price;
-        }
-      });
+      total.balance = props.items[0].total_point;
     }
 
     setTotalBalance(total.balance);
-    // setTotalIncome(total.income);
-    // setTotalExpense(total.expense);
   }, [props.items]);
 
   const AccessToken = sessionStorage.getItem("AccessToken");
@@ -59,7 +48,6 @@ const PocketStatus: React.FC<PocketStatusProps> = (props) => {
           },
         }
       );
-      console.log(response.data.body);
       console.log(response);
       alert("환불되었습니다.");
       location.reload();
