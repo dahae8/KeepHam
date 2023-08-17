@@ -86,8 +86,8 @@ function AlbumList(props: propsType) {
               navigate(`/Home/Chatroom/${item.id}`);
             }}
             sx={{
-              width: { xs: 200, md: 300 },
-              height: { xs: 200, md: 300 },
+              width: { xs: 200, md: 285 },
+              height: { xs: 200, md: 285 },
               backgroundImage: `url("${item.img}")`,
               backgroundSize: "cover",
               borderRadius: 8,

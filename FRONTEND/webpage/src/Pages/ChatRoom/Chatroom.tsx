@@ -27,10 +27,10 @@ import ChatInterface, {
   messageType,
 } from "@/Components/ChatRoom/ChatInterface.tsx";
 import SelectMenus, { menuInfo } from "@/Components/ChatRoom/SelectMenus.tsx";
-import UserSelect from "@/Components/ChatRoom/UserSelect.tsx";
 import UserList from "@/Components/ChatRoom/UserList.tsx";
 import { Client, Message } from "@stomp/stompjs";
 import axios from "axios";
+import MiniGame from "@/Components/ChatRoom/MiniGame.tsx";
 
 
 type roomInfoType = {
@@ -125,9 +125,12 @@ function ChatRoom() {
 
   const roomInfo = useLoaderData() as roomInfoType;
 
+
   const [currentStep, setCurrentStep] = useState<number>(roomInfo.step);
 
   console.log(roomInfo);
+
+  // console.log(roomInfo);
 
   const roomId = roomInfo.roomId;
   const superUser = roomInfo.superNick;
@@ -157,6 +160,21 @@ function ChatRoom() {
   function updateStep(step: number) {
     setCurrentStep(step);
   }
+  function gameResult(result: string) {
+    if (client) {
+      const resultMessage: ChatMessage_timestamp = {
+        room_id: roomId,
+        box_id: boxId,
+        author: nname,
+        content: result + " 님이 당첨되었습니다",
+        type: "INFO",
+      };
+      client.publish({
+        destination: `/app/joinUser/${roomId}`,
+        body: JSON.stringify(resultMessage),
+      });
+    }
+  }
 
   function navDisplay() {
     if (navIdx === 1) {
@@ -181,7 +199,7 @@ function ChatRoom() {
         />
       );
     } else if (navIdx === 3) {
-      return <UserSelect roomId={roomId} />;
+      return <MiniGame roomId={roomId} setRandom={gameResult} />;
     } else {
       return <></>;
     }
