@@ -1,0 +1,46 @@
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+      dialect: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:mysql://i9c104.p.ssafy.io:43306/ssafy
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: keepham@mysql!@#$
+  data:
+    mongodb:
+      uri: mongodb://ssafy:keephamssafy@i9c104.p.ssafy.io:47017/ssafy
+
+  security:
+    user:
+      name: ssafy
+      password: ssafy
+
+
+
+springdoc:
+  packages-to-scan: com.ssafy.keepham
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    path: /keepham-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    api-docs:
+      path: /api-docs/json
+      groups:
+        enabled: true
+    cache:
+      disabled: true
+
+logging.level:
+  org.hibernate:
+    SQL: debug
+    type: trace

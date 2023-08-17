@@ -1,0 +1,3 @@
+redis:
+  host: i9c104.p.ssafy.io
+  port: 46379
