@@ -177,13 +177,22 @@ function SelectStep2(props: propsType) {
   }, []);
 
   useEffect(() => {
+    const key = "Bearer " + sessionStorage.getItem("AccessToken");
+
     const confirmMenus = async () => {
       const url =
         import.meta.env.VITE_URL_ADDRESS +
         "/api/payment/storeMenu/user/" +
         roomId;
       try {
-        const response = await axios.get(url);
+        const response = await axios({
+          method: "post",
+          url: url,
+          data: {},
+          headers: {
+            Authorization: key,
+          },
+        });
 
         console.log(response);
       } catch (error) {
@@ -198,7 +207,7 @@ function SelectStep2(props: propsType) {
       <Box
         sx={{
           width: "100%",
-          height: userNick === props.superUser ? "100%" : "calc(100% - 80px)",
+          height: "calc(100% - 80px)",
           overflow: "auto",
           backgroundColor: "#D8DADF",
         }}

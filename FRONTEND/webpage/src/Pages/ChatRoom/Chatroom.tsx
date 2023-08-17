@@ -27,10 +27,10 @@ import ChatInterface, {
   messageType,
 } from "@/Components/ChatRoom/ChatInterface.tsx";
 import SelectMenus, { menuInfo } from "@/Components/ChatRoom/SelectMenus.tsx";
-import UserSelect from "@/Components/ChatRoom/UserSelect.tsx";
 import UserList from "@/Components/ChatRoom/UserList.tsx";
 import { Client, Message } from "@stomp/stompjs";
 import axios from "axios";
+import MiniGame from "@/Components/ChatRoom/MiniGame.tsx";
 
 type roomInfoType = {
   boxId: number;
@@ -122,7 +122,7 @@ function ChatRoom() {
 
   const roomInfo = useLoaderData() as roomInfoType;
 
-  console.log(roomInfo);
+  // console.log(roomInfo);
 
   const roomId = roomInfo.roomId;
   const superUser = roomInfo.superNick;
@@ -149,6 +149,22 @@ function ChatRoom() {
     setOpen(true);
   }
 
+  function gameResult(result: string) {
+    if (client) {
+      const resultMessage: ChatMessage_timestamp = {
+        room_id: roomId,
+        box_id: boxId,
+        author: nname,
+        content: result + " 님이 당첨되었습니다",
+        type: "INFO",
+      };
+      client.publish({
+        destination: `/app/joinUser/${roomId}`,
+        body: JSON.stringify(resultMessage),
+      });
+    }
+  }
+
   function navDisplay() {
     if (navIdx === 1) {
       return (
@@ -172,7 +188,7 @@ function ChatRoom() {
         />
       );
     } else if (navIdx === 3) {
-      return <UserSelect roomId={roomId} />;
+      return <MiniGame roomId={roomId} setRandom={gameResult} />;
     } else {
       return <></>;
     }
@@ -427,28 +443,28 @@ function ChatRoom() {
     // console.log("totalPoint:", totalPoint);
   }, [totalPoint]);
 
-  // 창 종료 시 퇴장처리
-  const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-    event.preventDefault();
-    event.returnValue = "떠나지마";
-    goingOutRoom();
-  };
+  // // 창 종료 시 퇴장처리
+  // const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+  //   event.preventDefault();
+  //   event.returnValue = "떠나지마";
+  //   goingOutRoom();
+  // };
 
-  useEffect(() => {
-    window.onpopstate = function (event) {
-      if (event) {
-        goingOutRoom();
-      }
-    };
-  });
+  // useEffect(() => {
+  //   window.onpopstate = function (event) {
+  //     if (event) {
+  //       goingOutRoom();
+  //     }
+  //   };
+  // });
 
-  useEffect(() => {
-    window.addEventListener("beforeunload", handleBeforeUnload);
+  // useEffect(() => {
+  //   window.addEventListener("beforeunload", handleBeforeUnload);
 
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [handleBeforeUnload]);
+  //   return () => {
+  //     window.removeEventListener("beforeunload", handleBeforeUnload);
+  //   };
+  // }, [handleBeforeUnload]);
 
   return (
     <>
