@@ -12,20 +12,14 @@ interface MyComponentProps {
 }
 
 const UserList: React.FC<MyComponentProps> = (props) => {
-  // console.log("방번호", props.roomId);
-  // const [userNick, setUserNick] = useState(sessionStorage.getItem("userNick"));
   const [superNick, setSuperNick] = useState(
     sessionStorage.getItem("superUser")
   );
   const userNick = sessionStorage.getItem("userNick");
-  // const superNick = sessionStorage.getItem("superUser");
 
-  // console.log('userNick:',userNick)
-  // console.log('superNick:',superNick)
 
   const [users, setUsers] = useState([]);
 
-  // const users = ['사용자1', '사용자2', '사용자3']
 
   const [reload, setReload] = useState(false);
 
@@ -47,11 +41,8 @@ const UserList: React.FC<MyComponentProps> = (props) => {
           props.roomId +
           "/users";
         const response = await axios.get(url);
-        // console.log("결과:", response.data.body);
 
-        // console.log("결과2:",response);
         setUsers(response.data.body);
-        // sessionStorage.setItem("superUser", )
       } catch (error) {
         console.log(error);
       }
@@ -71,11 +62,8 @@ const UserList: React.FC<MyComponentProps> = (props) => {
           props.roomId +
           "?status=OPEN&page=1&pageSize=1";
         const response = await axios.get(url);
-        // console.log("결과:", response.data.body[0].super_user_id);
 
-        // console.log("결과2:",response);
         setSuperNick(response.data.body[0].super_user_id);
-        // sessionStorage.setItem("superUser", )
       } catch (error) {
         console.log(error);
       }

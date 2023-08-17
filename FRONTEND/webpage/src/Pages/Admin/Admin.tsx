@@ -126,7 +126,6 @@ export default function Admin() {
           },
         });
         setBoxes(response.data.body);
-        console.log(response.data.body);
       } catch (error) {
         console.log(error);
       }
@@ -202,13 +201,7 @@ export default function Admin() {
                   },
                 }}
                 pageSizeOptions={[5]}
-                // onRowSelectionModelChange={(selectedRow) => {
-                //   const selectedIdx: number = Number(selectedRow[0]);
-                //   console.log(selectedIdx);
-                //   if (userState === "isLoggedIn")
-                //     navigate(`/Home/Chatroom/${selectedIdx}`);
-                //   else navigate("/Auth");
-                // }}
+
               />
             </Box>
           </div>

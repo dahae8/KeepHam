@@ -80,7 +80,6 @@ function TableList(props: propsType) {
               }
             };
             increasePeaple();
-            console.log("선택방번호:", props.data, selectedIdx);
             for (let i = 0; i < Number(props.data.length); i++) {
               if (props.data[i].id === selectedIdx) {
                 sessionStorage.setItem("storeName", props.data[i].store_name);

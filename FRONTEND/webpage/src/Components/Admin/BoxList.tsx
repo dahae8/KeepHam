@@ -54,7 +54,6 @@ function BoxList(props: propsType) {
         pageSizeOptions={[5]}
         onRowSelectionModelChange={(selectedRow) => {
           const selectedIdx: number = Number(selectedRow[0]);
-          console.log(selectedIdx);
           if (userState === "isLoggedIn")
             navigate(`/Home/Chatroom/${selectedIdx}`);
           else navigate("/Auth");

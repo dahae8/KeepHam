@@ -47,7 +47,6 @@ const MiniGame: React.FC<MyComponentProps> = (props) => {
       }
     };
     fetchUser();
-    // console.log('users', users)
   }, []);
 
   useEffect(() => {
