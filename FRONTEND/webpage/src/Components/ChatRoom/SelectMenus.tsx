@@ -33,40 +33,36 @@ export type propsType = {
 };
 
 function SelectMenus(props: propsType) {
-  const [currentStep, setCurrentStep] = useState<number>(props.step);
 
-  function updateStep(step: number) {
-    setCurrentStep(step);
-  }
   useEffect(() => {
-    console.log(currentStep)
+    console.log(props.step)
   })
 
 
   return (
     <>
-      {currentStep == 0 && (
+      {props.step == 0 && (
         <SelectStep1
           menuList={props.menuList}
           setCount={props.setCount}
           roomId={props.roomId}
           storeName={props.storeName}
           superUser={props.superUser}
-          step={currentStep}
+          step={props.step}
           totalPoint={props.totalPoint}
-          setStep={updateStep}
+          setStep={props.setStep}
         />
       )}
-      {currentStep == 1 && (
+      {props.step == 1 && (
         <SelectStep2
           menuList={props.menuList}
           setCount={props.setCount}
           roomId={props.roomId}
           storeName={props.storeName}
           superUser={props.superUser}
-          step={currentStep}
+          step={props.step}
           totalPoint={props.totalPoint}
-          setStep={updateStep}
+          setStep={props.setStep}
         />
       )}
     </>

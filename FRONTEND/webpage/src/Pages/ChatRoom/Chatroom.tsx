@@ -125,6 +125,8 @@ function ChatRoom() {
 
   const roomInfo = useLoaderData() as roomInfoType;
 
+  const [currentStep, setCurrentStep] = useState<number>(roomInfo.step);
+
   console.log(roomInfo);
 
   const roomId = roomInfo.roomId;
@@ -152,6 +154,10 @@ function ChatRoom() {
     setOpen(true);
   }
 
+  function updateStep(step: number) {
+    setCurrentStep(step);
+  }
+
   function navDisplay() {
     if (navIdx === 1) {
       return (
@@ -169,9 +175,9 @@ function ChatRoom() {
           roomId={roomInfo.roomId}
           storeName={roomInfo.store}
           superUser={roomInfo.superNick}
-          step={roomInfo.step}
+          step={currentStep}
           totalPoint={totalPoint}
-          setStep={() => {}}
+          setStep={updateStep}
         />
       );
     } else if (navIdx === 3) {
