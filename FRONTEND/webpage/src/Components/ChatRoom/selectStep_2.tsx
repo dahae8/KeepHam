@@ -94,13 +94,13 @@ function menuListItems(menuArray: menuInfo[]) {
 }
 
 function usersMenuListItems(usersMenuInfo: menuInfoByUsers[]) {
-  return usersMenuInfo.map((usersMenu) => {
+  return usersMenuInfo.map((usersMenu, idx) => {
     return (
-      <>
+      <Box key={idx}>
         <Typography>{usersMenu.user}</Typography>
         {menuListItems(usersMenu.menuInfo)}
         <Divider />
-      </>
+      </Box>
     );
   });
 }
