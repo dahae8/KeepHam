@@ -33,11 +33,6 @@ function TableList(props: propsType) {
       headerName: "최대인원",
       width: 100,
     },
-    {
-      field: "locked",
-      headerName: "입장가능여부",
-      width: 100,
-    },
   ];
   const navigate = useNavigate();
   const userState = window.sessionStorage.getItem("userState");
