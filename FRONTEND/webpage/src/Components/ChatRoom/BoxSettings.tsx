@@ -11,7 +11,6 @@ type propsType = {
 
 function BoxSettings(props: propsType) {
   const [pwValue, setPwValue] = useState<number>(0);
-  const [verify, setVerify] = useState<number>(0);
 
   return (
     <>
