@@ -26,7 +26,7 @@ function TableList(props: propsType) {
     {
       field: "address",
       headerName: "받는주소",
-      width: 100,
+      width: 200,
     },
     {
       field: "max_people_number",
