@@ -644,9 +644,6 @@ function ChatRoom() {
                 }}
               >
                 <Typography noWrap>{roomInfo.store}</Typography>
-                <Button variant="outlined" size="small" color="gray">
-                  변경
-                </Button>
               </Box>
               <Box
                 sx={{
