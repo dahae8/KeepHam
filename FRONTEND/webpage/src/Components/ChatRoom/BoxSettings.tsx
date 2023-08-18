@@ -27,21 +27,11 @@ function BoxSettings(props: propsType) {
             </Typography>
             <Divider />
           </Grid>
-          <Grid item xs={8}>
-            <TextField
-              label="Password"
-              autoComplete="current-password"
-              variant="standard"
-              onChange={(e) => {
-                setVerify(Number(e.target.value));
-              }}
-            />
-          </Grid>
           <Grid item xs={4}>
             <Button
               variant="contained"
               onClick={() => {
-                if (pwValue === verify) props.openBox();
+props.openBox();
               }}
             >
               함 개방
