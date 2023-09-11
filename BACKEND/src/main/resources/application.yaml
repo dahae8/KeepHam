@@ -10,13 +10,13 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mysql://i9c104.p.ssafy.io:43306/ssafy
+    url: mysqlURL
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: keepham@mysql!@#$
+    username: username
+    password: password
   data:
     mongodb:
-      uri: mongodb://ssafy:keephamssafy@i9c104.p.ssafy.io:47017/ssafy
+      uri: mongoURL
 
   security:
     user:
