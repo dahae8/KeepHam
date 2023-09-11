@@ -1,4 +1,4 @@
 secret-key: 시크릿키
 expiration-minutes: 30
 refresh-expiration-hours: 24
-issuer: ssafy
+issuer: ssa
