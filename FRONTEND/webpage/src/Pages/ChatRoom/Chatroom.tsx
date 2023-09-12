@@ -105,6 +105,7 @@ interface ChatMessage_timestamp {
 function ChatRoom() {
   const theme = useTheme();
   const bigSize = useMediaQuery(theme.breakpoints.up("xl"));
+  const [update, setUpdate] = useState(false);
   const [navIdx, setNavIdx] = useState(0);
   const [showUsers, setShowUsers] = useState(false);
   const [msgText, setMsgText] = useState("");
@@ -122,13 +123,19 @@ function ChatRoom() {
   const [open, setOpen] = useState<boolean>(false);
 
   const [totalPoint, setTotalPoint] = useState(0);
+  const [updateTotalPoint, setUpdateTotalPoint] = useState(true);
+  const [extendTime, setExtendTime] = useState(false);
 
-  const roomInfo = useLoaderData() as roomInfoType;
+  const [roomInfo, setRoomInfo] = useState<roomInfoType>(useLoaderData() as roomInfoType)
+
+
+  const [currentStep, setCurrentStep] = useState<number>(roomInfo.step);
+  const [remainTime, setRemainTime] = useState<string>(roomInfo.remainTime);
+  const [superUser, setSuperUser] = useState<string>(roomInfo.superNick);
 
   // console.log(roomInfo);
 
   const roomId = roomInfo.roomId;
-  const superUser = roomInfo.superNick;
   const boxId = roomInfo.boxId;
   const storeId = roomInfo.storeId;
   const nname = sessionStorage.getItem("userNick")!.toString();
@@ -152,6 +159,9 @@ function ChatRoom() {
     setOpen(true);
   }
 
+  function updateStep(step: number) {
+    setCurrentStep(step);
+  }
   function gameResult(result: string) {
     if (client) {
       const resultMessage: ChatMessage_timestamp = {
@@ -168,6 +178,27 @@ function ChatRoom() {
     }
   }
 
+  function selectionNotice() {
+    if (client) {
+      const resultMessage: ChatMessage_timestamp = {
+        room_id: roomId,
+        box_id: boxId,
+        author: nname,
+        content: nname + " 님이 구매를 확정하였습니다",
+        type: "INFO",
+      };
+      client.publish({
+        destination: `/app/joinUser/${roomId}`,
+        body: JSON.stringify(resultMessage),
+      });
+    }
+  }
+
+  function updatePoint() {
+    setUpdateTotalPoint(true);
+  }
+
+  // 네비게이션 바
   function navDisplay() {
     if (navIdx === 1) {
       return (
@@ -185,9 +216,11 @@ function ChatRoom() {
           roomId={roomInfo.roomId}
           storeName={roomInfo.store}
           superUser={roomInfo.superNick}
-          step={roomInfo.step}
+          step={currentStep}
           totalPoint={totalPoint}
-          setStep={() => {}}
+          setStep={updateStep}
+          selectionNotice={selectionNotice}
+          updatePoint={updatePoint}
         />
       );
     } else if (navIdx === 3) {
@@ -257,6 +290,7 @@ function ChatRoom() {
     };
     deleteRoom();
   }
+
   function goingOutRoom() {
     if (client) {
       const enterMessage: ChatMessage_timestamp = {
@@ -274,7 +308,7 @@ function ChatRoom() {
     navigate("/Home/RoomList");
   }
 
-  // 함 비밀번호 설정시 실행
+  // 함 비밀번호 설정
   useEffect(() => {
     if (client && roomPassword) {
       const chatMessage: ChatMessage_timestamp = {
@@ -289,12 +323,10 @@ function ChatRoom() {
         destination: `/app/sendMessage/${roomId}`, // 채팅 메시지를 처리하는 엔드포인트
         body: JSON.stringify(chatMessage),
       });
-      // console.log("비밀번호:", chatMessage);
-      setMsgText("");
     }
   }, [roomPassword]);
 
-  // 함 개방시 실행
+  // 함 개방
   useEffect(() => {
     if (client && open) {
       const chatMessage: ChatMessage_timestamp = {
@@ -309,9 +341,9 @@ function ChatRoom() {
         destination: `/app/sendMessage/${roomId}`, // 채팅 메시지를 처리하는 엔드포인트
         body: JSON.stringify(chatMessage),
       });
-      // console.log("함 개방:", chatMessage);
-      setMsgText("");
     }
+
+    setOpen(false)
   }, [open]);
 
   //입장 실행
@@ -320,7 +352,7 @@ function ChatRoom() {
 
     // WebSocket 연결 설정
     const newClient = new Client({
-      brokerURL: "ws://i9c104.p.ssafy.io:48080/api/my-chat", // WebSocket 서버 주소
+      brokerURL: "wss://i9c104.p.ssafy.io/api/my-chat", // WebSocket 서버 주소
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       debug: (str: string) => {
         console.log("디버그 : ", str);
@@ -338,6 +370,9 @@ function ChatRoom() {
           setsockMessages((prevMessages) => [...prevMessages, chatMessage]);
           if (chatMessage.type === "CLOSE") {
             navigate("/Home/RoomList");
+          }
+          if (chatMessage.type === "ENTER") {
+            setUpdate(true)
           }
         }
       );
@@ -397,7 +432,14 @@ function ChatRoom() {
         console.log(error);
       }
     };
+    
     addRoom();
+
+    window.onpopstate = function(event) {
+      if (event) {
+        goingOutRoom()
+      }
+    }
 
     return () => {
       if (client) {
@@ -419,8 +461,8 @@ function ChatRoom() {
     };
   }, []);
 
+  // 메시지 업데이트
   useEffect(() => {
-    // const userId = sessionStorage.getItem("userId");
     const messageFormchange: messageType[] = sockmessages.map((e) => {
       let byMee = true;
       if (e.author !== nname) byMee = false;
@@ -434,9 +476,8 @@ function ChatRoom() {
     setMessages(messageFormchange);
   }, [sockmessages]);
 
+  // 포인트
   useEffect(() => {
-    const AccessToken = sessionStorage.getItem("AccessToken");
-    console.log("AccessToken", AccessToken);
 
     const fetchTotalPoint = async () => {
       try {
@@ -447,7 +488,7 @@ function ChatRoom() {
           {},
           {
             headers: {
-              Authorization: `Bearer ` + AccessToken,
+              Authorization: key,
             },
           }
         );
@@ -459,32 +500,98 @@ function ChatRoom() {
         console.log(error);
       }
     };
-    fetchTotalPoint();
+
+    if(updateTotalPoint) {
+      fetchTotalPoint();
+      setUpdateTotalPoint(false);
+    }
     // console.log("totalPoint:", totalPoint);
-  }, [totalPoint]);
+  }, [updateTotalPoint]);
 
-  // // 창 종료 시 퇴장처리
-  // const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-  //   event.preventDefault();
-  //   event.returnValue = "떠나지마";
-  //   goingOutRoom();
-  // };
+  // 시간연장
+  useEffect(() => {
+    const extend = async () => {
+      try {
+        const url =
+          import.meta.env.VITE_URL_ADDRESS + "/api/rooms/extend";
+        const response = await axios(
+          {
+            method: "put",
+            url: url,
+            headers: {
+              Authorization: key,
+            },
+            data: {
+              room_id: roomId,
+              hour: 2,
+            }
+          }
+        );
+        console.log(response);
+        setUpdate(true)
+        
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if(extendTime) 
+    {
+      extend();
+      setExtendTime(false)
+    }
+    // console.log("totalPoint:", totalPoint);
+  }, [extendTime]);
 
-  // useEffect(() => {
-  //   window.onpopstate = function (event) {
-  //     if (event) {
-  //       goingOutRoom();
-  //     }
-  //   };
-  // });
+  const updateInfo = () => {
+    setUpdate(true)
+  }
 
-  // useEffect(() => {
-  //   window.addEventListener("beforeunload", handleBeforeUnload);
-
-  //   return () => {
-  //     window.removeEventListener("beforeunload", handleBeforeUnload);
-  //   };
-  // }, [handleBeforeUnload]);
+  // 방정보 업데이트
+  useEffect(() => {
+    const updateRoomInfo = async () => {
+      const url =
+      import.meta.env.VITE_URL_ADDRESS +
+      "/api/rooms/" +
+      roomId +
+      "?status=OPEN";
+    try {
+      const response = await axios({
+        method: "get",
+        url: url,
+        headers: {
+          Authorization: key,
+        },
+      });
+  
+      // console.log(response);
+  
+      const info: roomInfoType = {
+        boxId: response.data.body.box.box_id,
+        roomId: roomId,
+        storeId: response.data.body.store_id,
+        roomTitle: response.data.body.title,
+        store: response.data.body.store_name,
+        step: response.data.body.step,
+        remainTime: response.data.body.closed_at,
+        superNick: response.data.body.super_user_id,
+        address: response.data.body.box.detailed_address,
+        maxPeople: response.data.body.max_people_number,
+      };
+  
+      setRoomInfo(info)
+      setRemainTime(info.remainTime)
+      setSuperUser(info.superNick)
+      console.log("업데이트");
+      
+    }catch (error) {
+      console.log(error);
+    }
+  }
+  if(update) {
+    updateRoomInfo();
+    setUpdate(false);
+  }
+  }, [update])
 
   return (
     <>
@@ -537,9 +644,6 @@ function ChatRoom() {
                 }}
               >
                 <Typography noWrap>{roomInfo.store}</Typography>
-                <Button variant="outlined" size="small" color="gray">
-                  변경
-                </Button>
               </Box>
               <Box
                 sx={{
@@ -606,11 +710,14 @@ function ChatRoom() {
               }}
             >
               <Typography variant="h6" noWrap>
-                🕙{roomInfo.remainTime}
+                🕙{remainTime.substring(5, 7) + "월 " + remainTime.substring(8, 10) + "일 " + remainTime.substring(11, 13) + "시 " + remainTime.substring(14, 16) + "분"}
               </Typography>
-              <Button variant="outlined" size="small" color="gray">
+              {nname === superUser && <Button variant="outlined" size="small" color="gray" onClick={() => {
+                setExtendTime(true)
+
+              }}>
                 연장
-              </Button>
+              </Button>}
             </Box>
           </Box>
         </Box>
@@ -908,7 +1015,8 @@ function ChatRoom() {
                 borderBottomLeftRadius: 8,
               }}
             >
-              <UserList roomId={roomId} boxId={boxId} userSet={userSet}/>
+              <UserList roomId={roomId} boxId={boxId} userSet={userSet} superUser={superUser} userNick={nname} updateInfo={ updateInfo }
+            />
             </Box>
           </Box>
         </Box>

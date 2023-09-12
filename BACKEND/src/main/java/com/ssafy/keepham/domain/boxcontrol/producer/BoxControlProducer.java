@@ -20,17 +20,23 @@ public class BoxControlProducer {
     private final KafkaTemplate<String, Message> kafkaTemplate;
     private final MessageRepository messageRepository;
 
+    @Value("${kafka.box-open.topic}")
+    private String boxOpenTopic;
+
+    @Value("${kafka.box-keypad.topic}")
+    private String boxKeypadTopic;
+
     public void sendOpenMessageToBox(@Payload Message message){
         message.setTimestamp(LocalDateTime.now());
         log.info("open 메세지 : {}", message);
         messageRepository.save(message);
-        kafkaTemplate.send("box-open", message);
+        kafkaTemplate.send(boxOpenTopic, message);
     }
 
     public void sendKeyPadPasswordMessageToBox(@Payload Message message){
         message.setTimestamp(LocalDateTime.now());
         log.info("keypad 메세지 : {}", message);
         messageRepository.save(message);
-        kafkaTemplate.send("box-keyPad", message);
+        kafkaTemplate.send(boxKeypadTopic, message);
     }
 }

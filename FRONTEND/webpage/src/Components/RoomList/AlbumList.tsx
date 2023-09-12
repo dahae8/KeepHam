@@ -86,8 +86,8 @@ function AlbumList(props: propsType) {
               navigate(`/Home/Chatroom/${item.id}`);
             }}
             sx={{
-              width: { xs: 200, md: 285 },
-              height: { xs: 200, md: 285 },
+              width: { xs: 120, md: 212 },
+              height: { xs: 120, md: 212 },
               backgroundImage: `url("${item.img}")`,
               backgroundSize: "cover",
               borderRadius: 8,
@@ -102,7 +102,7 @@ function AlbumList(props: propsType) {
             >
               <Stack direction="row" justifyContent="end">
                 <Typography
-                  variant="h4"
+                  variant="body1"
                   sx={{
                     marginX: 2,
                     overflow: "hidden",
@@ -115,7 +115,7 @@ function AlbumList(props: propsType) {
               </Stack>
               <Divider />
               <Typography
-                variant="h6"
+                variant="body2"
                 sx={{
                   marginX: 2,
                   overflow: "hidden",

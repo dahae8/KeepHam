@@ -8,6 +8,7 @@ import Divider from "@mui/material/Divider";
 import axios from "axios";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import StarIcon from "@mui/icons-material/Star";
+import { Box } from "@mui/material";
 
 type ItemProps = {
   id: number;
@@ -15,7 +16,7 @@ type ItemProps = {
   roomId: number;
   userNick: string | null;
   superNick: string | null;
-  reloadUsers: () => void;
+  updateInfo: () => void;
 };
 
 function Item(props: ItemProps) {
@@ -58,15 +59,14 @@ function Item(props: ItemProps) {
         console.log(response.data.body);
 
         console.log(response);
+        props.updateInfo();
       } catch (error) {
         console.log(error);
       }
     };
 
     if (exitUserSwitch) {
-      console.log("test");
       exitUser();
-      props.reloadUsers();
       setExitUserSwitch(true);
     }
   }, [exitUserSwitch]);
@@ -90,14 +90,13 @@ function Item(props: ItemProps) {
         console.log(response.data.body);
 
         console.log(response);
+        props.updateInfo();
       } catch (error) {
         console.log(error);
       }
     };
     if (transSuperSwitch) {
-      console.log("test");
       transSuper();
-      props.reloadUsers();
       setTransSuperSwitch(false);
     }
   }, [transSuperSwitch]);
@@ -108,7 +107,10 @@ function Item(props: ItemProps) {
         {userNick === superNick && itemTitle !== superNick ? (
           <ListItem
             secondaryAction={
-              <div>
+              <Box sx={{
+                display: "flex",
+                gap: 2,
+              }}>
                 <Button
                   variant="contained"
                   onClick={() => {
@@ -125,7 +127,7 @@ function Item(props: ItemProps) {
                 >
                   <Typography>위임</Typography>
                 </Button>
-              </div>
+              </Box>
             }
           >
             <ListItemText primary={itemTitle} />

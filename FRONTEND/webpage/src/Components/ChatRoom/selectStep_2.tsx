@@ -234,9 +234,11 @@ function SelectStep2(props: propsType) {
           </Typography>
         ) : (
           <Button
+            disabled={confirm}
             variant="contained"
             onClick={() => {
               setConfirm(true);
+              props.selectionNotice()
             }}
           >
             구매확정

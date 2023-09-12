@@ -191,7 +191,7 @@ export default function RoomList() {
         const result: exRooms[] = response.data.body;
 
         result.forEach((res)=> {
-          res.address = res.box.address + res.box.detailed_address
+          res.address = res.box.detailed_address
         })
         
         setRooms(result)
