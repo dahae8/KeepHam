@@ -4,8 +4,8 @@ def get_mysql_connection():
     try:
         connection = pymysql.connect(
             host="localhost",
-            user="root",
-            password="",
+            user="사용자명",
+            password="암호",
             database=""
         )
         return connection

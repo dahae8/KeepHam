@@ -12,18 +12,16 @@ spring:
   datasource:
     url: mysqlURL
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: username
-    password: password
+    username: 사용자이름
+    password: 암호
   data:
     mongodb:
       uri: mongoURL
 
   security:
     user:
-      name: ssafy
-      password: ssafy
-
-
+      name: 이름
+      password: 암호
 
 springdoc:
   packages-to-scan: com.ssafy.keepham

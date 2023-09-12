@@ -1,5 +1,4 @@
-version: '3'
-
+version: "3"
 
 services:
   zookeeper-1:
@@ -15,7 +14,6 @@ services:
       - /var/lib/zookeeper-1/data
       - /var/lib/zookeeper-1/log
 
-
   zookeeper-2:
     image: confluentinc/cp-zookeeper:7.1.0
     container_name: zookeeper-2
@@ -29,7 +27,6 @@ services:
       - /var/lib/zookeeper-2/data
       - /var/lib/zookeeper-2/log
 
-
   zookeeper-3:
     image: confluentinc/cp-zookeeper:7.1.0
     container_name: zookeeper-3
@@ -42,7 +39,6 @@ services:
     volumes:
       - /var/lib/zookeeper-3/data
       - /var/lib/zookeeper-3/log
-
 
   kafka-1:
     image: confluentinc/cp-kafka:7.1.0
@@ -115,10 +111,9 @@ services:
     volumes:
       - ./mongodb:/data/db
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=keepham@mongodb!@#$
+      - MONGO_INITDB_ROOT_USERNAME=사용자이름
+      - MONGO_INITDB_ROOT_PASSWORD=암호
       - MONGO_INITDB_DATABASE=ssafy
-
 
   mysql:
     image: mysql:8.0
@@ -127,7 +122,7 @@ services:
     ports:
       - "43306:3306" # HOST:CONTAINER
     environment:
-      MYSQL_ROOT_PASSWORD: keepham@mysql!@#$
+      MYSQL_ROOT_PASSWORD: 암호
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
