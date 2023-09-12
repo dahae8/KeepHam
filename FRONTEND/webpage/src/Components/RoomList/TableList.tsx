@@ -26,16 +26,11 @@ function TableList(props: propsType) {
     {
       field: "address",
       headerName: "받는주소",
-      width: 100,
+      width: 200,
     },
     {
       field: "max_people_number",
       headerName: "최대인원",
-      width: 100,
-    },
-    {
-      field: "locked",
-      headerName: "입장가능여부",
       width: 100,
     },
   ];

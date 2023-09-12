@@ -18,9 +18,14 @@ import java.util.Set;
 @EnableRedisRepositories
 public class RedisConfig {
 
+    @Value("${spring.cache.redis.host}")
+    private String host;
+    @Value("${spring.cache.redis.port}")
+    private int port;
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory("i9c104.p.ssafy.io", 46379);
+        return new LettuceConnectionFactory(host, port);
     }
 
     @Bean

@@ -8,21 +8,16 @@ import cloudscraper
 import pymysql
 from mysql_connector import get_mysql_connection
 from query_utils import create_store_table, create_menu_table, insert_data_into_store, update_store_data, insert_data_into_menu, update_menu_data
-
-# TODO:
-# 메뉴 리스트 파싱 부분 수정
-# lat 및 lng에 대한 변화
-# 슬랙 호출
-# 가게 데이터 카테고리즈 파싱 고민
+from dotenv import load_dotenv
+import os
 
 
-# 파라미터 및 관련 변수 설정
-# 원하는 주소의 위 , 경도 주소가 필요!
+load_dotenv()
 
 url = 'https://www.yogiyo.co.kr/api/v1/restaurants-geo/'
 headers = {
-    "X-Apikey" : "iphoneap",
-    "X-Apisecret":"fe5183cc3dea12bd0ce299cf110a75a2",
+    "X-Apikey" : os.environ.get('api.key'),
+    "X-Apisecret":os.environ.get('secret.key'),
 }
 
 ## 가게 부분

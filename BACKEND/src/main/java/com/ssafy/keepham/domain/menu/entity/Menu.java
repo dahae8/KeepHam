@@ -1,10 +1,7 @@
 package com.ssafy.keepham.domain.menu.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /*
  item_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -27,6 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class Menu {
     @Id
     @GeneratedValue

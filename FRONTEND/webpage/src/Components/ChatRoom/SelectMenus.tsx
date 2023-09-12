@@ -1,6 +1,6 @@
 import SelectStep1 from "@/Components/ChatRoom/selectStep_1.tsx";
 import SelectStep2 from "@/Components/ChatRoom/selectStep_2.tsx";
-import { useState } from "react";
+import { useEffect } from "react";
 
 export interface menuInfo {
   item: number;
@@ -30,14 +30,16 @@ export type propsType = {
   step: number;
   totalPoint: number;
   setStep: (step: number) => void;
+  selectionNotice: () => void;
+  updatePoint: () => void;
 };
 
 function SelectMenus(props: propsType) {
-  const [currentStep, setCurrentStep] = useState<number>(props.step);
 
-  function updateStep(step: number) {
-    setCurrentStep(step);
-  }
+  useEffect(() => {
+    console.log(props.step)
+  })
+
 
   return (
     <>
@@ -48,9 +50,11 @@ function SelectMenus(props: propsType) {
           roomId={props.roomId}
           storeName={props.storeName}
           superUser={props.superUser}
-          step={currentStep}
+          step={props.step}
           totalPoint={props.totalPoint}
-          setStep={updateStep}
+          setStep={props.setStep}
+          selectionNotice={props.selectionNotice}
+          updatePoint={props.updatePoint}
         />
       )}
       {props.step == 1 && (
@@ -60,9 +64,11 @@ function SelectMenus(props: propsType) {
           roomId={props.roomId}
           storeName={props.storeName}
           superUser={props.superUser}
-          step={currentStep}
+          step={props.step}
           totalPoint={props.totalPoint}
-          setStep={updateStep}
+          setStep={props.setStep}
+          selectionNotice={props.selectionNotice}
+          updatePoint={props.updatePoint}
         />
       )}
     </>

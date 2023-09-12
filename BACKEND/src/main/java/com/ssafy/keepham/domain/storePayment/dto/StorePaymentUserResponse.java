@@ -8,6 +8,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class StorePaymentUserResponse {
     private Long roomId;
     //체팅방 번호

@@ -56,7 +56,7 @@ terminate = False
 logger.debug("run kafka_open")
 
 # 카프카
-password = "123456"
+password = "" 
 webOpen = False
 
 def subOpen():

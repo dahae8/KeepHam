@@ -4,9 +4,9 @@ def get_mysql_connection():
     try:
         connection = pymysql.connect(
             host="localhost",
-            user="root",
-            password="ssafy",
-            database="ssafy"
+            user="사용자명",
+            password="암호",
+            database=""
         )
         return connection
     except pymysql.Error as e:
